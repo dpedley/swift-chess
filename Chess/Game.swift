@@ -31,9 +31,8 @@ extension Chess {
         }
         let black: Player
         let white: Player
-        var lastMove: Move?
         var status: GameStatus {
-            guard let lastMove = lastMove else {
+            guard let lastMove = board.lastMove else {
                 if board.FEN == Chess.Board.startingFEN {
                     return .notYetStarted
                 }
@@ -110,7 +109,7 @@ extension Chess {
                 }
                 guard move.continuesGameplay else {
                     if move.isResign || move.isTimeout {
-                        strongSelf.lastMove = move
+                        strongSelf.board.lastMove = move
                         strongSelf.winningSide = move.side.opposingSide
                         return
                     }
@@ -122,7 +121,7 @@ extension Chess {
                 switch moveTry {
                 case .success:
                     print("Moved: \(move)")
-                    strongSelf.lastMove = move
+                    strongSelf.board.lastMove = move
                     strongSelf.continueBasedOnStatus()
                 case .failed(reason: let reason):
                     print("Move failed: \(move) \(reason)")

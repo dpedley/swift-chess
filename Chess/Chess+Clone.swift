@@ -15,8 +15,8 @@ extension Chess.Move.SideEffect {
             var updatedValue = self.rawValue
             var subValueOffset = 6
             for subValue in subValues {
-                updatedValue = updatedValue & Int64(subValue >> subValueOffset)
-                subValueOffset += 3
+                updatedValue = updatedValue | Int64(subValue << subValueOffset)
+                subValueOffset += 6
             }
             return updatedValue
         }
@@ -46,12 +46,12 @@ extension Chess.Move.SideEffect {
         case .notKnown:
             return .notKnown
         case .castling:
-            let rook = Int(value << 6) % 63
-            let guardingSquare = Int(value << 12) % 63
+            let rook = Int(value >> 6) & 63
+            let guardingSquare = Int(value >> 12) & 63
             return .castling(rook: rook, destination: guardingSquare)
         case .enPassant:
-            let attack = Int(value << 6) % 63
-            let trespasser = Int(value << 12) % 63
+            let attack = Int(value >> 6) & 63
+            let trespasser = Int(value >> 12) & 63
             return .enPassant(attack: attack, trespasser: trespasser)
         case .simulating:
             return .simulating

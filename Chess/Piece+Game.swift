@@ -18,9 +18,32 @@ extension Chess.Piece {
         
         switch pieceType {
         case .pawn(let hasMoved):
-            if move.rankDirection == side.rankDirection,
-                move.rankDistance <= ((hasMoved) ? 1 : 2) {
-                return true
+            // Only forward
+            if move.rankDirection == side.rankDirection {
+                if move.rankDistance == 1, move.fileDistance == 0 { // Plain vanilla pawn move
+                    return true
+                }
+                if move.rankDistance == 2, move.fileDistance == 0 {
+                    // Two step is only allow as the first move
+                    if hasMoved {
+                        return false
+                    }
+                    // The move is valid. Before we return, make sure to attach the enPassantPosition
+                    move.sideEffect = Chess.Move.SideEffect.enPassant(attack: move.end,
+                                                                      trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
+                    return true
+                }
+                if move.rankDistance <= ((hasMoved) ? 1 : 2) {
+                    return true
+                }
+                
+                // Check the special case of EnPassant. The code would come through because the
+                // destination square is empty. Which the system sees as a move, not an attack.
+                if let enPassantPosition = board?.enPassantPosition, move.end == enPassantPosition, move.rankDistance == 1, move.fileDistance == 1 {
+                    // We're capturing EnPassant, attach the SideEffect here.
+                    move.sideEffect = Chess.Move.SideEffect.enPassant(attack: move.end,
+                                                                      trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
+                }
             }
             return false
         case .knight:
@@ -63,10 +86,10 @@ extension Chess.Piece {
                 default:
                     break
                 }
-                let isKingSide: Bool = move.rankDirection > 0
+                let isKingSide: Bool = move.fileDirection > 0
                 let square = board.startingSquare(for: side, pieceType: DefaultType.Rook, kingSide: isKingSide)
                 if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
-                    move.sideEffect = Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - (move.fileDirection * -1))
+                    move.sideEffect = Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
                     return true
                 }
             }

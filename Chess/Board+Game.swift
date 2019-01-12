@@ -9,10 +9,20 @@
 import Foundation
 
 extension Chess.Board  {
-    var squareForActiveKing: Chess.Square {
+    internal func lastEnPassantPosition() -> Chess.Position? {
+        guard let sideEffect = lastMove?.sideEffect else { return nil }
+        switch sideEffect {
+        case Chess.Move.SideEffect.enPassant(let attack, _):
+            return attack
+        default:
+            return nil
+        }
+    }
+
+    internal func findKing(_ side: Chess.Side) -> Chess.Square {
         var kingSearch: Chess.Square? = nil
         squares.forEach {
-            if let piece = $0.piece, piece.side == playingSide {
+            if let piece = $0.piece, piece.side == side {
                 switch piece.pieceType {
                 case .king:
                     kingSearch = $0
@@ -22,7 +32,7 @@ extension Chess.Board  {
             }
         }
         guard let square = kingSearch else {
-            fatalError("Tried to access the \(playingSide) king when it wasn't on the board [\(FEN)]")
+            fatalError("Tried to access the \(side) king when it wasn't on the board [\(FEN)]")
         }
         return square
     }
@@ -73,7 +83,14 @@ extension Chess.Board  {
         move.setVerified()
         
         // Before we `commit` the move grab the destination square's piece (if there is one) `commit` will over write it.
-        let capturedPiece = squares[move.end].piece
+        // We do this with the special EnPassant capture as well.
+        let capturedPiece: Chess.Piece?
+        switch move.sideEffect {
+        case .enPassant(_, let trespasser):
+            capturedPiece = squares[trespasser].piece
+        default:
+            capturedPiece = squares[move.end].piece
+        }
         commit(move)
         return .success(capturedPiece: capturedPiece)
     }
@@ -99,13 +116,13 @@ extension Chess.Board  {
             let rookSquare = squares[rookIndex]
             let destinationSquare = squares[destinationIndex]
             guard let rook = rookSquare.piece else { fatalError("Cannot castle without a rook") } // Should we check type and side as well?
-            guard destinationSquare.isEmpty else { fatalError("Destination must be empty when castling \(move)") }
+            guard destinationSquare.isEmpty else {
+                fatalError("Destination must be empty when castling \(move)")
+            }
             rookSquare.clear()
             destinationSquare.piece = rook
-        case .enPassant(let attackIndex, let trespassersIndex):
-            // You attack the "empty square" the pawn has trespassed into the square beyond
-            // There is no action to take during to this move, instead, when this is the "last move"
-            // we reference it to see if the attacked square is this one.
+        case .enPassant(_, _):
+            // This was handled before the commit, see capturedPiece.
             break
         case .noneish:
             // Do nothing ish
@@ -114,6 +131,13 @@ extension Chess.Board  {
         
         squares[move.start].clear()
         squares[move.end].piece = piece
+        
+        lastMove = move        
+        if playingSide == .black {
+            fullMoves += 1
+        }
+        
         playingSide = playingSide.opposingSide
+        
     }
 }

@@ -11,11 +11,17 @@ import Foundation
 extension Chess {
     enum PieceType {
         case pawn(hasMoved: Bool)
-        case knight
-        case bishop
+        case knight(hasMoved: Bool)
+        case bishop(hasMoved: Bool)
         case rook(hasMoved: Bool, isKingSide: Bool)
-        case queen
+        case queen(hasMoved: Bool)
         case king(hasMoved: Bool)
+        var hasMoved: Bool {
+            switch self {
+            case .pawn(let hasMoved), .knight(let hasMoved), .bishop(let hasMoved), .rook(let hasMoved, _), .queen(let hasMoved), .king(let hasMoved):
+                return hasMoved
+            }
+        }
         func pieceMoved() -> PieceType {
             switch self {
             case .pawn(let hasMoved):
@@ -26,7 +32,7 @@ extension Chess {
                 return .rook(hasMoved: true, isKingSide: isKingSide)
             case .king(let hasMoved):
                 if hasMoved { break }
-                return .pawn(hasMoved: true)
+                return .king(hasMoved: true)
             default:
                 break;
             }

@@ -31,6 +31,7 @@ extension Chess {
                 return pieceType.fen(.white)
             }
         }
+        var hasMoved: Bool { return pieceType.hasMoved }
 
         static func from(fen: String) -> Piece? {
             guard fen.count == 1 else {
@@ -42,13 +43,13 @@ extension Chess {
             if lower == "p" {
                 foundType = .pawn(hasMoved: false)
             } else if lower == "n" {
-                foundType = .knight
+                foundType = .knight(hasMoved: false)
             } else if lower == "b" {
-                foundType = .bishop
+                foundType = .bishop(hasMoved: false)
             } else if lower == "r" {
                 foundType = .rook(hasMoved: false, isKingSide: true)
             } else if lower == "q" {
-                foundType = .queen
+                foundType = .queen(hasMoved: false)
             } else if lower == "k" {
                 foundType = .king(hasMoved: false)
             }

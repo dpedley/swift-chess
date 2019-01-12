@@ -27,6 +27,7 @@ extension Chess {
                 guard let board = board else {
                     fatalError("We cannot compute attacked indices without a board reference.")
                 }
+                
                 for testIndex in 0..<board.squares.count {
                     let testSquare = board.squares[testIndex]
                     if piece.isAttackValid(Move(side: piece.side, start: position, end: testSquare.position)) {

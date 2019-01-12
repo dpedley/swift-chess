@@ -16,6 +16,9 @@ extension Chess_Index {
     static func square(on board: Chess.Board) -> Chess.Square {
             return board.squares[index]
     }
+    static func hasMoved(on board: Chess.Board) -> Bool {
+        return (board.squares[index].piece?.hasMoved) ?? true
+    }
 }
 
 extension Chess.Board {
