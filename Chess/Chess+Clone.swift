@@ -10,7 +10,7 @@ import Foundation
 
 extension Chess.Move.SideEffect {
     enum BaseInt: Int64 {
-        case notKnown = 0, castling, enPassant, simulating, none
+        case notKnown = 0, castling, enPassantInvade, enPassantCapture, simulating, none
         func annotated(with subValues: [Int]) -> Int64 {
             var updatedValue = self.rawValue
             var subValueOffset = 6
@@ -28,8 +28,10 @@ extension Chess.Move.SideEffect {
             return BaseInt.notKnown.rawValue
         case .castling(let rook, let guardingSquare):
             return BaseInt.castling.annotated(with: [rook, guardingSquare])
-        case .enPassant(let attack, let trespasser):
-            return BaseInt.enPassant.annotated(with: [attack, trespasser])
+        case .enPassantInvade(let territory, let invader):
+            return BaseInt.enPassantInvade.annotated(with: [territory, invader])
+        case .enPassantCapture(let attack, let trespasser):
+            return BaseInt.enPassantCapture.annotated(with: [attack, trespasser])
         case .simulating:
             return BaseInt.simulating.rawValue
         case .noneish:
@@ -49,10 +51,14 @@ extension Chess.Move.SideEffect {
             let rook = Int(value >> 6) & 63
             let guardingSquare = Int(value >> 12) & 63
             return .castling(rook: rook, destination: guardingSquare)
-        case .enPassant:
+        case .enPassantInvade:
+            let territory = Int(value >> 6) & 63
+            let invader = Int(value >> 12) & 63
+            return .enPassantInvade(territory: territory, invader: invader)
+        case .enPassantCapture:
             let attack = Int(value >> 6) & 63
             let trespasser = Int(value >> 12) & 63
-            return .enPassant(attack: attack, trespasser: trespasser)
+            return .enPassantCapture(attack: attack, trespasser: trespasser)
         case .simulating:
             return .simulating
         case .none:

@@ -66,6 +66,7 @@ extension Chess {
             }
             return side == .white ? upper : upper.lowercased()
         }
+        
     }
 }
 

@@ -12,8 +12,8 @@ extension Chess.Board  {
     internal func lastEnPassantPosition() -> Chess.Position? {
         guard let sideEffect = lastMove?.sideEffect else { return nil }
         switch sideEffect {
-        case Chess.Move.SideEffect.enPassant(let attack, _):
-            return attack
+        case Chess.Move.SideEffect.enPassantInvade(let territory, _):
+            return territory
         default:
             return nil
         }
@@ -86,12 +86,13 @@ extension Chess.Board  {
         // We do this with the special EnPassant capture as well.
         let capturedPiece: Chess.Piece?
         switch move.sideEffect {
-        case .enPassant(_, let trespasser):
+        case .enPassantCapture(_, let trespasser):
             capturedPiece = squares[trespasser].piece
         default:
             capturedPiece = squares[move.end].piece
         }
         commit(move)
+        
         return .success(capturedPiece: capturedPiece)
     }
     
@@ -121,7 +122,10 @@ extension Chess.Board  {
             }
             rookSquare.clear()
             destinationSquare.piece = rook
-        case .enPassant(_, _):
+        case .enPassantInvade(_, _):
+            // This is handled by lastMove. We check that later to see if the invader double stepped.
+            break
+        case .enPassantCapture(_, _):
             // This was handled before the commit, see capturedPiece.
             break
         case .noneish:

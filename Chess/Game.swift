@@ -81,8 +81,9 @@ extension Chess {
                 return black
             }
         }
-        let board = Board()
-        public init(_ player: Player, against challenger: Player) {
+        let board: Chess.Board
+        public init(_ player: Player, against challenger: Player, ui: Chess_GameVisualizing = Chess.UI.Default.devNull) {
+            self.board = Chess.Board(ui: ui)
             guard player.side == challenger.side.opposingSide else {
                 fatalError("Can't play with two \(player.side)s")
             }
@@ -119,9 +120,22 @@ extension Chess {
                 
                 let moveTry = strongSelf.board.attemptMove(move)
                 switch moveTry {
-                case .success:
+                case .success(let capturedPiece):
                     print("Moved: \(move)")
                     strongSelf.board.lastMove = move
+                    
+                    // we need to update the UI here
+                    if let piece = strongSelf.board.squares[move.start].piece {
+                        let uiUpdate: Chess.UI.PieceUpdate
+                        if let capturedPiece = capturedPiece {
+                            uiUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
+                        } else {
+                            uiUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
+                        }
+                        strongSelf.board.ui.apply(board: strongSelf.board,
+                                                  updates: [ Chess.UI.Update.piece(uiUpdate) ])
+                    }
+
                     strongSelf.continueBasedOnStatus()
                 case .failed(reason: let reason):
                     print("Move failed: \(move) \(reason)")

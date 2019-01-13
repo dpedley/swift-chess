@@ -8,14 +8,14 @@
 
 import Foundation
 
-protocol Chess_PositionStoring {
+public protocol Chess_PositionStoring {
     var fileNumber: Int { get }
     var rank: Int { get }
     var rawIndex: Int { get set }
 }
 
 extension Chess {
-    typealias Position = Int
+    public typealias Position = Int
     
 }
 
@@ -36,12 +36,12 @@ extension Chess.Position: Chess_PositionStoring {
         return ((8 - rank) * 8) + fileNumber
     }
     
-    var rawIndex: Int { get { return self } set { self = newValue } }
-    var fileNumber: Int {
+    public var rawIndex: Int { get { return self } set { self = newValue } }
+    public var fileNumber: Int {
         return self % 8
     }
     
-    var rank: Int {
+    public var rank: Int {
         return ((63 - self) / 8) + 1 // The +1 is because we are 1 based.
     }
     

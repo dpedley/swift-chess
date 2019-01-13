@@ -9,7 +9,7 @@
 import Foundation
 
 extension Chess {    
-    class Move: NSObject {
+    public class Move: NSObject {
         enum Limitation {
             case unknown
             case noPieceToMove
@@ -43,7 +43,7 @@ extension Chess {
             return end.isBoardPosition
         }
         
-        override var description: String {
+        override public var description: String {
             let desc: String
             if isResign {
                 desc = "Resigned"

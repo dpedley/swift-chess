@@ -29,7 +29,7 @@ extension Chess.Piece {
                         return false
                     }
                     // The move is valid. Before we return, make sure to attach the enPassantPosition
-                    move.sideEffect = Chess.Move.SideEffect.enPassant(attack: move.end,
+                    move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
                                                                       trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
                     return true
                 }
@@ -41,7 +41,7 @@ extension Chess.Piece {
                 // destination square is empty. Which the system sees as a move, not an attack.
                 if let enPassantPosition = board?.enPassantPosition, move.end == enPassantPosition, move.rankDistance == 1, move.fileDistance == 1 {
                     // We're capturing EnPassant, attach the SideEffect here.
-                    move.sideEffect = Chess.Move.SideEffect.enPassant(attack: move.end,
+                    move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
                                                                       trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
                 }
             }

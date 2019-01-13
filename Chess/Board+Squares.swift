@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Chess_Index {
+public protocol Chess_Index {
     static var index: Int { get }
 }
 

@@ -9,7 +9,7 @@
 import Foundation
 
 extension Chess {
-    class Square: NSObject {
+    public class Square: NSObject {
         let position: Position
         weak var board: Chess_PieceCoordinating?
         var piece: Piece? = nil {
@@ -21,8 +21,15 @@ extension Chess {
                 self.attackedSquareIndices.removeAll()
             }
             didSet {
-                // If we don't have a piece now, all the cascading "clearing" is done in willSet
-                guard let piece = piece else { return }
+                guard let piece = piece else {
+                    // If we don't have a piece now, nor a board, all the cascading "clearing" is already done in willSet
+                    // we just need to update the UI here
+                    guard let board = board else { return }
+                    board.ui.apply(board: board,
+                                   updates: [Chess.UI.Update.clearSquare(position),
+                                             Chess.UI.Update.selection( Chess.UI.SelectionUpdate.isAttackableBySelectedPeice, positions: []) ])
+                    return                    
+                }
 
                 guard let board = board else {
                     fatalError("We cannot compute attacked indices without a board reference.")
@@ -35,6 +42,9 @@ extension Chess {
                         attackedSquareIndices.append(testIndex)
                     }
                 }
+
+                board.ui.apply(board: board,
+                               updates: [ Chess.UI.Update.selection( Chess.UI.SelectionUpdate.isAttackableBySelectedPeice, positions: attackedSquareIndices) ])
             }
         }
         var isEmpty: Bool { return piece==nil }
@@ -53,6 +63,7 @@ extension Chess {
         // occupying this space. It is based on being the only piece on the board, so the piece's path to this
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
+        // TODO: Rename it's not a squareIndex, It's a position
         private var attackedSquareIndices: [Chess.Position] = []
         var attackedSquares: [Square]? {
             guard let board = board, !attackedSquareIndices.isEmpty else { return nil }
@@ -100,7 +111,7 @@ extension Chess {
             return allSquaresWithValidAttackingPieces.count > 0
         }
         
-        override var description: String {
+        override public var description: String {
             return "\(position.FEN) \(piece?.FEN ?? "")"
         }
     }

@@ -20,9 +20,9 @@ extension Chess {
             static let King = PieceType.king(hasMoved: false)
         }
         
-        
         let side: Side
         let pieceType: PieceType
+        let UI: UI.Piece
         var FEN: String {
             switch side {
             case .black:
@@ -33,6 +33,12 @@ extension Chess {
         }
         var hasMoved: Bool { return pieceType.hasMoved }
 
+        init(side: Side, pieceType: PieceType) {
+            self.side = side
+            self.pieceType = pieceType
+            self.UI = Chess.UI.Piece(side: side, pieceType: pieceType)
+        }
+        
         static func from(fen: String) -> Piece? {
             guard fen.count == 1 else {
                 fatalError("Couldn't create a piece from [\(fen)]")
@@ -58,6 +64,23 @@ extension Chess {
                 return nil
             }
             return Piece(side: side, pieceType: pieceType)
+        }
+        
+        var unicode: String {
+            switch self.pieceType {
+            case .pawn(_):
+                return side == .black ? "\u{265F}" : "\u{2659}"
+            case .knight(_):
+                return side == .black ? "\u{265E}" : "\u{2658}"
+            case .bishop(_):
+                return side == .black ? "\u{265D}" : "\u{2657}"
+            case .rook(_, _):
+                return side == .black ? "\u{265C}" : "\u{2656}"
+            case .queen(_):
+                return side == .black ? "\u{265B}" : "\u{2655}"
+            case .king(_):
+                return side == .black ? "\u{265A}" : "\u{2654}"
+            }
         }
     }
 }
