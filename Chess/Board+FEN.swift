@@ -101,5 +101,9 @@ extension Chess.Board {
             }
             rankIndex+=1
         }
+        
+        // Update the UI
+        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
+        self.ui.apply(board: self, updates: [uiUpdate])
     }
 }

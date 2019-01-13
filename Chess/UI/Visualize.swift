@@ -80,6 +80,11 @@ extension Chess.UI {
                     self.applyPieceUpdate(board: board, update: pieceUpdate)
                 case .selection(let selectionUpdate, let positions):
                     self.applySelectionUpdate(board: board, update: selectionUpdate, positions: positions)
+                case .resetBoard(let pieces):
+                    guard pieces.count == 64 else { return }
+                    for index in 0...63 {
+                        self.ui.squares[index].setOccupant(pieces[index])
+                    }
                 }
             }
         }

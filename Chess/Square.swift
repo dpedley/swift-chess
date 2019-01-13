@@ -42,9 +42,6 @@ extension Chess {
                         attackedSquareIndices.append(testIndex)
                     }
                 }
-
-                board.ui.apply(board: board,
-                               updates: [ Chess.UI.Update.selection( Chess.UI.SelectionUpdate.isAttackableBySelectedPeice, positions: attackedSquareIndices) ])
             }
         }
         var isEmpty: Bool { return piece==nil }

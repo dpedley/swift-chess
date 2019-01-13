@@ -24,5 +24,6 @@ extension Chess.UI {
         case clearSquare(_ squarePosition: Chess.Position)
         case piece(_ update: PieceUpdate)
         case selection(_ update: SelectionUpdate, positions: [Chess.Position])
+        case resetBoard(_ pieces: [Chess.UI.Piece])
     }
 }
