@@ -125,7 +125,8 @@ extension Chess {
                     strongSelf.board.lastMove = move
                     
                     // we need to update the UI here
-                    if let piece = strongSelf.board.squares[move.start].piece {
+                    // Note piece is at `move.end` now as the move is complete.
+                    if let piece = strongSelf.board.squares[move.end].piece {
                         let uiUpdate: Chess.UI.PieceUpdate
                         if let capturedPiece = capturedPiece {
                             uiUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)

@@ -9,6 +9,7 @@
 import Foundation
 
 extension Chess.UI {
+    
     public enum Selection {
         case none
         case selected
