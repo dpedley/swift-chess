@@ -133,8 +133,19 @@ extension Chess {
                         } else {
                             uiUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
                         }
+                        var updates = [ Chess.UI.Update.piece(uiUpdate) ]
+                        switch move.sideEffect {
+                        case .castling(let rookStart, let rookEnd):
+                            if let rook = strongSelf.board.squares[rookEnd].piece {
+                                let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
+                                updates.append( Chess.UI.Update.piece(rookUpdate) )
+                            }
+                        case .enPassantCapture(_, _),  .enPassantInvade(_, _), .notKnown, .simulating, .noneish:
+                            // These cases don't imply another uiUpdate is needed.
+                            break
+                        }
                         strongSelf.board.ui.apply(board: strongSelf.board,
-                                                  updates: [ Chess.UI.Update.piece(uiUpdate) ])
+                                                  updates: updates)
                     }
 
                     strongSelf.continueBasedOnStatus()
