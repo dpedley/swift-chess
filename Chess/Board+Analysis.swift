@@ -40,7 +40,7 @@ extension Chess.Board  {
         
         // Before we `commit` the move grab the destination square's piece (if there is one) `commit` will over write it.
         let capturedPiece = squares[move.end].piece
-        commit(move)
+        commit(move, capturedPiece: capturedPiece)
         return .success(capturedPiece: capturedPiece)
     }
     

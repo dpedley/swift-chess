@@ -21,9 +21,12 @@ extension Chess {
         case drawByMoves
         case drawBecauseOfInsufficientMatingMaterial
         case stalemate
+        case paused
     }
     
     public class Game {
+        internal var userPaused = false
+        internal var botPausedMove: Chess.Move?
         var winningSide: Side?
         var winner: Player? {
             guard let winningSide = winningSide else { return nil }
@@ -38,6 +41,11 @@ extension Chess {
                 }
                 return .unknown
             }
+            
+            if userPaused {
+                return .paused
+            }
+            
             if lastMove.isTimeout {
                 return .timeout
             }
@@ -98,63 +106,105 @@ extension Chess {
         }
         
         public func start() {
+            userPaused = false
             executeTurn()
         }
         
+        public func pause() {
+            // TODO add bot check
+            userPaused = true
+        }
+        
         internal func executeTurn() {
-            // TODO: track moves
+            if let move = botPausedMove {
+                guard move.side == board.playingSide else {
+                    fatalError("bot move cache corrupted.")
+                }
+                botPausedMove = nil
+                execute(move: move)
+                return
+            }
+
             weak var weakSelf = self
             activePlayer?.getBestMove(currentFEN: board.FEN, movesSoFar: []) { move in
                 guard let strongSelf = weakSelf else {
                     return
                 }
+                
+                // Did the user pause while the bot was thinking?
+                // TODO add bot check
+                if strongSelf.userPaused {
+                    strongSelf.botPausedMove = move
+                    return
+                }
+                
                 guard move.continuesGameplay else {
                     if move.isResign || move.isTimeout {
-                        strongSelf.board.lastMove = move
+                        // TODO: do we push the resign onto [turns] and the UI stack as well here?
+//                        strongSelf.board.lastMove = move
+                        
                         strongSelf.winningSide = move.side.opposingSide
                         return
                     }
 
                     fatalError("Need to diagnose this scenario, shouldn't come here.")
                 }
-                
-                let moveTry = strongSelf.board.attemptMove(move)
-                switch moveTry {
-                case .success(let capturedPiece):
-                    print("Moved: \(move)")
-                    strongSelf.board.lastMove = move
-                    
-                    // we need to update the UI here
-                    // Note piece is at `move.end` now as the move is complete.
-                    if let piece = strongSelf.board.squares[move.end].piece {
-                        let uiUpdate: Chess.UI.PieceUpdate
-                        if let capturedPiece = capturedPiece {
-                            uiUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
-                        } else {
-                            uiUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
-                        }
-                        var updates = [ Chess.UI.Update.piece(uiUpdate) ]
-                        switch move.sideEffect {
-                        case .castling(let rookStart, let rookEnd):
-                            if let rook = strongSelf.board.squares[rookEnd].piece {
-                                let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
-                                updates.append( Chess.UI.Update.piece(rookUpdate) )
-                            }
-                        case .enPassantCapture(_, _),  .enPassantInvade(_, _), .notKnown, .simulating, .noneish:
-                            // These cases don't imply another uiUpdate is needed.
-                            break
-                        }
-                        strongSelf.board.ui.apply(board: strongSelf.board,
-                                                  updates: updates)
-                    }
-
-                    strongSelf.continueBasedOnStatus()
-                case .failed(reason: let reason):
-                    print("Move failed: \(move) \(reason)")
-                    // TODO message user
-                    break
-                }
+                strongSelf.execute(move: move)
             }
+        }
+        
+        internal func execute(move: Chess.Move) {
+            // Create a previous move "clear" ui event while we still have access to `lastMove`
+            var lastUIClear: Chess.UI.Update? = nil
+            if let lastMove = board.lastMove {
+                lastUIClear = Chess.UI.Update.selection(Chess.UI.SelectionUpdate.selectionsCleared,
+                                                         positions: [lastMove.start, lastMove.end])
+            }
+            let moveTry = board.attemptMove(move)
+            switch moveTry {
+            case .success(let capturedPiece):
+                print("Moved: \(move)")
+                // TODO: we may need to account for non-boardmoves
+                if let clearSquares = lastUIClear {
+                    // Clear the old move, and select the start of the new move.
+                    board.ui.apply(board: board, updates: [clearSquares,
+                            Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [move.start])])
+                }
+                
+                // we need to update the UI here
+                // Note piece is at `move.end` now as the move is complete.
+                if let piece = board.squares[move.end].piece {
+                    let uiUpdate: Chess.UI.PieceUpdate
+                    if let capturedPiece = capturedPiece {
+                        uiUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
+                    } else {
+                        uiUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
+                    }
+                    
+                    var updates = [Chess.UI.Update.piece(uiUpdate)]
+                    updates.append(Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [move.start, move.end]))
+                    switch move.sideEffect {
+                    case .castling(let rookStart, let rookEnd):
+                        if let rook = board.squares[rookEnd].piece {
+                            let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
+                            updates.append( Chess.UI.Update.piece(rookUpdate) )
+                        }
+                    case .enPassantCapture(_, _),  .enPassantInvade(_, _), .promotion(_), .notKnown, .simulating, .noneish:
+                        // These cases don't imply another uiUpdate is needed.
+                        break
+                    }
+                    updates.append( Chess.UI.Update.ledger(move) )
+                    
+                    board.ui.apply(board: board, updates: updates)
+                }
+                
+                continueBasedOnStatus()
+            case .failed(reason: let reason):
+                print("Move failed: \(move) \(reason)")
+                // TODO message user
+                break
+            }
+
         }
         
         internal func continueBasedOnStatus() {

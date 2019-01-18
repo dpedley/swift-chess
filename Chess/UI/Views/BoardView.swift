@@ -8,9 +8,22 @@
 
 import UIKit
 
+extension UIView {
+    func fullFrameConstraints(_ toView: UIView) -> [NSLayoutConstraint] {
+        return [
+            self.topAnchor.constraint(equalTo: toView.topAnchor),
+            self.bottomAnchor.constraint(equalTo: toView.bottomAnchor),
+            self.leadingAnchor.constraint(equalTo: toView.leadingAnchor),
+            self.trailingAnchor.constraint(equalTo: toView.trailingAnchor) ]
+    }    
+}
+
+
 
 class BoardView: UIView {
+    private var subviewLayoutComplete = false
     internal let boardImageView = UIImageView(frame: CGRect.zero)
+    
     var boardTheme: Chess.UI.BoardTheme = Chess.UI.activeTheme.boardTheme {
         didSet {
             boardImageView.image = boardTheme.color.image
@@ -28,25 +41,41 @@ class BoardView: UIView {
         }
         return newSquares
     }()
-    var squareLayoutComplete = false
 
     override func layoutSubviews() {
-        if !squareLayoutComplete {
-            addSubview(boardImageView)
+        super.layoutSubviews()
+
+        if subviewLayoutComplete { // We've previously done the layout setup below, here we just update our constants
+            let oneEighthSize = CGSize(width: frame.size.width / 8, height: frame.size.height / 8)
             for index in 0...63 {
                 let indexSquare = squares[index]
-                addSubview(indexSquare)
+                let newOrigin = indexSquare.calculateOrigin(for: oneEighthSize)
+                indexSquare.topConstraint?.constant = newOrigin.y
+                indexSquare.leadingConstraint?.constant = newOrigin.x
             }
-            sendSubviewToBack(boardImageView)
-            squareLayoutComplete = true
+            
+        } else { // This is where the square are wired up.
+            
+            boardImageView.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(boardImageView)
+            NSLayoutConstraint.activate(boardImageView.fullFrameConstraints(self))
+            let oneEighthSize = CGSize(width: frame.size.width / 8, height: frame.size.height / 8)
+            for index in 0...63 {
+                let indexSquare = squares[index]
+                indexSquare.translatesAutoresizingMaskIntoConstraints = false
+                addSubview(indexSquare)
+                NSLayoutConstraint.activate(indexSquare.squareConstraints(self, originOffset: indexSquare.calculateOrigin(for: oneEighthSize)))
+            }
+            subviewLayoutComplete = true
         }
-        boardImageView.frame = bounds
-        let squareSize = CGSize(width: frame.width / 8, height: frame.height / 8)
-        for index in 0...63 {
-            let indexSquare = squares[index]
-            indexSquare.frame = CGRect(origin: indexSquare.calculateOrigin(for: squareSize),
-                                         size: squareSize)
-        }        
+        
+        sendSubviewToBack(boardImageView)
         super.layoutSubviews()
+    }
+    
+    func setSquares(actionHandler: Chess_UISquareActionHandling) {
+        for index in 0...63 {
+            squares[index].actionHandler = actionHandler
+        }
     }
 }

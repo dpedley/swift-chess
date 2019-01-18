@@ -30,14 +30,5 @@ extension Chess {
         var opposingSide: Side {
             return (self == .black) ? .white : .black
         }
-        
-        func twoSquareMove(fromString: String) -> Move? {
-            guard fromString.count==4 else {
-                return nil
-            }
-            let startPosition = String(fromString.dropLast(2))
-            let endPosition = String(fromString.dropFirst(2))
-            return Move(side: self, start: Position.from(rankAndFile: startPosition), end: Position.from(rankAndFile: endPosition))
-        }
     }
 }

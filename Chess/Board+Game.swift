@@ -91,20 +91,22 @@ extension Chess.Board  {
         default:
             capturedPiece = squares[move.end].piece
         }
-        commit(move)
+        commit(move, capturedPiece: capturedPiece)
         
         return .success(capturedPiece: capturedPiece)
     }
     
     // Crashes if the move cannot be made, vet using attemptMove first.
-    func commit(_ move: Chess.Move)  {
-        guard let piece = squares[move.start].piece else {
+    func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?)  {
+        guard let movingPiece = squares[move.start].piece else {
             fatalError("Cannot move, no piece.")
         }
-        guard piece.side == playingSide else {
-            fatalError("Error, \(piece.side) cannot move, it's \(playingSide)'s turn.")
+        guard movingPiece.side == playingSide else {
+            fatalError("Error, \(movingPiece.side) cannot move, it's \(playingSide)'s turn.")
         }
 
+        var unicodeString: String?
+        var piece = movingPiece
         switch move.sideEffect {
         case .notKnown:
             fatalError("Cannot commit move, it's side effect is unknown. \(move)")
@@ -120,13 +122,20 @@ extension Chess.Board  {
             guard destinationSquare.isEmpty else {
                 fatalError("Destination must be empty when castling \(move)")
             }
+            unicodeString = (rookSquare.isKingSide) ? "O-O" : "O-O-O"
             rookSquare.clear()
             destinationSquare.piece = rook
+        case .promotion(let promotedPiece):
+            // omg we're getting an upgrade.
+            piece = promotedPiece
+            let captureBase = (capturedPiece != nil) ? "\(move.start.file)x" : ""
+            unicodeString = "\(captureBase)\(move.end.FEN)=\(promotedPiece.unicode)"
         case .enPassantInvade(_, _):
             // This is handled by lastMove. We check that later to see if the invader double stepped.
             break
         case .enPassantCapture(_, _):
             // This was handled before the commit, see capturedPiece.
+            unicodeString = "\(move.start.file)x\(move.end)"
             break
         case .noneish:
             // Do nothing ish
@@ -135,13 +144,31 @@ extension Chess.Board  {
         
         squares[move.start].clear()
         squares[move.end].piece = piece
+        if unicodeString == nil {
+            switch movingPiece.pieceType {
+            case .pawn(_):
+                unicodeString = (capturedPiece != nil) ? "\(move.start.file)x\(move.end.FEN)" : "\(move.end.FEN)"
+            case .knight(_), .bishop(_), .rook(_, _), .queen(_), .king(_):
+                let unicodeCapture: String = (capturedPiece != nil) ? "x" : ""
+                unicodeString = "\(piece.unicode)\(unicodeCapture)\(move.end.FEN)"
+            }
+        }
+        move.unicodePGN = unicodeString
         
-        lastMove = move        
         if playingSide == .black {
+            if turns.count == 0 {
+                // This should only happen in board variants.
+                turns.append(Chess.Turn(white: move, black: nil))
+            } else {
+                // This is the usual black move follows white, so the turn exists in the stack.
+                turns[turns.count - 1].black = move
+            }
+            
             fullMoves += 1
+        } else {
+            turns.append(Chess.Turn(white: move, black: nil))
         }
         
         playingSide = playingSide.opposingSide
-        
     }
 }

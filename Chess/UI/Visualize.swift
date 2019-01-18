@@ -8,15 +8,31 @@
 
 import Foundation
 
+// TODO: Actions to their own source file?
+public protocol Chess_UISquareActionHandling: class {
+     // The user tapped this square
+    func tap(square: Chess_UISquareVisualizer)
+    
+     // User began dragging in this square, if there was a piece there is it returned
+    func drag(square: Chess_UISquareVisualizer) -> Chess.UI.Piece?
+    
+     // Dragging continued into a new square, if this square's selection should change, the new selection is returned
+    func drag(entered: Chess_UISquareVisualizer) -> Chess.UI.Selection?
+}
+
+// This is the protocol that each UI square should respond to.
 public protocol Chess_UISquareVisualizer {
+    var position: Chess.Position? { get }
     mutating func setSelected(_ selectionType: Chess.UI.Selection)
     mutating func setOccupant(_ piece: Chess.UI.Piece)
 }
 
+// This is how an app exposes it's UI elements to the Chess framework.
 public protocol Chess_UIGameVisualizer {
     var squares: [Chess_UISquareVisualizer] { get set }
     func blackCaptured(_ piece: Chess.UI.Piece)
     func whiteCaptured(_ piece: Chess.UI.Piece)
+    func addMoveToLedger(_ move: Chess.Move)
 }
 
 extension Chess.UI {
@@ -85,6 +101,8 @@ extension Chess.UI {
                     for index in 0...63 {
                         self.ui.squares[index].setOccupant(pieces[index])
                     }
+                case .ledger(let move):
+                    self.ui.addMoveToLedger(move)
                 }
             }
         }

@@ -8,8 +8,13 @@
 
 import Foundation
 
-extension Chess {    
+extension Chess {
+    struct Turn {
+        var white: Move?
+        var black: Move?
+    }
     public class Move: NSObject {
+        
         enum Limitation {
             case unknown
             case noPieceToMove
@@ -24,13 +29,18 @@ extension Chess {
             case failed(reason: Limitation)
         }
         
+        // Core properties
         let side: Chess.Side
         let start: Chess.Position
         let end: Chess.Position
+        
+        // Computed move constants
+        var unicodePGN: String? // THis is set when the move is committed.
         let rankDistance: Int
         let fileDistance: Int
         let rankDirection: Int
         let fileDirection: Int
+        
         var timeElapsed: TimeInterval?
         var sideEffect: SideEffect = .notKnown
         var isResign: Bool {
@@ -66,5 +76,7 @@ extension Chess {
             self.fileDirection = (start.file == end.file) ? 0 : (start.file < end.file) ? 1 : -1
             self.timeElapsed = ponderTime
         }
+        
+        
     }
 }

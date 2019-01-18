@@ -10,7 +10,7 @@ import Foundation
 
 extension Chess.Move.SideEffect {
     enum BaseInt: Int64 {
-        case notKnown = 0, castling, enPassantInvade, enPassantCapture, simulating, none
+        case notKnown = 0, castling, enPassantInvade, enPassantCapture, promotion, simulating, none
         func annotated(with subValues: [Int]) -> Int64 {
             var updatedValue = self.rawValue
             var subValueOffset = 6
@@ -18,6 +18,19 @@ extension Chess.Move.SideEffect {
                 updatedValue = updatedValue | Int64(subValue << subValueOffset)
                 subValueOffset += 6
             }
+            return updatedValue
+        }
+        func annotated(with piece: Chess.Piece) -> Int64 {
+            var updatedValue = self.rawValue
+
+            // DEV NOTE: We only need to annotate the piece type, not the hasMoved,
+            // this is a safe assumption in SideEffects, because a side effect happens
+            // following a move.
+            guard let pieceChar = piece.FEN.first,
+                let subValue = pieceChar.unicodeScalars.first else {
+                fatalError("A FEN should always be a character.")
+            }
+            updatedValue = updatedValue | Int64(subValue.value << 8)
             return updatedValue
         }
     }
@@ -32,6 +45,8 @@ extension Chess.Move.SideEffect {
             return BaseInt.enPassantInvade.annotated(with: [territory, invader])
         case .enPassantCapture(let attack, let trespasser):
             return BaseInt.enPassantCapture.annotated(with: [attack, trespasser])
+        case .promotion(let piece):
+            return BaseInt.promotion.annotated(with: piece)
         case .simulating:
             return BaseInt.simulating.rawValue
         case .noneish:
@@ -59,6 +74,12 @@ extension Chess.Move.SideEffect {
             let attack = Int(value >> 6) & 63
             let trespasser = Int(value >> 12) & 63
             return .enPassantCapture(attack: attack, trespasser: trespasser)
+        case .promotion:
+            guard let unicodeScalar = Unicode.Scalar(Int(value >> 8)),
+             let piece = Chess.Piece.from(fen: String(Character(unicodeScalar))) else {
+                fatalError("Couldn't parse piece FEN")
+            }
+            return .promotion(piece: piece)
         case .simulating:
             return .simulating
         case .none:

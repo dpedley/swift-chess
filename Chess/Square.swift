@@ -18,7 +18,7 @@ extension Chess {
                 if selected { selected = false }
                 
                 // We need to rebuild the attacked squares index list.
-                self.attackedSquareIndices.removeAll()
+                self.positionsOfAttackedSquares.removeAll()
             }
             didSet {
                 guard let piece = piece else {
@@ -39,11 +39,12 @@ extension Chess {
                     let testSquare = board.squares[testIndex]
                     if piece.isAttackValid(Move(side: piece.side, start: position, end: testSquare.position)) {
                         // Only
-                        attackedSquareIndices.append(testIndex)
+                        positionsOfAttackedSquares.append(testIndex)
                     }
                 }
             }
         }
+        var isKingSide: Bool { return (position > 3) }
         var isEmpty: Bool { return piece==nil }
         var selected: Bool = false {
             didSet {
@@ -61,10 +62,10 @@ extension Chess {
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
         // TODO: Rename it's not a squareIndex, It's a position
-        private var attackedSquareIndices: [Chess.Position] = []
+        private var positionsOfAttackedSquares: [Chess.Position] = []
         var attackedSquares: [Square]? {
-            guard let board = board, !attackedSquareIndices.isEmpty else { return nil }
-            return attackedSquareIndices.map { board.squares[$0] }
+            guard let board = board, !positionsOfAttackedSquares.isEmpty else { return nil }
+            return positionsOfAttackedSquares.map { board.squares[$0] }
         }
         
         // Note this is a somewhat heavy computed var, grab a copy for multiple inline uses
@@ -73,7 +74,7 @@ extension Chess {
             let filteredSquares = board?.squares.filter({ attackingSquare -> Bool in
                 guard let attackingPiece = attackingSquare.piece,
                     attackingPiece.side != piece?.side,
-                    attackingSquare.attackedSquareIndices.contains(position) else {
+                    attackingSquare.positionsOfAttackedSquares.contains(position) else {
                     return false
                 }
                 

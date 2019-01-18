@@ -18,7 +18,7 @@ public protocol Chess_PieceCoordinating: class {
     var squares: [Chess.Square] { get }
     var positionsForOccupiedSquares: [Chess.Position] { get }
     var playingSide: Chess.Side { get }
-    var lastMove: Chess.Move? { get set }
+    var lastMove: Chess.Move? { get }
     var ui: Chess_GameVisualizing { get }
 }
 
@@ -27,8 +27,26 @@ extension Chess {
         static let startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         let ui: Chess_GameVisualizing
         var squares: [Square] = []
-        var playingSide: Side = .white
-        var lastMove: Move? = nil
+        var turns: [Turn] = []
+        var playingSide: Side = .white {
+            willSet {
+                // If side are about to change, we should clear the move elements
+                moveStart = nil
+            }
+        }
+        var moveStart: Position? {
+            didSet {
+                guard let newSelection = moveStart else { return }
+                ui.apply(board: self, updates: [Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [newSelection])])
+            }
+        }
+        var lastMove: Move? {
+            guard let lastTurn = turns.last else { return nil }
+            if let move = lastTurn.black {
+                return move
+            }
+            return lastTurn.white
+        }
         var fullMoves = 1 // This is intentionally 1 even at the games start.
         var FEN: String { return createCurrentFENString() }
         var enPassantPosition: Position? { return lastEnPassantPosition() }

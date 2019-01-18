@@ -23,6 +23,7 @@ extension Chess.Position: Chess_PositionStoring {
     // The number's aren't meaningful, just negative and unique
     private static let timeoutPositionInt = -4
     private static let resignPositionInt = -17
+    private static let pausedPositionInt = -1971
     // Note: fileNumber is a 0 based index into the file charaters
     //       rank is 1 based to reflect position
     private static let validRanks: [Int] = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -52,6 +53,10 @@ extension Chess.Position: Chess_PositionStoring {
     
     var isResign: Bool {
         return self == Chess.Position.resignPositionInt
+    }
+    
+    var isPaused: Bool {
+        return self == Chess.Position.pausedPositionInt
     }
     
     var isTimeout: Bool {
@@ -96,6 +101,10 @@ extension Chess.Position: Chess_PositionStoring {
     
     static var resignedPosition: Chess.Position {
         return Chess.Position.resignPositionInt
+    }
+    
+    static var pausedPosition: Chess.Position {
+        return Chess.Position.pausedPositionInt
     }
     
     static var timedOutPosition: Chess.Position {
