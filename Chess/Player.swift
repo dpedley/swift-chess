@@ -15,6 +15,14 @@ extension Chess {
         let side: Side
         var timeLeft: TimeInterval? = nil
         var currentMoveStartTime: Date? = nil
+        var firstName: String? = nil
+        var lastName: String? = nil
+        var pgnName: String {
+            guard let firstName = firstName, let lastName = lastName else {
+                return "??"
+            }
+            return "\(lastName), \(firstName)"
+        }
         weak var board: Chess_PieceCoordinating?
         public init(side: Side, matchLength: TimeInterval?) {
             self.side = side
@@ -63,6 +71,42 @@ extension Chess {
         
         func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
             fatalError("This method is meant to be overriden by subclasses")
+        }
+    }
+}
+
+
+extension Chess {
+    public class PlaybackPlayer: Player {
+        var moveStrings: [String] = []
+        var currentMove = 0
+        let responseDelay: TimeInterval
+        required init(firstName: String, lastName: String, side: Side, moves: [String], responseDelay: TimeInterval) {
+            self.responseDelay = responseDelay
+            moveStrings.append(contentsOf: moves)
+            super.init(side: side, matchLength: nil)
+            self.firstName = firstName
+            self.lastName = lastName
+        }
+        
+        override func isBot() -> Bool {
+            return true
+        }
+        
+        override func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
+            weak var weakSelf = self
+            Thread.detachNewThread {
+                if let responseDelay = weakSelf?.responseDelay {
+                    Thread.sleep(forTimeInterval: responseDelay)
+                }
+                // Notice we don't strongify until after the sleep. Otherwise we'd be holding onto self
+                guard let strongSelf = weakSelf, strongSelf.currentMove<strongSelf.moveStrings.count,
+                    let move = strongSelf.side.twoSquareMove(fromString: strongSelf.moveStrings[strongSelf.currentMove]) else {
+                        return
+                }
+                strongSelf.currentMove += 1
+                callback(move)
+            }
         }
     }
 }

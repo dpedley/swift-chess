@@ -106,6 +106,7 @@ extension Chess.Board  {
         }
 
         var unicodeString: String?
+        var pgnString: String?
         var piece = movingPiece
         switch move.sideEffect {
         case .notKnown:
@@ -123,6 +124,7 @@ extension Chess.Board  {
                 fatalError("Destination must be empty when castling \(move)")
             }
             unicodeString = (rookSquare.isKingSide) ? "O-O" : "O-O-O"
+            pgnString = unicodeString
             rookSquare.clear()
             destinationSquare.piece = rook
         case .promotion(let promotedPiece):
@@ -130,12 +132,14 @@ extension Chess.Board  {
             piece = promotedPiece
             let captureBase = (capturedPiece != nil) ? "\(move.start.file)x" : ""
             unicodeString = "\(captureBase)\(move.end.FEN)=\(promotedPiece.unicode)"
+            pgnString = "\(captureBase)\(move.end.FEN)=\(promotedPiece.FEN)"
         case .enPassantInvade(_, _):
             // This is handled by lastMove. We check that later to see if the invader double stepped.
             break
         case .enPassantCapture(_, _):
             // This was handled before the commit, see capturedPiece.
             unicodeString = "\(move.start.file)x\(move.end)"
+            pgnString = unicodeString
             break
         case .noneish:
             // Do nothing ish
@@ -148,12 +152,15 @@ extension Chess.Board  {
             switch movingPiece.pieceType {
             case .pawn(_):
                 unicodeString = (capturedPiece != nil) ? "\(move.start.file)x\(move.end.FEN)" : "\(move.end.FEN)"
+                pgnString = unicodeString
             case .knight(_), .bishop(_), .rook(_, _), .queen(_), .king(_):
                 let unicodeCapture: String = (capturedPiece != nil) ? "x" : ""
                 unicodeString = "\(piece.unicode)\(unicodeCapture)\(move.end.FEN)"
+                pgnString = "\(piece.FEN)\(unicodeCapture)\(move.end.FEN)"
             }
         }
         move.unicodePGN = unicodeString
+        move.PGN = pgnString
         
         if playingSide == .black {
             if turns.count == 0 {

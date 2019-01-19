@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol Chess_GameVisualizing: class {
-    func apply(game: Chess.Game, status: Chess.UI.Status)
+    func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status)
     func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update])
 }
 
@@ -32,6 +32,9 @@ extension Chess {
             willSet {
                 // If side are about to change, we should clear the move elements
                 moveStart = nil
+            }
+            didSet {
+                self.ui.apply(board: self, status: Chess.UI.Status(nextToPlay: playingSide))
             }
         }
         var moveStart: Position? {

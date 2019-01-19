@@ -36,6 +36,7 @@ extension Chess {
         
         // Computed move constants
         var unicodePGN: String? // THis is set when the move is committed.
+        var PGN: String? // THis is set when the move is committed.
         let rankDistance: Int
         let fileDistance: Int
         let rankDirection: Int

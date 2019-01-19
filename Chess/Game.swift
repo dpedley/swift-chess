@@ -27,13 +27,26 @@ extension Chess {
     public class Game {
         internal var userPaused = false
         internal var botPausedMove: Chess.Move?
-        var winningSide: Side?
+        var winningSide: Side? {
+            didSet {
+                if let winningSide = winningSide {
+                    switch winningSide {
+                    case .black:
+                        pgn.result = .blackWon
+                    case .white:
+                        pgn.result = .whiteWon
+                    }
+                }
+            }
+        }
         var winner: Player? {
             guard let winningSide = winningSide else { return nil }
             return (winningSide == .black) ? black : white
         }
         let black: Player
         let white: Player
+        var round: Int = 1
+        var pgn: Chess.Game.PortableNotation
         var status: GameStatus {
             guard let lastMove = board.lastMove else {
                 if board.FEN == Chess.Board.startingFEN {
@@ -103,6 +116,15 @@ extension Chess {
                 self.white = challenger
             }
             board.resetBoard()
+            pgn = Chess.Game.PortableNotation(eventName: "Leela iOS Arena",
+                                              site: PortableNotation.deviceSite(),
+                                              date: Date(),
+                                              round: round,
+                                              black: black.pgnName,
+                                              white: white.pgnName,
+                                              result: .other,
+                                              tags: [:],
+                                              moves: [])
         }
         
         public func start() {
@@ -164,6 +186,8 @@ extension Chess {
             switch moveTry {
             case .success(let capturedPiece):
                 print("Moved: \(move)")
+                let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
+                pgn.moves.append(annotatedMove)
                 // TODO: we may need to account for non-boardmoves
                 if let clearSquares = lastUIClear {
                     // Clear the old move, and select the start of the new move.
@@ -202,6 +226,8 @@ extension Chess {
             case .failed(reason: let reason):
                 print("Move failed: \(move) \(reason)")
                 // TODO message user
+                winningSide = board.playingSide.opposingSide
+                print("\nUnknown: \n\(pgn.formattedString)")
                 break
             }
 
@@ -214,6 +240,7 @@ extension Chess {
                 executeTurn()
             case .mate:
                 winningSide = board.playingSide.opposingSide
+                print("\nMate: \n\(pgn.formattedString)")
             default:
                 break
             }

@@ -33,11 +33,12 @@ public protocol Chess_UIGameVisualizer {
     func blackCaptured(_ piece: Chess.UI.Piece)
     func whiteCaptured(_ piece: Chess.UI.Piece)
     func addMoveToLedger(_ move: Chess.Move)
+    func sideChanged(_ playingSide: Chess.Side)
 }
 
 extension Chess.UI {
     class NilVisualizer: Chess_GameVisualizing {
-        func apply(game: Chess.Game, status: Chess.UI.Status) {}
+        func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status) {}
         func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update]) {}
     }
 
@@ -82,8 +83,8 @@ extension Chess.UI {
             }
         }
         
-        func apply(game: Chess.Game, status: Chess.UI.Status) {
-            
+        func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status) {
+            self.ui.sideChanged(status.nextToPlay)
         }
         
         func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update]) {

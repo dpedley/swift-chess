@@ -26,7 +26,7 @@ extension Chess.UI {
             print(outputString)
         }
         
-        func apply(game: Chess.Game, status: Chess.UI.Status) {
+        func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status) {
             // TODO:
         }
         
