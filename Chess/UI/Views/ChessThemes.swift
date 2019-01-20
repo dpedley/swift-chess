@@ -11,3 +11,11 @@ import UIKit
 extension SquareView {
     // TODO themes
 }
+
+extension UIView {
+    func applyTheme() {
+        layer.borderColor = Chess.UI.borderColor
+        layer.borderWidth = Chess.UI.borderWidth
+        layer.cornerRadius = 4
+    }
+}

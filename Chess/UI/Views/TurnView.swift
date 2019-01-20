@@ -69,19 +69,16 @@ public class TurnView: UIView {
         whiteLabel.adjustsFontSizeToFitWidth = true
         numberLabel.backgroundColor = .gray
         numberLabel.textAlignment = .center
-        numberLabel.layer.borderColor = UIColor.darkGray.cgColor
-        numberLabel.layer.borderWidth = 1
+        numberLabel.applyTheme()
         
         blackLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 28)
         whiteLabel.adjustsFontSizeToFitWidth = true
         blackLabel.backgroundColor = .lightGray
-        blackLabel.layer.borderColor = UIColor.darkGray.cgColor
-        blackLabel.layer.borderWidth = 1
+        blackLabel.applyTheme()
         
         whiteLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 28)
         whiteLabel.adjustsFontSizeToFitWidth = true
         whiteLabel.backgroundColor = .lightGray
-        whiteLabel.layer.borderColor = UIColor.darkGray.cgColor
-        whiteLabel.layer.borderWidth = 1
+        whiteLabel.applyTheme()
     }
 }

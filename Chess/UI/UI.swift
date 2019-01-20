@@ -36,7 +36,7 @@ extension Chess {
         }
         
         struct BoardTheme {
-            var color: BoardColor = .brown
+            var color: BoardColor = .blue
             var pieceSet: PieceSet
         }
         
@@ -44,11 +44,26 @@ extension Chess {
             var boardTheme: BoardTheme
             
             static var defaultTheme: ChessTheme = {
-                let boardTheme = BoardTheme(color: .brown, pieceSet: loadPieces(themeName: "cburnett"))
+                let boardTheme = BoardTheme(color: .blue, pieceSet: loadPieces(themeName: "cburnett"))
                 return ChessTheme(boardTheme: boardTheme)
             }()
         }
         
         static var activeTheme = ChessTheme.defaultTheme
     }
+}
+
+extension Chess.UI {
+    static let playControlsColor = UIColor.white
+    static let controlAttributes: [NSAttributedString.Key : Any] = [
+        NSAttributedString.Key.foregroundColor: UIColor.black,
+        NSAttributedString.Key.font: UIFont(name: "lichess", size: 24)!]
+    public static let rewind = NSAttributedString(string: "W", attributes: controlAttributes)
+    public static let previous = NSAttributedString(string: "Y", attributes: controlAttributes)
+    public static let play = NSAttributedString(string: "G", attributes: controlAttributes)
+    public static let next = NSAttributedString(string: "X", attributes: controlAttributes)
+    public static let fastForward = NSAttributedString(string: "V", attributes: controlAttributes)
+    
+    public static let borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+    public static let borderWidth: CGFloat = 2
 }

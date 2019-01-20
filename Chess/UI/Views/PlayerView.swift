@@ -57,12 +57,10 @@ class PlayerView: UIView {
         nameLabel.font = UIFont(name: "Courier", size: 20)
         nameLabel.backgroundColor = .lightGray
         nameLabel.textAlignment = .center
-        nameLabel.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-        nameLabel.layer.borderWidth = 2
+        nameLabel.applyTheme()
         
         prisonerLabel.font = UIFont(name: "Courier", size: 20)
         prisonerLabel.backgroundColor = .lightGray
-        nameLabel.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-        prisonerLabel.layer.borderWidth = 2
+        prisonerLabel.applyTheme()
     }
 }

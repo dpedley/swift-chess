@@ -57,6 +57,10 @@ class BoardView: UIView {
         } else { // This is where the square are wired up.
             
             boardImageView.translatesAutoresizingMaskIntoConstraints = false
+            boardImageView.applyTheme()
+            boardImageView.layer.masksToBounds = true // Imageview's will not respoect the corner radius without this
+            boardImageView.layer.shouldRasterize = true // Mask to bounds is expensive without this.
+
             addSubview(boardImageView)
             NSLayoutConstraint.activate(boardImageView.fullFrameConstraints(self))
             let oneEighthSize = CGSize(width: frame.size.width / 8, height: frame.size.height / 8)
