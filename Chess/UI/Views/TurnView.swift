@@ -17,11 +17,12 @@ public class TurnView: UIView {
     private static let numberLabelWidthRatio: CGFloat = 10
     
     override public func layoutSubviews() {
+        super.layoutSubviews()
         if !subviewLayoutComplete {
             addSubview(numberLabel)
             addSubview(blackLabel)
             addSubview(whiteLabel)
-
+            
             numberLabelWidth = numberLabel.widthAnchor.constraint(equalToConstant: frame.size.width / TurnView.numberLabelWidthRatio)
             let halfTheRemainingWidth = ( frame.size.width - ( frame.size.width / TurnView.numberLabelWidthRatio ) ) / 2
 
@@ -65,20 +66,27 @@ public class TurnView: UIView {
         blackLabel.translatesAutoresizingMaskIntoConstraints = false
         whiteLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        numberLabel.font = UIFont(name: "Courier", size: 18)
+        numberLabel.font = UIFont(name: "HelveticaNeue-Thin", size: 24)
         whiteLabel.adjustsFontSizeToFitWidth = true
-        numberLabel.backgroundColor = .gray
         numberLabel.textAlignment = .center
-        numberLabel.applyTheme()
         
-        blackLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 28)
-        whiteLabel.adjustsFontSizeToFitWidth = true
-        blackLabel.backgroundColor = .lightGray
-        blackLabel.applyTheme()
+        blackLabel.font = UIFont(name: "HelveticaNeue-Light", size: 24)
+        blackLabel.adjustsFontSizeToFitWidth = true
         
-        whiteLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 28)
+        whiteLabel.font = UIFont(name: "HelveticaNeue-Light", size: 24)
         whiteLabel.adjustsFontSizeToFitWidth = true
-        whiteLabel.backgroundColor = .lightGray
-        whiteLabel.applyTheme()
+    }
+
+    func addLeftEdge(label: UILabel) {
+        let border = CALayer();
+        border.frame = CGRect(x:0, y: 0, width: Chess.UI.borderWidth, height:label.frame.height)
+        border.borderColor = Chess.UI.borderColor;
+        border.borderWidth = Chess.UI.borderWidth;
+        label.layer.addSublayer(border)
+    }
+    
+    public func themeView() {
+        addLeftEdge(label: blackLabel)
+        addLeftEdge(label: whiteLabel)
     }
 }

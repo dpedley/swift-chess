@@ -43,8 +43,8 @@ extension Chess {
             guard let winningSide = winningSide else { return nil }
             return (winningSide == .black) ? black : white
         }
-        let black: Player
-        let white: Player
+        var black: Player
+        var white: Player
         var round: Int = 1
         var pgn: Chess.Game.PortableNotation
         var status: GameStatus {
@@ -77,7 +77,7 @@ extension Chess {
             for boardVariant in allMoveVariantBoards {
                 if isStuckInCheck {
                     // Pretend this variant one move forward is still the currect player so we can evaluate the king
-                    if !boardVariant.board.squareForActiveKing.isUnderAttack {
+                    if let kingSquare = boardVariant.board.findOptionalKing(boardVariant.board.playingSide), !kingSquare.isUnderAttack {
                         isStuckInCheck = false
                     }
                 }

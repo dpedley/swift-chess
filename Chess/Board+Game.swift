@@ -20,6 +20,13 @@ extension Chess.Board  {
     }
 
     internal func findKing(_ side: Chess.Side) -> Chess.Square {
+        guard let square = findOptionalKing(side) else {
+            fatalError("Tried to access the \(side) king when it wasn't on the board [\(FEN)]")
+        }
+        return square
+    }
+    
+    internal func findOptionalKing(_ side: Chess.Side) -> Chess.Square? {
         var kingSearch: Chess.Square? = nil
         squares.forEach {
             if let piece = $0.piece, piece.side == side {
@@ -31,10 +38,7 @@ extension Chess.Board  {
                 }
             }
         }
-        guard let square = kingSearch else {
-            fatalError("Tried to access the \(side) king when it wasn't on the board [\(FEN)]")
-        }
-        return square
+        return kingSearch
     }
     
     func prepareMove(_ move: Chess.Move) -> Chess.Move.Result? {

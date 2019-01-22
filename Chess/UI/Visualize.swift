@@ -56,14 +56,17 @@ extension Chess.UI {
                 switch piece {
                 case .blackPawn, .blackKnight, .blackBishop, .blackRook, .blackQueen, .blackKing:
                     self.ui.blackCaptured(capturedPiece)
+                    Chess.Sounds.Capture?.play()
                 case .whitePawn, .whiteKnight, .whiteBishop, .whiteRook, .whiteQueen, .whiteKing:
                     self.ui.whiteCaptured(capturedPiece)
+                    Chess.Sounds.Capture?.play()
                 case .none:
                     break
                 }
             case .moved(let piece, let start, let end):
                 self.ui.squares[start].setOccupant(.none)
                 self.ui.squares[end].setOccupant(piece)
+                Chess.Sounds.Move?.play()
             }
         }
 

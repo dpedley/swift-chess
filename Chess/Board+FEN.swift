@@ -51,11 +51,20 @@ extension Chess.Board {
     }
 
     func resetBoard(FEN: String = Chess.Board.startingFEN) {
+        turns.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
         guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
             fatalError("Invalid FEN: Cannot find active side.")
         }
         playingSide = newSide
+        guard let moveCount = Int(FENParts[5]) else {
+            fatalError("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
+        }
+        fullMoves = moveCount
+        
+        // TODO: castling checks in the hasMoved below
+        // TODO: en passant square last move side effect additions
+        
         guard let piecesString = FENParts.first else {
             fatalError("Invalid FEN")
         }

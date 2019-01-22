@@ -61,6 +61,10 @@ extension Chess {
             }
         }
         
+        func prepareForGame() {
+            fatalError("This method is meant to be overriden by subclasses")
+        }
+        
         func isBot() -> Bool {
             fatalError("This method is meant to be overriden by subclasses")
         }
@@ -93,6 +97,10 @@ extension Chess {
             return true
         }
         
+        override func prepareForGame() {
+            currentMove = 0
+        }
+        
         override func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
             weak var weakSelf = self
             Thread.detachNewThread {
@@ -100,8 +108,10 @@ extension Chess {
                     Thread.sleep(forTimeInterval: responseDelay)
                 }
                 // Notice we don't strongify until after the sleep. Otherwise we'd be holding onto self
-                guard let strongSelf = weakSelf, strongSelf.currentMove<strongSelf.moveStrings.count,
-                    let move = strongSelf.side.twoSquareMove(fromString: strongSelf.moveStrings[strongSelf.currentMove]) else {
+                guard let strongSelf = weakSelf else { return }
+                guard strongSelf.currentMove<strongSelf.moveStrings.count else { return }
+                let moveString = strongSelf.moveStrings[strongSelf.currentMove]
+                guard let move = strongSelf.side.twoSquareMove(fromString: moveString) else {
                         return
                 }
                 strongSelf.currentMove += 1
