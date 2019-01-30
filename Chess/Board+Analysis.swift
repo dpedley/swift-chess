@@ -9,15 +9,32 @@
 import Foundation
 
 extension Chess.Board  {
-    func createVariantsForEveryValidMove() -> [Chess.SingleMoveVariant]? {
-        var boards: [Chess.SingleMoveVariant] = []
-
+    func validVariantExists(for side: Chess.Side) -> Bool {
         for square in squares {
-            if let piece = square.piece, piece.side == playingSide,
+            if let piece = square.piece, piece.side == side,
                 let toSquares = square.attackedSquares {
                 // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    let moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare.position)
+                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
+                    let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
+                    if let _ = variant.move {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
+    func createValidVariants(for side: Chess.Side) -> [Chess.SingleMoveVariant]? {
+        var boards: [Chess.SingleMoveVariant] = []
+
+        for square in squares {
+            if let piece = square.piece, piece.side == side,
+                let toSquares = square.attackedSquares {
+                // Try to create a tmp board from every square this piece thinks it can attack.
+                for toSquare in toSquares {
+                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
                     let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
                     if let _ = variant.move {
                         boards.append(variant)

@@ -11,5 +11,6 @@ import Foundation
 extension Chess.UI {
     public struct Status {
         let nextToPlay: Chess.Side
+        let isInCheck: Bool
     }
 }

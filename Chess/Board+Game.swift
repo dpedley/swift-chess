@@ -9,6 +9,15 @@
 import Foundation
 
 extension Chess.Board  {
+    
+    internal func boardFatal(_ message: String) {
+        if let variantSelf = self as? Chess.BoardVariant {
+            print(message)
+        } else {
+            fatalError(message)
+        }
+    }
+    
     internal func lastEnPassantPosition() -> Chess.Position? {
         guard let sideEffect = lastMove?.sideEffect else { return nil }
         switch sideEffect {
@@ -63,7 +72,7 @@ extension Chess.Board  {
         let testVariant = variant(with: move)
         
         // Are we defending the king properly?
-        let kingSquare = testVariant.board.squareForActiveKing
+        let kingSquare = testVariant.board.findKing(move.side)
         let attackers = kingSquare.allSquaresWithValidAttackingPieces
         if attackers.count>0 {
             

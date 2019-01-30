@@ -11,13 +11,21 @@ import UIKit
 class SquareView: UIImageView, Chess_UISquareVisualizer {
     static var pieceSet = Chess.UI.activeTheme.boardTheme.pieceSet
     static let selectionAlpha: CGFloat = 0.3
-    static let selectedColor = UIColor.yellow.withAlphaComponent(selectionAlpha)
-    static let preMoveColor = UIColor.blue.withAlphaComponent(selectionAlpha)
-    
+    static let highlightColor = UIColor.yellow.withAlphaComponent(selectionAlpha)
+    static let premoveColor = UIColor.blue.withAlphaComponent(selectionAlpha)
+    static let attention = UIColor.red.withAlphaComponent(selectionAlpha)
+
     var position: Chess.Position?
     var topConstraint: NSLayoutConstraint?
     var leadingConstraint: NSLayoutConstraint?
     private var tapRecognizer: UITapGestureRecognizer?
+    private var isTargetViewSetup = false
+    private let targetView = UIView(frame: CGRect.zero)
+    private var selectionType: Chess.UI.Selection = .none {
+        didSet {
+            updateSelectionUI()
+        }
+    }
     weak var actionHandler: Chess_UISquareActionHandling? {
         didSet {
             guard let _ = self.tapRecognizer else {
@@ -47,17 +55,6 @@ class SquareView: UIImageView, Chess_UISquareVisualizer {
     func calculateOrigin(for size: CGSize) -> CGPoint {
         return CGPoint(x: size.width * CGFloat(position?.fileNumber ?? 0) ,
                        y: size.height * CGFloat(8 - (position?.rank  ?? 1)))
-    }
-    
-    func setSelected(_ selectionType: Chess.UI.Selection) {
-        switch selectionType {
-        case .none:
-            backgroundColor = .clear
-        case .selected:
-            backgroundColor = SquareView.selectedColor
-        case .target:
-            backgroundColor = .blue
-        }
     }
     
     func setOccupant(_ piece: Chess.UI.Piece) {
@@ -104,5 +101,60 @@ extension SquareView { // UIKit stuff
             self.widthAnchor.constraint(equalTo: toView.widthAnchor, multiplier: 0.125),
             self.heightAnchor.constraint(equalTo: toView.heightAnchor, multiplier: 0.125),
             topAnchorConstraint, leadingAnchorConstraint]
+    }
+}
+
+extension SquareView {
+    // Selection related stuff
+    private func setupTargetView() {
+        if isTargetViewSetup { return }
+        guard !frame.equalTo(CGRect.zero) else {
+            fatalError("Developer error, cannot call setupTargetView before frame is ready.")
+        }
+        isTargetViewSetup = true
+        addSubview(targetView)
+        NSLayoutConstraint.activate(targetView.fullFrameConstraints(targetView))
+        targetView.layer.cornerRadius = frame.size.width / 2
+        targetView.backgroundColor = .cyan
+    }
+    
+    private func updateSelectionUI() {
+        guard Thread.isMainThread else {
+            weak var weakSelf = self
+            DispatchQueue.main.async {
+                if let strongSelf = weakSelf {
+                    strongSelf.updateSelectionUI()
+                }
+            }
+            return
+        }
+        switch selectionType {
+        case .none:
+            backgroundColor = .clear
+            targetView.alpha = 0
+        case .highlight:
+            backgroundColor = SquareView.highlightColor
+            targetView.alpha = 0
+        case .target:
+            setupTargetView()
+            backgroundColor = .clear
+            targetView.alpha = SquareView.selectionAlpha
+        case .premove:
+            backgroundColor = SquareView.premoveColor
+            targetView.alpha = 0
+        case .attention:
+            backgroundColor = SquareView.attention
+            targetView.alpha = 0
+        }
+    }
+    
+    func setSelected(_ newSelectionType: Chess.UI.Selection) {
+        selectionType = newSelectionType
+    }
+    
+    func clear(if outdatedSelectionType: Chess.UI.Selection) {
+        if selectionType == outdatedSelectionType {
+            selectionType = .none
+        }
     }
 }

@@ -14,16 +14,12 @@ extension Chess.UI {
         case capture(piece: Chess.UI.Piece, from: Chess.Position, captured: Chess.UI.Piece, at: Chess.Position)
     }
     
-    public enum SelectionUpdate {
-        case isSelected
-        case selectionsCleared
-        case isAttackableBySelectedPeice
-    }
-    
     public enum Update {
         case clearSquare(_ squarePosition: Chess.Position)
+        case flashSquare(_ squarePosition: Chess.Position)
         case piece(_ update: PieceUpdate)
-        case selection(_ update: SelectionUpdate, positions: [Chess.Position])
+        case highlight(_ positions: [Chess.Position])
+        case deselect(_ selectionType: Chess.UI.Selection)
         case resetBoard(_ pieces: [Chess.UI.Piece])
         case ledger(_ move: Chess.Move)
     }

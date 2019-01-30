@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import QuartzCore
 
 extension UIView {
     func fullFrameConstraints(_ toView: UIView) -> [NSLayoutConstraint] {
@@ -75,6 +76,12 @@ class BoardView: UIView {
         
         sendSubviewToBack(boardImageView)
         super.layoutSubviews()
+    }
+    
+    func clearAllSelections() {
+        for square in squares {
+            square.setSelected(.none)
+        }
     }
     
     func setSquares(actionHandler: Chess_UISquareActionHandling) {

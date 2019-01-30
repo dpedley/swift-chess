@@ -11,6 +11,13 @@ import Foundation
 public protocol Chess_GameVisualizing: class {
     func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status)
     func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update])
+    var humanInteracting: Bool { get }
+}
+
+extension Chess_GameVisualizing {
+    var humanInteracting: Bool {
+        return false
+    }
 }
 
 public protocol Chess_PieceCoordinating: class {
@@ -29,18 +36,15 @@ extension Chess {
         var squares: [Square] = []
         var turns: [Turn] = []
         var playingSide: Side = .white {
-            willSet {
-                // If side are about to change, we should clear the move elements
-                moveStart = nil
-            }
             didSet {
-                self.ui.apply(board: self, status: Chess.UI.Status(nextToPlay: playingSide))
-            }
-        }
-        var moveStart: Position? {
-            didSet {
-                guard let newSelection = moveStart else { return }
-                ui.apply(board: self, updates: [Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [newSelection])])
+                let isInCheck: Bool
+                // Only do this for an active visual board, it's expensive for a NilVisualizer
+                if self.ui.humanInteracting {
+                    isInCheck = squareForActiveKing.isUnderAttack
+                } else {
+                    isInCheck = false
+                }
+                self.ui.apply(board: self, status: Chess.UI.Status(nextToPlay: playingSide, isInCheck: isInCheck))
             }
         }
         var lastMove: Move? {

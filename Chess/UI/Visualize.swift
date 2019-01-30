@@ -25,6 +25,7 @@ public protocol Chess_UISquareVisualizer {
     var position: Chess.Position? { get }
     mutating func setSelected(_ selectionType: Chess.UI.Selection)
     mutating func setOccupant(_ piece: Chess.UI.Piece)
+    mutating func clear(if outdatedSelectionType: Chess.UI.Selection)
 }
 
 // This is how an app exposes it's UI elements to the Chess framework.
@@ -34,6 +35,7 @@ public protocol Chess_UIGameVisualizer {
     func whiteCaptured(_ piece: Chess.UI.Piece)
     func addMoveToLedger(_ move: Chess.Move)
     func sideChanged(_ playingSide: Chess.Side)
+    func clearAllSelections()
 }
 
 extension Chess.UI {
@@ -45,68 +47,73 @@ extension Chess.UI {
     class Visualizer<GameVisualizer: Chess_UIGameVisualizer>: Chess_GameVisualizing {
         var ui: GameVisualizer
         init(_ gameVisualizer: GameVisualizer) {
-            self.ui = gameVisualizer
+            ui = gameVisualizer
         }
         
-        func applyPieceUpdate(board: Chess_PieceCoordinating, update: Chess.UI.PieceUpdate) {
+        func apply(pieceUpdate update: Chess.UI.PieceUpdate, to board: Chess_PieceCoordinating) {
             switch update {
             case .capture(let piece, let start, let capturedPiece, let end): // _ capturedPiece
-                self.ui.squares[start].setOccupant(.none)
-                self.ui.squares[end].setOccupant(piece)
+                ui.squares[start].setOccupant(.none)
+                ui.squares[end].setOccupant(piece)
+                Chess.Sounds.Capture?.play()
+                
+                // Send the piece to the dungeon
                 switch piece {
                 case .blackPawn, .blackKnight, .blackBishop, .blackRook, .blackQueen, .blackKing:
-                    self.ui.blackCaptured(capturedPiece)
-                    Chess.Sounds.Capture?.play()
+                    ui.blackCaptured(capturedPiece)
                 case .whitePawn, .whiteKnight, .whiteBishop, .whiteRook, .whiteQueen, .whiteKing:
-                    self.ui.whiteCaptured(capturedPiece)
-                    Chess.Sounds.Capture?.play()
+                    ui.whiteCaptured(capturedPiece)
                 case .none:
                     break
                 }
             case .moved(let piece, let start, let end):
-                self.ui.squares[start].setOccupant(.none)
-                self.ui.squares[end].setOccupant(piece)
+                ui.squares[start].setOccupant(.none)
+                ui.squares[end].setOccupant(piece)
                 Chess.Sounds.Move?.play()
             }
         }
 
-        func applySelectionUpdate(board: Chess_PieceCoordinating, update: Chess.UI.SelectionUpdate, positions: [Chess.Position]) {
-            let selectionType: Chess.UI.Selection
-            switch update {
-            case .isAttackableBySelectedPeice:
-                selectionType = .target
-            case .isSelected:
-                selectionType = .selected
-            case .selectionsCleared:
-                selectionType = .none
-            }
-            
+        func apply(selectionUpdate: Chess.UI.Selection, to board: Chess_PieceCoordinating, at positions: [Chess.Position]) {
             positions.forEach {
-                self.ui.squares[$0].setSelected(selectionType)
+                ui.squares[$0].setSelected(selectionUpdate)
             }
         }
         
         func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status) {
-            self.ui.sideChanged(status.nextToPlay)
+            ui.sideChanged(status.nextToPlay)
+            if status.isInCheck {
+                Chess.Sounds.Check?.play()
+            }
         }
-        
+
+        func apply(deselectionType: Chess.UI.Selection) {
+            for index in 0...63 {
+                ui.squares[index].clear(if: deselectionType)
+            }
+        }
+
         func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update]) {
-            guard self.ui.squares.count == 64 else { return } // Make sure we've been initialized
+            guard ui.squares.count == 64 else { return } // Make sure we've been initialized
             for update in updates {
                 switch update {
                 case .clearSquare(let position):
-                    self.ui.squares[position].setOccupant(.none)
+                    ui.squares[position].setOccupant(.none)
+                case .flashSquare(let position):
+                    apply(selectionUpdate: .attention, to: board, at: [position])
+                    apply(selectionUpdate: .none, to: board, at: [position])
                 case .piece(let pieceUpdate):
-                    self.applyPieceUpdate(board: board, update: pieceUpdate)
-                case .selection(let selectionUpdate, let positions):
-                    self.applySelectionUpdate(board: board, update: selectionUpdate, positions: positions)
+                    apply(pieceUpdate: pieceUpdate, to: board)
+                case .highlight(let positions):
+                    apply(selectionUpdate: .highlight, to: board, at: positions)
+                case .deselect(let selectionType):
+                    apply(deselectionType: selectionType)
                 case .resetBoard(let pieces):
                     guard pieces.count == 64 else { return }
                     for index in 0...63 {
-                        self.ui.squares[index].setOccupant(pieces[index])
+                        ui.squares[index].setOccupant(pieces[index])
                     }
                 case .ledger(let move):
-                    self.ui.addMoveToLedger(move)
+                    ui.addMoveToLedger(move)
                 }
             }
         }

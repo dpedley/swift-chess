@@ -14,8 +14,10 @@ extension Chess.UI {
     
     public enum Selection {
         case none
-        case selected
+        case premove
+        case highlight
         case target
+        case attention
     }
     
     public enum Piece: String {

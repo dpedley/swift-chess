@@ -25,7 +25,7 @@ extension Chess {
     }
     
     public class Game {
-        internal var userPaused = false
+        internal var userPaused = true
         internal var botPausedMove: Chess.Move?
         var winningSide: Side? {
             didSet {
@@ -66,25 +66,25 @@ extension Chess {
             if lastMove.isResign {
                 return .resign
             }
-
-            // Does the active side have any valid moves?
-            guard let allMoveVariantBoards = board.createVariantsForEveryValidMove() else {
-                return .stalemate
-            }
             
-            var isStuckInCheck = true
-            // Check if all the variants leave the king still in check
-            for boardVariant in allMoveVariantBoards {
-                if isStuckInCheck {
-                    // Pretend this variant one move forward is still the currect player so we can evaluate the king
-                    if let kingSquare = boardVariant.board.findOptionalKing(boardVariant.board.playingSide), !kingSquare.isUnderAttack {
-                        isStuckInCheck = false
+            // Check for mate
+            if board.findKing(board.playingSide).isUnderAttack {
+                var isStuckInCheck = true
+                if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
+                    for boardVariant in allVariantBoards {
+                        if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack {
+                            isStuckInCheck = false
+                        }
                     }
                 }
+                if isStuckInCheck {
+                    return .mate
+                }
             }
-            
-            if isStuckInCheck {
-                return .mate
+
+            // Does the active side have any valid moves?
+            guard board.validVariantExists(for: board.playingSide) else {
+                return .stalemate
             }
             
             // TODO: draws...
@@ -149,14 +149,21 @@ extension Chess {
 
             weak var weakSelf = self
             activePlayer?.getBestMove(currentFEN: board.FEN, movesSoFar: []) { move in
-                guard let strongSelf = weakSelf else {
+                guard let strongSelf = weakSelf, let activePlayer = strongSelf.activePlayer else {
                     return
+                }
+                
+                // If this callback was from a human, we don't want to be called twice so we nil it here
+                if let human = activePlayer as? Chess.HumanPlayer {
+                    human.chessBestMoveCallback = nil
                 }
                 
                 // Did the user pause while the bot was thinking?
                 // TODO add bot check
                 if strongSelf.userPaused {
-                    strongSelf.botPausedMove = move
+                    if activePlayer.isBot() {
+                        strongSelf.botPausedMove = move
+                    }
                     return
                 }
                 
@@ -177,11 +184,6 @@ extension Chess {
         
         internal func execute(move: Chess.Move) {
             // Create a previous move "clear" ui event while we still have access to `lastMove`
-            var lastUIClear: Chess.UI.Update? = nil
-            if let lastMove = board.lastMove {
-                lastUIClear = Chess.UI.Update.selection(Chess.UI.SelectionUpdate.selectionsCleared,
-                                                         positions: [lastMove.start, lastMove.end])
-            }
             let moveTry = board.attemptMove(move)
             switch moveTry {
             case .success(let capturedPiece):
@@ -189,24 +191,24 @@ extension Chess {
                 let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
                 pgn.moves.append(annotatedMove)
                 // TODO: we may need to account for non-boardmoves
-                if let clearSquares = lastUIClear {
-                    // Clear the old move, and select the start of the new move.
-                    board.ui.apply(board: board, updates: [clearSquares,
-                            Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [move.start])])
-                }
-                
+                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
+                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
+
                 // we need to update the UI here
                 // Note piece is at `move.end` now as the move is complete.
                 if let piece = board.squares[move.end].piece {
-                    let uiUpdate: Chess.UI.PieceUpdate
+                    let moveUpdate: Chess.UI.PieceUpdate
                     if let capturedPiece = capturedPiece {
-                        uiUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
+                        moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
                     } else {
-                        uiUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
+                        moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
                     }
                     
-                    var updates = [Chess.UI.Update.piece(uiUpdate)]
-                    updates.append(Chess.UI.Update.selection(Chess.UI.SelectionUpdate.isSelected, positions: [move.start, move.end]))
+                    // Update the board with the move
+                    var updates = [Chess.UI.Update.piece(moveUpdate)]
+                    updates.append(Chess.UI.Update.highlight([move.start, move.end]))
+                    
+                    // Add any side effects
                     switch move.sideEffect {
                     case .castling(let rookStart, let rookEnd):
                         if let rook = board.squares[rookEnd].piece {
@@ -217,6 +219,37 @@ extension Chess {
                         // These cases don't imply another uiUpdate is needed.
                         break
                     }
+                    
+                    // Check for check and mate
+                    if board.squareForActiveKing.isUnderAttack {
+                        // Are we in mate?
+                        switch status {
+                        case .mate:
+                            break
+                        case .unknown:
+                            break
+                        case .notYetStarted:
+                            break
+                        case .active:
+                            break
+                        case .resign:
+                            break
+                        case .timeout:
+                            break
+                        case .drawByRepetition:
+                            break
+                        case .drawByMoves:
+                            break
+                        case .drawBecauseOfInsufficientMatingMaterial:
+                            break
+                        case .stalemate:
+                            break
+                        case .paused:
+                            break
+                        }
+                    }
+                    
+                    // Lastly add this move to our ledger
                     updates.append( Chess.UI.Update.ledger(move) )
                     
                     board.ui.apply(board: board, updates: updates)
@@ -225,12 +258,46 @@ extension Chess {
                 continueBasedOnStatus()
             case .failed(reason: let reason):
                 print("Move failed: \(move) \(reason)")
-                // TODO message user
-                winningSide = board.playingSide.opposingSide
-                print("\nUnknown: \n\(pgn.formattedString)")
-                break
+                if let human = activePlayer as? Chess.HumanPlayer {
+                    updateBoard(human: human, failed: move, with: reason)
+                    
+                    // Try again human.
+                    continueBasedOnStatus()
+                } else {
+                    // a bot failed to move, for some this means resign
+                    
+                
+                    // TODO message user
+                    winningSide = board.playingSide.opposingSide
+                    print("\nUnknown: \n\(pgn.formattedString)")
+                }
             }
 
+        }
+        
+        internal func clearActivePlayerSelections() {
+            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
+            board.ui.apply(board: board, updates: updates)
+        }
+        
+        internal func flashKing() {
+            let kingPosition = board.squareForActiveKing.position
+            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
+            board.ui.apply(board: board, updates: updates)
+        }
+        
+        internal func updateBoard(human: Chess.HumanPlayer, failed move: Chess.Move, with reason: Chess.Move.Limitation) {
+            clearActivePlayerSelections()
+            switch reason {
+            case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove, .sameSideAlreadyOccupiesDestination:
+                // Nothing to see here, just humans
+                break
+            case .piecePinned, .kingWouldBeUnderAttackAfterMove:
+                flashKing()
+                Chess.Sounds.Check?.play()
+            case .unknown:
+                print("Human's move had unknown limitation.")
+            }
         }
         
         internal func continueBasedOnStatus() {

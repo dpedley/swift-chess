@@ -33,8 +33,15 @@ extension Chess {
             case .king(let hasMoved):
                 if hasMoved { break }
                 return .king(hasMoved: true)
-            default:
-                break;
+            case .knight(let hasMoved):
+                if hasMoved { break }
+                return .knight(hasMoved: true)
+            case .bishop(let hasMoved):
+                if hasMoved { break }
+                return .bishop(hasMoved: true)
+            case .queen(let hasMoved):
+                if hasMoved { break }
+                return .queen(hasMoved: true)
             }
             return self
         }

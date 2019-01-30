@@ -25,9 +25,7 @@ extension Chess {
                     // If we don't have a piece now, nor a board, all the cascading "clearing" is already done in willSet
                     // we just need to update the UI here
                     guard let board = board else { return }
-                    board.ui.apply(board: board,
-                                   updates: [Chess.UI.Update.clearSquare(position),
-                                             Chess.UI.Update.selection( Chess.UI.SelectionUpdate.isAttackableBySelectedPeice, positions: []) ])
+                    board.ui.apply(board: board, updates: [Chess.UI.Update.clearSquare(position)])
                     return                    
                 }
 
