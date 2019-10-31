@@ -9,7 +9,7 @@
 import Foundation
 
 extension Chess.Board {
-    private static let CharZero = Unicode.Scalar("0")!.value
+    private static let CharZero = Unicode.Scalar("0").value
     internal func createCurrentFENString() -> String {
         var fen = ""
         var emptyCount = 0

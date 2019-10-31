@@ -6,7 +6,7 @@
 //  Copyright © 2019 d0. All rights reserved.
 //
 
-import Foundation
+import AVFoundation
 /*
  private var backgroundSound: Sound?
  private var dogSound: Sound?
@@ -20,6 +20,9 @@ import Foundation
 
 extension Chess {
     enum Sounds {
+        private static func Sound(url: URL) -> AVAudioPlayer {
+            return try! AVAudioPlayer(contentsOf: url)
+        }
         private static let BerserkURL = Bundle.main.url(forResource: "Berserk", withExtension: "mp3")!
         private static let CaptureURL = Bundle.main.url(forResource: "Capture", withExtension: "mp3")!
         private static let CheckURL = Bundle.main.url(forResource: "Check", withExtension: "mp3")!

@@ -6,8 +6,7 @@
 //  Copyright © 2019 d0. All rights reserved.
 //
 
-import UIKit
-
+import Foundation
 
 extension Chess {
     

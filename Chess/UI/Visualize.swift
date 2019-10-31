@@ -55,7 +55,7 @@ extension Chess.UI {
             case .capture(let piece, let start, let capturedPiece, let end): // _ capturedPiece
                 ui.squares[start].setOccupant(.none)
                 ui.squares[end].setOccupant(piece)
-                Chess.Sounds.Capture?.play()
+                Chess.Sounds.Capture.play()
                 
                 // Send the piece to the dungeon
                 switch piece {
@@ -69,7 +69,7 @@ extension Chess.UI {
             case .moved(let piece, let start, let end):
                 ui.squares[start].setOccupant(.none)
                 ui.squares[end].setOccupant(piece)
-                Chess.Sounds.Move?.play()
+                Chess.Sounds.Move.play()
             }
         }
 
@@ -82,7 +82,7 @@ extension Chess.UI {
         func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status) {
             ui.sideChanged(status.nextToPlay)
             if status.isInCheck {
-                Chess.Sounds.Check?.play()
+                Chess.Sounds.Check.play()
             }
         }
 

@@ -294,7 +294,7 @@ extension Chess {
                 break
             case .piecePinned, .kingWouldBeUnderAttackAfterMove:
                 flashKing()
-                Chess.Sounds.Check?.play()
+                Chess.Sounds.Check.play()
             case .unknown:
                 print("Human's move had unknown limitation.")
             }
