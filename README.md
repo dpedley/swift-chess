@@ -1,2 +1,3 @@
-# swift-chess
-Chess represented in swift
+# Chess
+
+A description of this package.

@@ -1,0 +1,41 @@
+//
+//  SquareView.swift
+//  ChessPieces
+//
+//  Created by Douglas Pedley on 11/23/20.
+//
+
+import Foundation
+import SwiftUI
+
+@available(iOS 14.0, *)
+struct SquareView: View, Identifiable {
+    let id = UUID()
+    @EnvironmentObject var store: ChessStore
+    let position: Int
+    var body: some View {
+        Rectangle()
+            .fill(color)
+        store.state.game.board.squares[position].piece?.UI.asView()
+    }
+    var color: Color {
+        let themeColor = store.state.theme.boardTheme.color
+        return (file + row) % 2 == 0 ? themeColor.dark : themeColor.light
+    }
+    var file: Int { return position / 8 }
+    var row: Int { return position % 8 }
+}
+
+@available(iOS 14.0, *)
+struct SquareView_Preview: PreviewProvider {
+    static var previews: some View {
+        ZStack(alignment: .center, content: {
+            SquareView(position: 3).environmentObject(previewChessStore)
+        })
+        .background(Color.gray)
+        .frame(width: 300,
+               height: 300,
+               alignment: .center)
+    }
+}
+
