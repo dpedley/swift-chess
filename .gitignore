@@ -3,3 +3,7 @@
 project.pbxproj/
 xcshareddata/
 xcuserdata/
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
