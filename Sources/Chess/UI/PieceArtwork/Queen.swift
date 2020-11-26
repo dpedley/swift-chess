@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct Queen_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {
@@ -22,7 +21,6 @@ struct Queen_Preview: PreviewProvider {
     }
 }
 
-@available(iOS 14.0, *)
 extension PieceArtwork {
     static let queen: PieceArtwork = {
         // We start right on top

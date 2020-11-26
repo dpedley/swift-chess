@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct Pawn_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {
@@ -22,7 +21,6 @@ struct Pawn_Preview: PreviewProvider {
     }
 }
 
-@available(iOS 14.0, *)
 extension PieceArtwork {
     static let pawn = PieceArtwork(start: .xy(0, -0.65),
                                     strokes: [

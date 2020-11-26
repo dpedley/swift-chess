@@ -17,7 +17,6 @@ struct ChessEnvironment {
     var target: TargetEnvironment = .development
 }
 
-@available(iOS 14.0, *)
 struct ChessState {
     var player: Chess.Player
     var opponent: Chess.Player
@@ -69,10 +68,8 @@ enum ChessAction {
     case setBoard(fen: String)
 }
 
-@available(iOS 14.0, *)
 typealias ChessStore = Store<ChessState, ChessAction, ChessEnvironment>
 
-@available(iOS 14.0, *)
 extension App {
     static func chessReducer(
         state: inout ChessState,
@@ -90,7 +87,6 @@ extension App {
     }
 }
 
-@available(iOS 14.0, *)
 extension PreviewProvider {
     static func previewChessReducer(state: inout ChessState, action: ChessAction, environment: ChessEnvironment) -> AnyPublisher<ChessAction, Never>? {
         return nil
