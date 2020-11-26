@@ -8,9 +8,10 @@
 import Foundation
 import SwiftUI
 
+@available(iOS 14.0, *)
 struct SquareView: View, Identifiable {
     let id = UUID()
-    @EnvironmentObject var store: AppStore
+    @EnvironmentObject var store: ChessStore
     let position: Int
     var body: some View {
         Rectangle()
@@ -25,10 +26,11 @@ struct SquareView: View, Identifiable {
     var row: Int { return position % 8 }
 }
 
+@available(iOS 14.0, *)
 struct SquareView_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {
-            SquareView(position: 3).environmentObject(previewStore)
+            SquareView(position: 3).environmentObject(previewChessStore)
         })
         .background(Color.gray)
         .frame(width: 300,

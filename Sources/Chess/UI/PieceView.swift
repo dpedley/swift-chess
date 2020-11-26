@@ -13,6 +13,7 @@ import SwiftUI
 /// This is the view used for the chess pieces.
 /// The artwork controls which piece you see
 /// The style has the colors.
+@available(iOS 14.0, *)
 struct PieceView: View {
     @StateObject var artwork: PieceArtwork
     @StateObject var style: PieceStyle
@@ -106,6 +107,7 @@ struct PieceView: View {
     }
 }
 
+@available(iOS 14.0, *)
 struct PieceView_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {

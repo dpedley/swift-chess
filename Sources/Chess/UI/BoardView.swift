@@ -8,9 +8,10 @@
 import SwiftUI
 import Combine
 
+@available(iOS 14.0, *)
 struct BoardView: View {
     let id = UUID()
-    @EnvironmentObject var store: AppStore
+    @EnvironmentObject var store: ChessStore
     var squares: [SquareView] {
         var squares: [SquareView] = []
         for i in 0..<64 {
@@ -52,8 +53,9 @@ struct BoardView: View {
     }
 }
 
+@available(iOS 14.0, *)
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
-        BoardView().environmentObject(previewStore)
+        BoardView().environmentObject(previewChessStore)
     }
 }

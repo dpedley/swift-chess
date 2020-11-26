@@ -2,14 +2,13 @@ import XCTest
 @testable import Chess
 
 final class ChessTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Chess().text, "Hello, World!")
+    func testGameBoardSetup() {
+        let board = Chess.Board(FEN: Chess.Board.startingFEN)
+        XCTAssertEqual(board.squares[0].piece?.UI, Chess.UI.Piece.blackRook)
+        XCTAssertEqual(board.squares[63].piece?.UI, Chess.UI.Piece.whiteRook)
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testGameBoardSetup", testGameBoardSetup),
     ]
 }
