@@ -7,6 +7,13 @@
 
 import Foundation
 
+typealias GameAnalysis = [Chess.Side: Double]
+extension GameAnalysis {
+    func value(for side: Chess.Side) -> Double {
+        return self[side] ?? 0
+    }
+}
+
 extension Chess.Board  {
     func validVariantExists(for side: Chess.Side) -> Bool {
         for square in squares {
@@ -96,5 +103,14 @@ extension Chess.Board  {
             }
         })
         return indices
+    }
+    
+    var pieceWeights: GameAnalysis {
+        var pieceWeights: GameAnalysis = [.black: 0, .white: 0]
+        for square in squares {
+            guard let piece = square.piece else { continue }
+            pieceWeights[piece.side] = pieceWeights.value(for: piece.side) + piece.weight
+        }
+        return pieceWeights
     }
 }

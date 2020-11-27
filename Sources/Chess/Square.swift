@@ -20,19 +20,7 @@ extension Chess {
                 self.positionsOfAttackedSquares.removeAll()
             }
             didSet {
-                guard let piece = piece else {
-                    // If we don't have a piece now, nor a board, all the cascading "clearing" is already done in willSet
-                    // we just need to update the UI here
-                    guard let board = board else { return }
-                    #warning("Hookup UI")
-//                    board.ui.apply(board: board, updates: [Chess.UI.Update.clearSquare(position)])
-                    return                    
-                }
-
-                guard let board = board else {
-                    fatalError("We cannot compute attacked indices without a board reference.")
-                }
-                
+                guard let piece = piece,  let board = board else { return }
                 for testIndex in 0..<board.squares.count {
                     let testSquare = board.squares[testIndex]
                     if piece.isAttackValid(Move(side: piece.side, start: position, end: testSquare.position)) {

@@ -13,7 +13,6 @@ extension Chess {
         var black: Move?
     }
     public class Move: NSObject {
-        
         enum Limitation {
             case unknown
             case noPieceToMove
@@ -76,7 +75,5 @@ extension Chess {
             self.fileDirection = (start.file == end.file) ? 0 : (start.file < end.file) ? 1 : -1
             self.timeElapsed = ponderTime
         }
-        
-        
     }
 }

@@ -33,7 +33,7 @@ extension Chess {
                     case .failed(let reason):
                         actualChanges.append(.moveFailed(move: move, reason: reason))
                     case .success(_): // piece
-                        // Note about warning, we may want to include the piece loss for variant analysis styff here.
+                        // Note about warning, we may want to include the piece loss for variant analysis stuff here.
                         actualChanges.append(.moveMade(move: move))
                     }
                 case .moveFailed:
