@@ -7,18 +7,11 @@
 
 import Foundation
 
-public protocol Chess_PositionStoring {
-    var fileNumber: Int { get }
-    var rank: Int { get }
-    var rawIndex: Int { get set }
-}
-
 extension Chess {
-    public typealias Position = Int
-    
+    public typealias Position = Int // 0-63 like a FEN index
 }
 
-extension Chess.Position: Chess_PositionStoring {
+extension Chess.Position {
     // The number's aren't meaningful, just negative and unique
     private static let timeoutPositionInt = -4
     private static let resignPositionInt = -17

@@ -26,7 +26,7 @@ extension Chess {
     public class Game: ObservableObject {
         internal var userPaused = true
         internal var botPausedMove: Chess.Move?
-        let board = Chess.Board()
+        let board = Chess.Board(populateExpensiveVisuals: true)
         var winningSide: Side? {
             didSet {
                 if let winningSide = winningSide {
@@ -47,53 +47,7 @@ extension Chess {
         var white: Player
         var round: Int = 1
         var pgn: Chess.Game.PortableNotation
-        var status: GameStatus {
-            guard let lastMove = board.lastMove else {
-                if board.FEN == Chess.Board.startingFEN {
-                    return .notYetStarted
-                }
-                return .unknown
-            }
-            
-            if userPaused {
-                return .paused
-            }
-            
-            if lastMove.isTimeout {
-                return .timeout
-            }
-            
-            if lastMove.isResign {
-                return .resign
-            }
-            
-            // Check for mate
-            if board.findKing(board.playingSide).isUnderAttack {
-                var isStuckInCheck = true
-                if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
-                    for boardVariant in allVariantBoards {
-                        if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack {
-                            isStuckInCheck = false
-                        }
-                    }
-                }
-                if isStuckInCheck {
-                    return .mate
-                }
-            }
-
-            // Does the active side have any valid moves?
-            guard board.validVariantExists(for: board.playingSide) else {
-                return .stalemate
-            }
-            
-            // TODO: draws...
-//            case drawByRepetition
-//            case drawByMoves
-//            case drawBecauseOfInsufficientMatingMaterial
-
-            return .active
-        }
+        var status: GameStatus { buildCurrentStatus() }
         var activePlayer: Player? {
             switch board.playingSide {
             case .white:
