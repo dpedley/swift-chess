@@ -37,6 +37,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(ChessTests.allTests),
         testCase(GameTests.allTests),
         testCase(MoveTests.allTests),
+        testCase(NamedPositionTests.allTests),
         testCase(PositionTests.allTests),
         testCase(PromotionTests.allTests)
     ]

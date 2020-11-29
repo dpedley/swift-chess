@@ -13,10 +13,10 @@ final class MoveTests: XCTestCase {
         XCTAssertEqual(blackPawn.UI, .blackPawn) // make sure the found pieces are the correct type
         XCTAssertEqual(whitePawn.UI, .whitePawn)
         
-        var whiteMoveForwardTwo = Chess.Move(side: .white, start: .f2, end: .f4)
+        var whiteMoveForwardTwo = Chess.Move.white.f2.f4
         TestMove(board.attemptMove(&whiteMoveForwardTwo))
         board.playingSide = .black
-        var takeEnPassant = Chess.Move(side: .black, start: .g4, end: .f3)
+        var takeEnPassant = Chess.Move.black.g4.f3
         TestMove(board.attemptMove(&takeEnPassant))
     }
     
@@ -31,7 +31,7 @@ final class MoveTests: XCTestCase {
 
         // Try to move the knights
         // - black
-        var moveBlack = Chess.Move(side: .black, start: .c6, end: .d4)
+        var moveBlack = Chess.Move.black.c6.d4
         let blackPin = try XCTUnwrap(TestMoveFails(board.attemptMove(&moveBlack)))
         switch blackPin {
         case .kingWouldBeUnderAttackAfterMove:
@@ -42,7 +42,7 @@ final class MoveTests: XCTestCase {
         }
         board.playingSide = .white
         // - white
-        var moveWhite = Chess.Move(side: .white, start: .e4, end: .g3)
+        var moveWhite = Chess.Move.white.e4.g3
         let whitePin = try XCTUnwrap(TestMoveFails(board.attemptMove(&moveWhite)))
         switch whitePin {
         case .kingWouldBeUnderAttackAfterMove:

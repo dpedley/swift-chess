@@ -10,13 +10,13 @@ final class PromotionTests: XCTestCase {
         
         // First without explicit promotion declaration
         let board1 = Chess.Board(FEN: promoteFEN)
-        var move1 = Chess.Move(side: .black, start: .e2, end: .e1) // black's pawn moves to first rank
+        var move1 = Chess.Move.black.e2.e1 // black's pawn moves to first rank
         TestMove(board1.attemptMove(&move1))
         XCTAssertEqual(board1.FEN, promotedFEN)
         
         // Next with explicit queen promotion
         let board2 = Chess.Board(FEN: promoteFEN)
-        var move2 = Chess.Move(side: .black, start: .e2, end: .e1) // black's pawn moves to first rank
+        var move2 = Chess.Move.black.e2.e1 // black's pawn moves to first rank
         move2.sideEffect = .promotion(piece: .init(side: .black, pieceType: .queen(hasMoved: true)))
         TestMove(board2.attemptMove(&move2))
         XCTAssertEqual(board2.FEN, promotedFEN)
@@ -32,7 +32,7 @@ final class PromotionTests: XCTestCase {
         
         // Rook promotion
         let board = Chess.Board(FEN: promoteFEN)
-        var move = Chess.Move(side: .white, start: .d7, end: .d8) // white's pawn moves to eighth rank
+        var move = Chess.Move.white.d7.d8 // white's pawn moves to eighth rank
         move.sideEffect = .promotion(piece: .init(side: .white, pieceType: .rook(hasMoved: true, isKingSide: false)))
         TestMove(board.attemptMove(&move))
         XCTAssertEqual(board.FEN, promotedFEN)
@@ -47,7 +47,7 @@ final class PromotionTests: XCTestCase {
         
         // Rook promotion
         let board = Chess.Board(FEN: promoteFEN)
-        var move = Chess.Move(side: .black, start: .c2, end: .c1) // black's pawn moves to first rank
+        var move = Chess.Move.black.c2.c1 // black's pawn moves to first rank
         move.sideEffect = .promotion(piece: .init(side: .black, pieceType: .bishop(hasMoved: true)))
         TestMove(board.attemptMove(&move))
         XCTAssertEqual(board.FEN, promotedFEN)
@@ -62,7 +62,7 @@ final class PromotionTests: XCTestCase {
         
         // Knight promotion
         let board = Chess.Board(FEN: promoteFEN)
-        var move = Chess.Move(side: .black, start: .c2, end: .c1) // black's pawn moves to first rank
+        var move = Chess.Move.black.c2.c1 // black's pawn moves to first rank
         move.sideEffect = .promotion(piece: .init(side: .black, pieceType: .knight(hasMoved: true)))
         TestMove(board.attemptMove(&move))
         XCTAssertEqual(board.FEN, promotedFEN)
