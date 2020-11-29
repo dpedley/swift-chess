@@ -18,7 +18,16 @@ extension Chess.Move {
         case promotion(piece: Chess.Piece)
         case simulating // To force a move when we're in simulations
         case noneish // Don't make this none until we're done
+        var isUnknown: Bool {
+            switch self {
+            case .notKnown, .simulating, .noneish:
+                return true
+            default:
+                return false
+            }
+        }
     }
+    
     
     func cloneForSimulation() -> Chess.Move {
         let aCopy = self.clone()

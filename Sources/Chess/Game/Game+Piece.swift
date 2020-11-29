@@ -9,6 +9,26 @@
 import Foundation
 
 extension Chess.Piece {
+    func isAttackValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
+        // Attacks are moves, except when they aren't
+        switch pieceType {
+        case .pawn:
+            if move.rankDirection == side.rankDirection,
+                move.rankDistance == 1, move.fileDistance == 1 {
+                if let board = board {
+                    // If we are passed a board, then it's only a valid attack if a piece is present.
+                    guard let _ = board.squares[move.end].piece else {
+                        return false
+                    }
+                }
+                return true
+            }
+            return false
+        default:
+            return isMoveValid(&move, board: board)
+        }
+    }
+    
     func isMoveValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
         
         // Make sure it's a move
@@ -65,22 +85,22 @@ extension Chess.Piece {
             return false
         case .bishop:
             if (move.rankDistance==move.fileDistance) {
-                return true
+                return isMovePathOpen(move, board: board)
             }
             return false
         case .rook:
             if (move.rankDistance==0) || (move.fileDistance==0) {
-                return true
+                return isMovePathOpen(move, board: board)
             }
             return false
         case .queen:
             // Like a bishop
             if (move.rankDistance==move.fileDistance) {
-                return true
+                return isMovePathOpen(move, board: board)
             }
             // Like a rook
             if (move.rankDistance==0) || (move.fileDistance==0) {
-                return true
+                return isMovePathOpen(move, board: board)
             }
             return false
         case .king(let hasMoved):
@@ -108,23 +128,38 @@ extension Chess.Piece {
         }
     }
     
-    func isAttackValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
+    private func isMovePathOpen(_ move: Chess.Move, board: Chess.Board?) -> Bool {
+        guard let board = board else {
+            // there is no board so nothing left to confirm
+            return true
+        }
+        
+        let travel = move.rankDistance > move.fileDistance ? move.rankDistance : move.fileDistance
+        guard travel>1 else {
+            // We didn't travel far enough to be blocked
+            return true
+        }
+        // Need to check steps between
+        for tween in 1..<travel {
+            let tweenPosition = Chess.Position.from(fileNumber: move.start.fileNumber + (tween * move.fileDirection),
+                rank: move.start.rank + (tween * move.rankDirection))
+            guard board.squares[tweenPosition].piece == nil else {
+                return false
+            }
+        }
+        return true
+
+    }
+    
+    func isLastRank(_ position: Chess.Position) -> Bool {
         // Attacks are moves, except when they aren't
         switch pieceType {
         case .pawn:
-            if move.rankDirection == side.rankDirection,
-                move.rankDistance == 1, move.fileDistance == 1 {
-                if let board = board {
-                    // If we are passed a board, then it's only a valid attack if a piece is present.
-                    guard let _ = board.squares[move.end].piece else {
-                        return false
-                    }
-                }
-                return true
-            }
-            return false
+            // It's a pawn, based on the side return whether we're at the final step.
+            return side == .black ? (position.rank==1) : (position.rank==8)
         default:
-            return isMoveValid(&move)
+            // All other pieces can move endlessly
+            return false
         }
     }
     

@@ -220,7 +220,7 @@ extension Chess {
             case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove, .sameSideAlreadyOccupiesDestination:
                 // Nothing to see here, just humans
                 break
-            case .piecePinned, .kingWouldBeUnderAttackAfterMove:
+            case .kingWouldBeUnderAttackAfterMove:
                 flashKing()
                 Chess.Sounds.Check.play()
             case .unknown:
