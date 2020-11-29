@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct Knight_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {
@@ -22,7 +21,6 @@ struct Knight_Preview: PreviewProvider {
     }
 }
 
-@available(iOS 14.0, *)
 extension PieceArtwork {
     static let knight: PieceArtwork = {
         // We start right on top center (just right or the ear)

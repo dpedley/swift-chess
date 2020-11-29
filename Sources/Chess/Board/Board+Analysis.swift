@@ -1,12 +1,18 @@
 //
 //  Board+Analysis.swift
-//  LeelaChessZero
 //
 //  Created by Douglas Pedley on 1/6/19.
 //  Copyright © 2019 d0. All rights reserved.
 //
 
 import Foundation
+
+typealias GameAnalysis = [Chess.Side: Double]
+extension GameAnalysis {
+    func value(for side: Chess.Side) -> Double {
+        return self[side] ?? 0
+    }
+}
 
 extension Chess.Board  {
     func validVariantExists(for side: Chess.Side) -> Bool {
@@ -28,16 +34,24 @@ extension Chess.Board  {
     
     func createValidVariants(for side: Chess.Side) -> [Chess.SingleMoveVariant]? {
         var boards: [Chess.SingleMoveVariant] = []
+        let currentFEN = self.FEN
 
         for square in squares {
             if let piece = square.piece, piece.side == side,
-                let toSquares = square.attackedSquares {
-                // Try to create a tmp board from every square this piece thinks it can attack.
+               let toSquares = square.attackedSquares {
+                    // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
-                    let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
-                    if let _ = variant.move {
-                        boards.append(variant)
+                    var moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
+                    let tmpBoard = Chess.Board(FEN: currentFEN)
+                    let attempt = tmpBoard.attemptMove(&moveAttempt)
+                    switch attempt {
+                    case .success:
+                        let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
+                        if let _ = variant.move {
+                            boards.append(variant)
+                        }
+                    default:
+                        break
                     }
                 }
             }
@@ -48,9 +62,11 @@ extension Chess.Board  {
         return boards
     }
     
-    // This doesn't check deep lines, just basic chess mechanics. (no pins etc.)
+    // This doesn't check deep lines, just basic chess mechanics. (no pins, side effects etc.)
     func shallowAttemptMove(_ move: Chess.Move) -> Chess.Move.Result {
-        if let failedResult = prepareMove(move) { return failedResult }
+        // Make a mutable copy for any side effects, these will not propogate to the caller.
+        var shallowMove = move
+        if let failedResult = prepareMove(&shallowMove) { return failedResult }
 
         // Simulations aren't fully vetted, but still allowed to be commited
         move.setSimulated()
@@ -76,8 +92,8 @@ extension Chess.Board  {
             
             for toSquare in toSquares {
                 let tmpBoard = Chess.Board(FEN: currentFEN)
-                let moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare.position)
-                let attempt = tmpBoard.attemptMove(moveAttempt)
+                var moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare.position)
+                let attempt = tmpBoard.attemptMove(&moveAttempt)
                 switch attempt {
                 case .success:
                     return true
@@ -97,5 +113,14 @@ extension Chess.Board  {
             }
         })
         return indices
+    }
+    
+    var pieceWeights: GameAnalysis {
+        var pieceWeights: GameAnalysis = [.black: 0, .white: 0]
+        for square in squares {
+            guard let piece = square.piece else { continue }
+            pieceWeights[piece.side] = pieceWeights.value(for: piece.side) + piece.weight
+        }
+        return pieceWeights
     }
 }

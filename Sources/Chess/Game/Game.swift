@@ -1,6 +1,5 @@
 //
 //  Game.swift
-//  LeelaChessZero
 //
 //  Created by Douglas Pedley on 1/5/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -27,7 +26,7 @@ extension Chess {
     public class Game: ObservableObject {
         internal var userPaused = true
         internal var botPausedMove: Chess.Move?
-        let board = Chess.Board()
+        @Published private(set) var board = Chess.Board(populateExpensiveVisuals: true)
         var winningSide: Side? {
             didSet {
                 if let winningSide = winningSide {
@@ -44,57 +43,11 @@ extension Chess {
             guard let winningSide = winningSide else { return nil }
             return (winningSide == .black) ? black : white
         }
-        var black: Player
-        var white: Player
-        var round: Int = 1
+        @Published var black: Player
+        @Published var white: Player
+        @Published var round: Int = 1
         var pgn: Chess.Game.PortableNotation
-        var status: GameStatus {
-            guard let lastMove = board.lastMove else {
-                if board.FEN == Chess.Board.startingFEN {
-                    return .notYetStarted
-                }
-                return .unknown
-            }
-            
-            if userPaused {
-                return .paused
-            }
-            
-            if lastMove.isTimeout {
-                return .timeout
-            }
-            
-            if lastMove.isResign {
-                return .resign
-            }
-            
-            // Check for mate
-            if board.findKing(board.playingSide).isUnderAttack {
-                var isStuckInCheck = true
-                if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
-                    for boardVariant in allVariantBoards {
-                        if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack {
-                            isStuckInCheck = false
-                        }
-                    }
-                }
-                if isStuckInCheck {
-                    return .mate
-                }
-            }
-
-            // Does the active side have any valid moves?
-            guard board.validVariantExists(for: board.playingSide) else {
-                return .stalemate
-            }
-            
-            // TODO: draws...
-//            case drawByRepetition
-//            case drawByMoves
-//            case drawBecauseOfInsufficientMatingMaterial
-
-            return .active
-        }
+        var status: GameStatus { buildCurrentStatus() }
         var activePlayer: Player? {
             switch board.playingSide {
             case .white:
@@ -107,28 +60,32 @@ extension Chess {
             guard player.side == challenger.side.opposingSide else {
                 fatalError("Can't play with two \(player.side)s")
             }
+            let white: Player
+            let black: Player
             if player.side == .white {
-                self.white = player
-                self.black = challenger
+                white = player
+                black = challenger
             } else {
-                self.black = player
-                self.white = challenger
+                black = player
+                white = challenger
             }
-            board.resetBoard()
-            pgn = Chess.Game.PortableNotation(eventName: "Game \(Date())",
+            self.pgn = Chess.Game.PortableNotation(eventName: "Game \(Date())",
                                               site: PortableNotation.deviceSite(),
                                               date: Date(),
-                                              round: round,
+                                              round: 1,
                                               black: black.pgnName,
                                               white: white.pgnName,
                                               result: .other,
                                               tags: [:],
                                               moves: [])
+            self.white = white
+            self.black = black
+            self.board.resetBoard()
         }
         
         public func start() {
             userPaused = false
-            executeTurn()
+            nextTurn()
         }
         
         public func pause() {
@@ -136,62 +93,31 @@ extension Chess {
             userPaused = true
         }
         
-        internal func executeTurn() {
-            if let move = botPausedMove {
-                guard move.side == board.playingSide else {
-                    fatalError("bot move cache corrupted.")
-                }
-                botPausedMove = nil
-                execute(move: move)
-                return
-            }
-
-            weak var weakSelf = self
-            activePlayer?.getBestMove(currentFEN: board.FEN, movesSoFar: []) { move in
-                guard let strongSelf = weakSelf, let activePlayer = strongSelf.activePlayer else {
-                    return
-                }
-                
-                // If this callback was from a human, we don't want to be called twice so we nil it here
-                if let human = activePlayer as? Chess.HumanPlayer {
-                    human.chessBestMoveCallback = nil
-                }
-                
-                // Did the user pause while the bot was thinking?
-                // TODO add bot check
-                if strongSelf.userPaused {
-                    if activePlayer.isBot() {
-                        strongSelf.botPausedMove = move
-                    }
-                    return
-                }
-                
-                guard move.continuesGameplay else {
-                    if move.isResign || move.isTimeout {
-                        // TODO: do we push the resign onto [turns] and the UI stack as well here?
-//                        strongSelf.board.lastMove = move
-                        
-                        strongSelf.winningSide = move.side.opposingSide
-                        return
-                    }
-
-                    fatalError("Need to diagnose this scenario, shouldn't come here.")
-                }
-                strongSelf.execute(move: move)
-            }
+        internal func nextTurn() {
+            activePlayer?.turnUpdate(game: self)
         }
         
-        internal func execute(move: Chess.Move) {
-            // Create a previous move "clear" ui event while we still have access to `lastMove`
-            let moveTry = board.attemptMove(move)
+        func execute(move: Chess.Move) {
+            guard move.continuesGameplay else {
+                if move.isResign || move.isTimeout {
+                    // TODO: do we push the resign onto [turns] and the UI stack as well here?
+//                        strongSelf.board.lastMove = move
+                    winningSide = move.side.opposingSide
+                    return
+                }
+
+                fatalError("Need to diagnose this scenario, shouldn't come here.")
+            }
+            // Create a mutable copy, moving may add side effects.
+            var moveAttempt = move
+            let moveTry = board.attemptMove(&moveAttempt)
             switch moveTry {
             case .success(let capturedPiece):
                 print("Moved: \(move)")
                 let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
                 pgn.moves.append(annotatedMove)
                 // TODO: we may need to account for non-boardmoves
-                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
-                #warning("Hookup UI")
+//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
 //                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
 
                 // we need to update the UI here
@@ -248,12 +174,11 @@ extension Chess {
                             break
                         }
                     }
-                    
                     // Lastly add this move to our ledger
                     updates.append( Chess.UI.Update.ledger(move) )
-                    
-                    #warning("Hookup UI")
-//                    board.ui.apply(board: board, updates: updates)
+                    if !userPaused {
+                        nextTurn()
+                    }
                 }
                 
                 continueBasedOnStatus()
@@ -277,15 +202,15 @@ extension Chess {
         }
         
         internal func clearActivePlayerSelections() {
-            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
-            #warning("Hookup UI")
+            // TODO: Vet the use of the old UI update here.
+//            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
 //            board.ui.apply(board: board, updates: updates)
         }
         
         internal func flashKing() {
-            let kingPosition = board.squareForActiveKing.position
-            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
-            #warning("Hookup UI")
+            // TODO: Vet the use of the old UI update here.
+//            let kingPosition = board.squareForActiveKing.position
+//            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
         
@@ -307,7 +232,7 @@ extension Chess {
             switch status {
             case .active:
                 print("FEN: \(board.FEN)")
-                executeTurn()
+                nextTurn()
             case .mate:
                 winningSide = board.playingSide.opposingSide
                 print("\nMate: \n\(pgn.formattedString)")

@@ -1,6 +1,5 @@
 //
 //  Chess+URL.swift
-//  Leela
 //
 //  Created by Douglas Pedley on 1/21/19.
 //  Copyright © 2019 d0. All rights reserved.

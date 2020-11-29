@@ -8,7 +8,6 @@
 import SwiftUI
 import Combine
 
-@available(iOS 14.0, *)
 struct BoardView: View {
     let id = UUID()
     @EnvironmentObject var store: ChessStore
@@ -53,7 +52,6 @@ struct BoardView: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
         BoardView().environmentObject(previewChessStore)

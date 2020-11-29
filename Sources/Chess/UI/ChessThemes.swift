@@ -8,13 +8,10 @@
 import SwiftUI
 
 
-// Some namespacing
 extension Chess.UI {
-    @available(iOS 14.0, *)
     struct ChessTheme {
         var boardTheme = BoardTheme(color: .blue, pieceSet: Chess.UI.loadPieceSet(themeName: "cburnett"))
     }
-    @available(iOS 14.0, *)
     struct BoardTheme {
         var color: BoardColor = .blue
         var pieceSet: PieceSet

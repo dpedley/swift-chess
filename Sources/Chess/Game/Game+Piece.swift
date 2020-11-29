@@ -9,7 +9,7 @@
 import Foundation
 
 extension Chess.Piece {
-    func isMoveValid(_ move: Chess.Move, board: Chess.Board? = nil) -> Bool {
+    func isMoveValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
         
         // Make sure it's a move
         if (move.rankDistance==0) && (move.fileDistance==0) {
@@ -20,6 +20,10 @@ extension Chess.Piece {
         case .pawn(let hasMoved):
             // Only forward
             if move.rankDirection == side.rankDirection {
+                if let _ = board?.squares[move.end].piece {
+                    // There is a piece at the destination, pawns only move to empty squares (this is not an attack)
+                    return false
+                }
                 if move.rankDistance == 1, move.fileDistance == 0 { // Plain vanilla pawn move
                     return true
                 }
@@ -28,6 +32,13 @@ extension Chess.Piece {
                     if hasMoved {
                         return false
                     }
+                    // Ensure the pawn isn't trying to jump a piece
+                    let jumpPosition = move.start + move.end / 2
+                    if let _ = board?.squares[jumpPosition].piece {
+                        // There is a piece in the spot one space forward, we can't move 2 spaces.
+                        return false
+                    }
+                    
                     // The move is valid. Before we return, make sure to attach the enPassantPosition
                     move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
                                                                       trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
@@ -97,17 +108,23 @@ extension Chess.Piece {
         }
     }
     
-    func isAttackValid(_ move: Chess.Move) -> Bool {
+    func isAttackValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
         // Attacks are moves, except when they aren't
         switch pieceType {
         case .pawn:
             if move.rankDirection == side.rankDirection,
                 move.rankDistance == 1, move.fileDistance == 1 {
+                if let board = board {
+                    // If we are passed a board, then it's only a valid attack if a piece is present.
+                    guard let _ = board.squares[move.end].piece else {
+                        return false
+                    }
+                }
                 return true
             }
             return false
         default:
-            return isMoveValid(move)
+            return isMoveValid(&move)
         }
     }
     

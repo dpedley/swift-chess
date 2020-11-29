@@ -1,6 +1,5 @@
 //
 //  Board.swift
-//  LeelaChessZero
 //
 //  Created by Douglas Pedley on 1/5/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -30,19 +29,18 @@ public protocol Chess_PieceCoordinating: class {
 
 extension Chess {
     class Board {
+        let populateExpensiveVisuals: Bool
         var squares: [Square] = []
         var turns: [Turn] = []
+        var isInCheck: Bool? = nil
         var playingSide: Side = .white {
             didSet {
-                let isInCheck: Bool
                 // Only do this for an active visual board, it's expensive for a NilVisualizer
-                #warning("Hookup UI")
-//                if self.ui.humanInteracting {
-//                    isInCheck = squareForActiveKing.isUnderAttack
-//                } else {
-                    isInCheck = false
-//                }
-//                self.ui.apply(board: self, status: Chess.UI.Status(nextToPlay: playingSide, isInCheck: isInCheck))
+                if self.populateExpensiveVisuals {
+                    isInCheck = squareForActiveKing.isUnderAttack
+                } else {
+                    isInCheck = nil
+                }
             }
         }
         var lastMove: Move? {
@@ -57,7 +55,8 @@ extension Chess {
         var enPassantPosition: Position? { return lastEnPassantPosition() }
         var squareForActiveKing: Chess.Square { return findKing(playingSide) }
 
-        init() {
+        init(populateExpensiveVisuals: Bool = false) {
+            self.populateExpensiveVisuals = populateExpensiveVisuals
             for index in 0...63 {
                 let newSquare = Square(position: Position.from(FENIndex: index))
                 newSquare.board = self
@@ -65,8 +64,8 @@ extension Chess {
             }
         }
         
-        convenience init(FEN: String) {
-            self.init()
+        convenience init(FEN: String, populateExpensiveVisuals: Bool = false) {
+            self.init(populateExpensiveVisuals: populateExpensiveVisuals)
             self.resetBoard(FEN: FEN)
         }
     }

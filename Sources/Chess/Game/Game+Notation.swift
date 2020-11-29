@@ -1,6 +1,5 @@
 //
 //  Game+Notation.swift
-//  Leela
 //
 //  Created by Douglas Pedley on 1/18/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -104,7 +103,7 @@ extension Chess.Game {
         }
     }
     
-    func sampleGame() -> Chess.Game {
+    static func sampleGame() -> Chess.Game {
         let fischer = Chess.PlaybackPlayer(firstName: "Robert J.", lastName: "Fischer", side: .white, moves: [ "e2e4", "g1f3", "f1b5", "b5a4", "O-O", "f1e1", "a4b3", "c2c3", "h2h3", "d2d4", "c3c4", "c4b5", "b1c3", "c1g5", "c3b1", "g5h4", "d4e5", "h4e7", "e5d6", "b1d2", "d2c4", "b3c4", "f3e5", "c4f7", "e5f7", "d1e1", "e1e3", "e3g5", "b2b3", "a2a3", "a3b4", "a1a5", "f2f3", "g1f2", "a5a7", "a7a6", "f2e1", "g2g3", "e1d2", "a6d6", "d6a6", "g3g4", "a6e6"
             
             ], responseDelay: 1.0)

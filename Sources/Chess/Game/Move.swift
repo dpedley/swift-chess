@@ -1,6 +1,5 @@
 //
 //  Move.swift
-//  LeelaChessZero
 //
 //  Created by Douglas Pedley on 1/5/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -14,15 +13,14 @@ extension Chess {
         var black: Move?
     }
     public class Move: NSObject {
-        
-        enum Limitation {
-            case unknown
-            case noPieceToMove
-            case invalidAttackForPiece
-            case invalidMoveForPiece
-            case piecePinned
-            case sameSideAlreadyOccupiesDestination
-            case kingWouldBeUnderAttackAfterMove
+        enum Limitation: String {
+            case unknown = "Unknown limitation."
+            case noPieceToMove = "The was no piece at the starting square."
+            case invalidAttackForPiece = "You cannot attack this way with this piece."
+            case invalidMoveForPiece = "This piece doesn't move that way."
+            case piecePinned = "This piece is pinned, so it cannot move."
+            case sameSideAlreadyOccupiesDestination = "Two pieces cannot occupy the same square."
+            case kingWouldBeUnderAttackAfterMove = "You must save your king."
         }
         enum Result {
             case success(capturedPiece: Piece?)
@@ -77,7 +75,5 @@ extension Chess {
             self.fileDirection = (start.file == end.file) ? 0 : (start.file < end.file) ? 1 : -1
             self.timeElapsed = ponderTime
         }
-        
-        
     }
 }

@@ -10,7 +10,6 @@ import SwiftUI
 
 extension Chess.UI {
     
-    @available(iOS 14.0, *)
     typealias PieceSet = [Chess.UI.Piece : PieceView]
     
     public enum Selection {
@@ -65,7 +64,6 @@ extension Chess.UI {
                 return " "
             }
         }
-        @available(iOS 14.0, *)
         func asView() -> PieceView? {
             return PieceView(self)
 
@@ -90,7 +88,6 @@ extension Chess.UI {
 
     }
     
-    @available(iOS 14.0, *)
     static func loadPieceSet(themeName: String) -> PieceSet {
         // TODO support themes
         return [

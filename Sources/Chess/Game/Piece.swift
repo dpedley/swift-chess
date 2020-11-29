@@ -1,6 +1,5 @@
 //
 //  Piece.swift
-//  LeelaChessZero
 //
 //  Created by Douglas Pedley on 1/5/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -80,6 +79,25 @@ extension Chess {
                 return side == .black ? "\u{265B}" : "\u{2655}"
             case .king(_):
                 return side == .black ? "\u{265A}" : "\u{2654}"
+            }
+        }
+        
+        /// Sourced here:https://en.wikipedia.org/wiki/Chess_piece_relative_value
+        /// Went with AlphaZero - 1.0 3.05    3.33    5.63    9.5
+        var weight: Double {
+            switch self.pieceType {
+            case .pawn(_):
+                return 1.0
+            case .knight(_):
+                return 3.05
+            case .bishop(_):
+                return 3.33
+            case .rook(_, _):
+                return 5.63
+            case .queen(_):
+                return 9.5
+            case .king(_):
+                return 0.0
             }
         }
     }
