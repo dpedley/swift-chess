@@ -17,18 +17,7 @@ extension Chess {
                 if selected { selected = false }
                 
                 // We need to rebuild the attacked squares index list.
-                self.positionsOfAttackedSquares.removeAll()
-            }
-            didSet {
-                guard let piece = piece,  let board = board else { return }
-                for testIndex in 0..<board.squares.count {
-                    let testSquare = board.squares[testIndex]
-                    var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
-                    if piece.isAttackValid(&moveTest, board: self.board) {
-                        // Only
-                        positionsOfAttackedSquares.append(testIndex)
-                    }
-                }
+                self.cachesPositionsOfAttackedSquares = nil
             }
         }
         var isKingSide: Bool { return (position > 3) }
@@ -48,8 +37,27 @@ extension Chess {
         // occupying this space. It is based on being the only piece on the board, so the piece's path to this
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
-        // TODO: Rename it's not a squareIndex, It's a position
-        private var positionsOfAttackedSquares: [Chess.Position] = []
+        private var cachesPositionsOfAttackedSquares: [Chess.Position]? = nil
+        var positionsOfAttackedSquares: [Chess.Position] {
+            guard let positions = cachesPositionsOfAttackedSquares else {
+                // Need to build the positions
+                guard let piece = piece,  let board = board else {
+                    cachesPositionsOfAttackedSquares = []
+                    return []
+                }
+                var positions: [Chess.Position] = []
+                for testIndex in 0..<board.squares.count {
+                    let testSquare = board.squares[testIndex]
+                    var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
+                    if piece.isAttackValid(&moveTest, board: self.board) {
+                        positions.append(testIndex)
+                    }
+                }
+                cachesPositionsOfAttackedSquares = positions
+                return positions
+            }
+            return positions
+        }
         var attackedSquares: [Square]? {
             guard let board = board, !positionsOfAttackedSquares.isEmpty else { return nil }
             return positionsOfAttackedSquares.map { board.squares[$0] }

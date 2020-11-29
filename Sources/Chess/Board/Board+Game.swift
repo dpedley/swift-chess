@@ -55,7 +55,9 @@ extension Chess.Board  {
                 return .failed(reason: .invalidAttackForPiece)
             }
         }
-        guard piece.isMoveValid(&move, board: self) else { return .failed(reason: .invalidMoveForPiece) }
+        guard piece.isMoveValid(&move, board: self) else {
+            return .failed(reason: .invalidMoveForPiece)
+        }
         return nil
     }
     
@@ -116,6 +118,13 @@ extension Chess.Board  {
         var unicodeString: String?
         var pgnString: String?
         var piece = movingPiece
+        
+        // When pawns move to their last rank, we need a promotion side effect
+        // we default to queen promotion if none is given.
+        if piece.isLastRank(move.end), move.sideEffect.isUnknown {
+            move.sideEffect = .promotion(piece: .init(side: piece.side, pieceType: .queen(hasMoved: true)))
+        }
+
         switch move.sideEffect {
         case .notKnown:
             fatalError("Cannot commit move, it's side effect is unknown. \(move)")
@@ -169,6 +178,7 @@ extension Chess.Board  {
         }
         move.unicodePGN = unicodeString
         move.PGN = pgnString
+        
         
         if playingSide == .black {
             if turns.count == 0 {
