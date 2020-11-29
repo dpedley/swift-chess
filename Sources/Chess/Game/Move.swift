@@ -18,9 +18,8 @@ extension Chess {
             case noPieceToMove = "The was no piece at the starting square."
             case invalidAttackForPiece = "You cannot attack this way with this piece."
             case invalidMoveForPiece = "This piece doesn't move that way."
-            case piecePinned = "This piece is pinned, so it cannot move."
             case sameSideAlreadyOccupiesDestination = "Two pieces cannot occupy the same square."
-            case kingWouldBeUnderAttackAfterMove = "You must save your king."
+            case kingWouldBeUnderAttackAfterMove = "You must save your king, piece is pinned."
         }
         enum Result {
             case success(capturedPiece: Piece?)
