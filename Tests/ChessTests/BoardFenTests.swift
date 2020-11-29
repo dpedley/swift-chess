@@ -43,7 +43,7 @@ final class BoardFenTests: XCTestCase {
             return piece.isQueen()
         })
         
-        var qtq = Chess.Move(side: .white, start: .b6, end: .c7)
+        var qtq = Chess.Move.white.b6.c7
         TestMove(board.attemptMove(&qtq))
         
         XCTAssertNotNil(queenTakesQueen, "Cannot find critical move, queen takes queen")
