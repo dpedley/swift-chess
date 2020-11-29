@@ -117,8 +117,7 @@ extension Chess {
                 let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
                 pgn.moves.append(annotatedMove)
                 // TODO: we may need to account for non-boardmoves
-                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
-                #warning("Hookup UI")
+//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
 //                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
 
                 // we need to update the UI here
@@ -203,15 +202,15 @@ extension Chess {
         }
         
         internal func clearActivePlayerSelections() {
-            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
-            #warning("Hookup UI")
+            // TODO: Vet the use of the old UI update here.
+//            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
 //            board.ui.apply(board: board, updates: updates)
         }
         
         internal func flashKing() {
-            let kingPosition = board.squareForActiveKing.position
-            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
-            #warning("Hookup UI")
+            // TODO: Vet the use of the old UI update here.
+//            let kingPosition = board.squareForActiveKing.position
+//            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
         

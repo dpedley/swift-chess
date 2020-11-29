@@ -113,8 +113,8 @@ extension Chess.Board {
         playingSide = newSide
 
         // Update the UI
-        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
-        #warning("Hookup UI")
+        // TODO: Vet the use of the old UI update here.
+//        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
 //        self.ui.apply(board: self, updates: [uiUpdate])
     }
 }
