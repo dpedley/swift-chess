@@ -57,7 +57,6 @@ extension Chess.Board {
         guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
             fatalError("Invalid FEN: Cannot find active side.")
         }
-        playingSide = newSide
         guard let moveCount = Int(FENParts[5]) else {
             fatalError("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
         }
@@ -111,7 +110,8 @@ extension Chess.Board {
             }
             rankIndex+=1
         }
-        
+        playingSide = newSide
+
         // Update the UI
         let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
         #warning("Hookup UI")

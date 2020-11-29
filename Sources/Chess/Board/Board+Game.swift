@@ -40,23 +40,28 @@ extension Chess.Board  {
         return kingSearch
     }
     
-    func prepareMove(_ move: Chess.Move) -> Chess.Move.Result? {
+    func prepareMove(_ move: inout Chess.Move) -> Chess.Move.Result? {
         let fromSquare = squares[move.start]
         let toSquare = squares[move.end]
-        guard let piece = fromSquare.piece else { return .failed(reason: .noPieceToMove) }
-        guard piece.side != toSquare.piece?.side else { return .failed(reason: .sameSideAlreadyOccupiesDestination) }
-        
-        if let _ = toSquare.piece {
-            guard piece.isAttackValid(move) else { return .failed(reason: .invalidAttackForPiece) }
-        } else {
-            guard piece.isMoveValid(move, board: self) else { return .failed(reason: .invalidMoveForPiece) }
+        guard let piece = fromSquare.piece else {
+            return .failed(reason: .noPieceToMove)
         }
+        
+        if let toPiece = toSquare.piece {
+            guard piece.side != toPiece.side else {
+                return .failed(reason: .sameSideAlreadyOccupiesDestination)
+            }
+            guard piece.isAttackValid(&move, board: self) else {
+                return .failed(reason: .invalidAttackForPiece)
+            }
+        }
+        guard piece.isMoveValid(&move, board: self) else { return .failed(reason: .invalidMoveForPiece) }
         return nil
     }
     
     // Returns false if move cannot be made
-    func attemptMove(_ move: Chess.Move) -> Chess.Move.Result {
-        if let failedResult = prepareMove(move) { return failedResult }
+    func attemptMove(_ move: inout Chess.Move) -> Chess.Move.Result {
+        if let failedResult = prepareMove(&move) { return failedResult }
         
         // We need to attempt the move and see if it produces a board where the king is under attack.
         let testVariant = variant(with: move)

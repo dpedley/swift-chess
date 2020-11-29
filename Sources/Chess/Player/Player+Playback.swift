@@ -28,21 +28,30 @@ extension Chess {
             currentMove = 0
         }
         
-        override func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
+        override func turnUpdate(game: Chess.Game) {
+            // This bot only acts on it's own turn, no eval during opponents move time
+            guard game.board.playingSide == side else { return }
             weak var weakSelf = self
             Thread.detachNewThread {
                 if let responseDelay = weakSelf?.responseDelay {
                     Thread.sleep(forTimeInterval: responseDelay)
                 }
                 // Notice we don't strongify until after the sleep. Otherwise we'd be holding onto self
-                guard let strongSelf = weakSelf else { return }
-                guard strongSelf.currentMove<strongSelf.moveStrings.count else { return }
-                let moveString = strongSelf.moveStrings[strongSelf.currentMove]
-                guard let move = strongSelf.side.twoSquareMove(fromString: moveString) else {
+                guard let self = weakSelf else { return }
+                guard self.currentMove<self.moveStrings.count else { return }
+                let moveString = self.moveStrings[self.currentMove]
+                guard let move = self.side.twoSquareMove(fromString: moveString) else {
                         return
                 }
-                strongSelf.currentMove += 1
-                callback(move)
+                
+                // Make yer move.
+                game.execute(move: move)
+                
+                // If the move worked, we should see it is not the opponents turn
+                if game.board.playingSide == self.side.opposingSide {
+                    // It worked, let's update our move index
+                    self.currentMove += 1
+                }
             }
         }
     }
@@ -74,7 +83,7 @@ extension Chess {
             // TODO message human that the game is over.
         }
         
-        override func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
+        override func turnUpdate(game: Chess.Game) {
             // TODO, this is probably where we serialize the state of the board for app restarts etc.
             if let move = moveAttempt {
                 // Premove baby!
@@ -82,11 +91,13 @@ extension Chess {
                 Thread.detachNewThread {
                     DispatchQueue.main.async {
                         Thread.sleep(forTimeInterval: HumanPlayer.minimalHumanTimeinterval)
-                            callback(move)
+                        game.execute(move: move)
                     }
                 }
             } else {
-                chessBestMoveCallback = callback
+                chessBestMoveCallback = { move in
+                    game.execute(move: move)
+                }
             }
         }
     }

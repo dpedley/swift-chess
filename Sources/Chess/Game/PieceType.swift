@@ -46,15 +46,6 @@ extension Chess {
             return self
         }
         
-        func isKing() -> Bool {
-            switch self {
-            case .king:
-                return true
-            default:
-                return false
-            }
-        }
-        
         func fen(_ side: Side = .black) -> String {
             let upper: String
             switch self {
@@ -74,6 +65,59 @@ extension Chess {
             return side == .white ? upper : upper.lowercased()
         }
         
+        func isKing() -> Bool {
+            switch self {
+            case .king:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        func isQueen() -> Bool {
+            switch self {
+            case .queen:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        func isRook() -> Bool {
+            switch self {
+            case .rook:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        func isBishop() -> Bool {
+            switch self {
+            case .bishop:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        func isKnight() -> Bool {
+            switch self {
+            case .knight:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        func isPawn() -> Bool {
+            switch self {
+            case .pawn:
+                return true
+            default:
+                return false
+            }
+        }
     }
 }
 

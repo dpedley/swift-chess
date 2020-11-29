@@ -24,11 +24,29 @@ struct Chess_Preview: PreviewProvider {
         store.state.game.board.resetBoard()
         return store
     }()
+    static var testStore: ChessStore = {
+        let white = Chess.PlaybackPlayer(firstName: "Test", lastName: "One",
+                                         side: .white, moves: ["e2e4", ""], responseDelay: 0.1)
+        let black = Chess.PlaybackPlayer(firstName: "Test", lastName: "Two",
+                                         side: .black, moves: ["e7e5"], responseDelay: 0.1)
+
+        let testGame = Chess.Game(white, against: black)
+        let testState = ChessState(player: white, opponent: black)
+        let store = ChessStore(initialState: testState,
+                                       reducer: previewChessReducer, environment: ChessEnvironment(target: .development))
+        store.state.game.board.resetBoard()
+        return store
+    }()
     static var previews: some View {
         GeometryReader { geometry in
-            BoardView()
-                .environmentObject(previewChessStore)
-                .frame(width: geometry.size.height, height: geometry.size.height, alignment: .center)
+            HStack {
+                BoardView()
+                    .environmentObject(testStore)
+                    .frame(width: geometry.size.height, height: geometry.size.height, alignment: .center)
+                Button("\(testStore.state.game.white.lastName ?? "Unknown") vs \(testStore.state.game.black.lastName ?? "Unknown")") {
+                    testStore.state.game.start()
+                }
+            }
         }
     }
 }

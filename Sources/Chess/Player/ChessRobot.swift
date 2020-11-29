@@ -16,19 +16,19 @@ extension ChessRobot where Self: Chess.Player {
     func isBot() -> Bool { return true }
     func prepareForGame() { }
     func timerRanOut() { }
-    func getBestMove(currentFEN: String, movesSoFar: [String], callback: @escaping Chess_TurnCallback) {
+    func turnUpdate(game: Chess.Game) {
         weak var weakSelf = self
         Thread.detachNewThread {
             guard let self = weakSelf else { return }
-            guard let move = self.evalutate(board: .init(FEN: currentFEN)) else {
-                guard let king = self.board?.squareForActiveKing.position else {
+            guard let move = self.evalutate(board: game.board) else {
+                let square = game.board.squareForActiveKing
+                guard square.piece?.side == self.side else {
                     fatalError("Misconfigured board, bot cannot find it's own king.")
                 }
-                callback(self.side.resigns(king: king))
+                game.execute(move: self.side.resigns(king: square.position))
                 return
             }
-            callback(move)
+            game.execute(move: move)
         }
-
     }
 }

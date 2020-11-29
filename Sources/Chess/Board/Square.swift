@@ -23,7 +23,8 @@ extension Chess {
                 guard let piece = piece,  let board = board else { return }
                 for testIndex in 0..<board.squares.count {
                     let testSquare = board.squares[testIndex]
-                    if piece.isAttackValid(Move(side: piece.side, start: position, end: testSquare.position)) {
+                    var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
+                    if piece.isAttackValid(&moveTest, board: self.board) {
                         // Only
                         positionsOfAttackedSquares.append(testIndex)
                     }
