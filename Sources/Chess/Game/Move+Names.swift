@@ -1,8 +1,17 @@
 //
-//  File.swift
-//  
+//  Move+Names.swift
 //
 //  Created by Douglas Pedley on 11/29/20.
+//  
+//  The move names are a developer nicety. They provide namespace access to
+//  the 64 squares as a start and end with a FEN like notation.
+//  for example:
+//  var aMove = Chess.Move.white.e2.e4
+//  var bMove = Chess.Move(side: .white, start: .e2, end: .e4)
+//  var cMove = Chess.Move(side: Side.white,
+//                        start: Position.from(rankAndFile: "e2"),
+//                          end: Position.from(rankAndFile: "e4"))
+//  These three are equivalent, the first one is enabled by the namespacing in this file.
 //
 
 import Foundation
@@ -19,6 +28,20 @@ extension Chess {
     }
     struct MoveStartSide {
         let side: Chess.Side
+        var O_O: Chess.Move { castleKingside }
+        var castleKingside: Chess.Move {
+            switch side {
+            case .black: return e8.g8
+            case .white: return e1.g1
+            }
+        }
+        var O_O_O: Chess.Move { castleQueenside }
+        var castleQueenside: Chess.Move {
+            switch side {
+            case .black: return e8.c8
+            case .white: return e1.c1
+            }
+        }
         let a1: Chess.MoveStart
         let a2: Chess.MoveStart
         let a3: Chess.MoveStart
