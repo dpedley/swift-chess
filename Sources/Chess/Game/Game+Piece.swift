@@ -53,18 +53,14 @@ extension Chess.Piece {
                         return false
                     }
                     // Ensure the pawn isn't trying to jump a piece
-                    let jumpPosition = move.start + move.end / 2
+                    let jumpPosition = (move.start + move.end) / 2
                     if let _ = board?.squares[jumpPosition].piece {
                         // There is a piece in the spot one space forward, we can't move 2 spaces.
                         return false
                     }
                     
                     // The move is valid. Before we return, make sure to attach the enPassantPosition
-                    move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
-                                                                      trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
-                    return true
-                }
-                if move.rankDistance <= ((hasMoved) ? 1 : 2) {
+                    move.sideEffect = Chess.Move.SideEffect.enPassantInvade(territory: jumpPosition, invader: move.end)
                     return true
                 }
                 
@@ -74,6 +70,7 @@ extension Chess.Piece {
                     // We're capturing EnPassant, attach the SideEffect here.
                     move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
                                                                       trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
+                    return true
                 }
             }
             return false
@@ -110,10 +107,12 @@ extension Chess.Piece {
             
             // Are we trying to castle?
             if !hasMoved, let board = board,
-                move.fileDistance == 0, (move.rankDistance == -2 || move.rankDistance == 2) {
+                move.rankDistance == 0, move.fileDistance == 2 {
                 switch move.sideEffect {
                 case .notKnown:
-                    print("Castling...")
+                    break
+                    // TODO: revisit what this is for?
+//                    print("Castling...")
                 default:
                     break
                 }

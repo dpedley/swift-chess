@@ -18,10 +18,10 @@ extension Chess.Board  {
     func validVariantExists(for side: Chess.Side) -> Bool {
         for square in squares {
             if let piece = square.piece, piece.side == side,
-                let toSquares = square.attackedSquares {
+               let toSquares = square.buildMoveDestinations(board: self) {
                 // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
+                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
                     let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
                     if let _ = variant.move {
                         return true
@@ -38,10 +38,10 @@ extension Chess.Board  {
 
         for square in squares {
             if let piece = square.piece, piece.side == side,
-               let toSquares = square.attackedSquares {
+               let toSquares = square.buildMoveDestinations(board: self) {
                     // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    var moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare.position)
+                    var moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
                     let tmpBoard = Chess.Board(FEN: currentFEN)
                     let attempt = tmpBoard.attemptMove(&moveAttempt)
                     switch attempt {
@@ -86,13 +86,13 @@ extension Chess.Board  {
         let currentFEN = self.FEN
         for square in squares {
             guard let piece = square.piece, piece.side == playingSide,
-                let toSquares = square.attackedSquares else {
+                  let toSquares = square.buildMoveDestinations(board: self) else {
                     continue
             }
             
             for toSquare in toSquares {
                 let tmpBoard = Chess.Board(FEN: currentFEN)
-                var moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare.position)
+                var moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare)
                 let attempt = tmpBoard.attemptMove(&moveAttempt)
                 switch attempt {
                 case .success:

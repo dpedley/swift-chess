@@ -2,8 +2,14 @@ import XCTest
 @testable import Chess
 
 final class ChessTests: XCTestCase {
-    func testChess() {
-        // Scholar's test
+    func testOpeningsCount() {
+        let board = Chess.Board(FEN: Chess.Board.startingFEN)
+        let openings = board.createValidVariants(for: .white)
+        XCTAssertEqual(openings?.count, 20)
+    }
+    
+    func testFastestMate() {
+        // Scholars mate test
         let board = Chess.Board(FEN: Chess.Board.startingFEN)
         var move = Chess.Move.white.e2.e4 // Kings pawn opens
         TestMove(board.attemptMove(&move))
@@ -24,6 +30,7 @@ final class ChessTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testChess", testChess),
+        ("testOpeningsCount", testOpeningsCount),
+        ("testFastestMate", testFastestMate)
     ]
 }

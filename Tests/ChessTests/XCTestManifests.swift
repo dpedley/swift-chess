@@ -34,12 +34,15 @@ extension XCTestCase {
 public func allTests() -> [XCTestCaseEntry] {
     return [
         testCase(BoardFenTests.allTests),
+//        testCase(ChessRobotTests.allTests),
         testCase(ChessTests.allTests),
         testCase(GameTests.allTests),
         testCase(MoveTests.allTests),
         testCase(NamedPositionTests.allTests),
+        testCase(PieceMoveTests.allTests),
         testCase(PositionTests.allTests),
-        testCase(PromotionTests.allTests)
+        testCase(PromotionTests.allTests),
+        testCase(RankAndFilesTests.allTests)
     ]
 }
 #endif

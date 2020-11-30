@@ -78,12 +78,12 @@ extension Chess.Position {
     
     func rankDistance(from otherPosition: Chess.Position) -> Int {
         guard isBoardPosition else { fatalError(Chess.Position.isNotBoardPositionError) }
-        return abs(fileNumber - otherPosition.fileNumber)
+        return abs(rank - otherPosition.rank)
     }
     
     func fileDistance(from otherPosition: Chess.Position) -> Int {
         guard isBoardPosition else { fatalError(Chess.Position.isNotBoardPositionError) }
-        return abs(rank - otherPosition.rank)
+        return abs(fileNumber - otherPosition.fileNumber)
     }
     
     func adjacentPosition(rankOffset: Int, fileOffset: Int) -> Chess.Position {
