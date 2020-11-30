@@ -49,7 +49,7 @@ extension Chess {
                 for testIndex in 0..<board.squares.count {
                     let testSquare = board.squares[testIndex]
                     var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
-                    if piece.isAttackValid(&moveTest, board: self.board) {
+                    if piece.isAttackValid(&moveTest) {
                         positions.append(testIndex)
                     }
                 }
@@ -90,6 +90,24 @@ extension Chess {
                 return true
             })
             return filteredSquares ?? []
+        }
+        
+        func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
+            guard let piece = self.piece else { return nil }
+            var destinations: [Chess.Position] = []
+            for fenIndex in 0..<64 {
+                let end = Chess.Position.from(FENIndex: fenIndex)
+                guard end != position else { continue }
+                var move = Chess.Move(side: piece.side, start: position, end: end)
+                if piece.isMoveValid(&move, board: board) {
+                    destinations.append(end)
+                }
+                if piece.pieceType.isPawn(), piece.isAttackValid(&move, board: board) {
+                    destinations.append(end)
+                }
+            }
+            guard destinations.count>0 else { return nil }
+            return destinations
         }
         
         init(position: Position) {
