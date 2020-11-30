@@ -78,6 +78,11 @@ final class NamedPositionTests: XCTestCase {
         XCTAssertEqual(Chess.Move.black.e6.a6.description, "e6a6")
         XCTAssertEqual(Chess.Move.black.f8.f7.description, "f8f7")
         XCTAssertEqual(Chess.Move.black.h8.a1.description, "h8a1")
+        XCTAssertEqual(Chess.Move.black.O_O.description, "e8g8")
+        XCTAssertEqual(Chess.Move.black.castleQueenside.description, "e8c8")
+        XCTAssertEqual(Chess.Move.white.castleKingside.description, "e1g1")
+        XCTAssertEqual(Chess.Move.white.O_O_O.description, "e1c1")
+
     }
     
     static var allTests = [
