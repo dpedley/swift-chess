@@ -35,6 +35,13 @@ final class BoardFenTests: XCTestCase {
         let zugDraw = "k7/2q2p2/1Q3p2/KP3P1p/P6P/8/8/8 w - - 0 1"
         let board = Chess.Board(FEN: zugDraw)
         let moves = board.createValidVariants(for: board.playingSide)
+        var moveStrings: [String] = []
+        if let moves = moves {
+            for move in moves {
+                guard let moveString = move.move?.description else { continue }
+                moveStrings.append(moveString)
+            }
+        }
         XCTAssertTrue(moves?.count==3, "Expected a board situation with only three possible moves, got \(String(describing: moves?.count))")
         let queenTakesQueen = moves?.first(where: { variant -> Bool in
             guard let start = variant.move?.start, let piece = board.squares[start].piece?.pieceType else {
