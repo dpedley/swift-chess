@@ -31,7 +31,6 @@ struct Chess_Preview: PreviewProvider {
             HStack {
                 BoardView()
                     .environmentObject(sampleStore)
-                    .frame(width: geometry.size.height, height: geometry.size.height, alignment: .center)
                 
                 VStack {
                     Button("Play \(sampleStore.state.game.activePlayer?.lastName ?? "") next move") {
@@ -39,7 +38,6 @@ struct Chess_Preview: PreviewProvider {
                         sampleStore.state.game.nextTurn()
                     }
                     Text("Count: \(previewCounter)")
-                    Text("FEN: \(sampleStore.state.game.board.FEN)")
                 }
             }
         }
