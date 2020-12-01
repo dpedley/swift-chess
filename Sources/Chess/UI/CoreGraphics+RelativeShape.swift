@@ -27,3 +27,8 @@ extension CGPoint {
     }
 }
 
+extension CGSize {
+    var minimumLength: CGFloat {
+        return width > height ? height : width
+    }
+}
