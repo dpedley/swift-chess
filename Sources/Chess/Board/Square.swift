@@ -64,35 +64,6 @@ extension Chess {
             return positions.map { board.squares[$0] }
         }
         
-//        // Note this is a somewhat heavy computed var, grab a copy for multiple inline uses
-//        mutating func allSquaresWithValidAttackingPieces(board: Chess.Board) -> [Square] {
-//            let occupiedPositions = board.positionsForOccupiedSquares
-//            let filteredSquares = board.squares.filter({ attackingSquare -> Bool in
-//                guard let attackingPiece = attackingSquare.piece,
-//                    attackingPiece.side != piece?.side,
-//                    attackingSquare.positionsOfAttackedSquares.contains(position) else {
-//                    return false
-//                }
-//
-//                // Need to check the lines.
-//                let attack = Move(side: attackingPiece.side, start: attackingSquare.position, end: position)
-//                guard let attackPathSteps = attackingPiece.steps(for: attack) else {
-//                    // There are no steps, the attack is on!
-//                    return true
-//                }
-//
-////                print("Move: \(attack) \(attack.start)\(attack.end) generated \(attackPathSteps)")
-//                for step in attackPathSteps {
-//                    if occupiedPositions.contains(step) {
-//                        return false
-//                    }
-//                }
-//
-//                return true
-//            })
-//            return filteredSquares ?? []
-//        }
-        
         func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }
             var destinations: [Chess.Position] = []
