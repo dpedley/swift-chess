@@ -8,9 +8,8 @@
 import Foundation
 
 extension Chess {
-    public class Square: NSObject {
+    public struct Square {
         let position: Position
-        weak var board: Board?
         var piece: Piece? = nil {
             willSet {
                 // Note this order, deselect first to catch the attackedSquareIndices referred squares before clearing.
@@ -24,8 +23,9 @@ extension Chess {
         var isEmpty: Bool { return piece==nil }
         var selected: Bool = false {
             didSet {
+                // TODO: this needs to be done elsewhere.
                 // Need to update the other squares that are attached by this one.
-                attackedSquares?.forEach( { $0.attackedBySelected = selected } )
+//                attackedSquares?.forEach( { $0.attackedBySelected = selected } )
             }
         }
         var attackedBySelected: Bool = false {
@@ -38,10 +38,10 @@ extension Chess {
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
         private var cachesPositionsOfAttackedSquares: [Chess.Position]? = nil
-        var positionsOfAttackedSquares: [Chess.Position] {
+        mutating func positionsOfAttackedSquares(board: Chess.Board) -> [Chess.Position] {
             guard let positions = cachesPositionsOfAttackedSquares else {
                 // Need to build the positions
-                guard let piece = piece,  let board = board else {
+                guard let piece = piece else {
                     cachesPositionsOfAttackedSquares = []
                     return []
                 }
@@ -58,39 +58,40 @@ extension Chess {
             }
             return positions
         }
-        var attackedSquares: [Square]? {
-            guard let board = board, !positionsOfAttackedSquares.isEmpty else { return nil }
-            return positionsOfAttackedSquares.map { board.squares[$0] }
+        mutating func attackedSquares(board: Chess.Board) -> [Square]? {
+            let positions = positionsOfAttackedSquares(board: board)
+            guard !positions.isEmpty else { return nil }
+            return positions.map { board.squares[$0] }
         }
         
-        // Note this is a somewhat heavy computed var, grab a copy for multiple inline uses
-        var allSquaresWithValidAttackingPieces: [Square] {
-            let occupiedPositions = board?.positionsForOccupiedSquares ?? []
-            let filteredSquares = board?.squares.filter({ attackingSquare -> Bool in
-                guard let attackingPiece = attackingSquare.piece,
-                    attackingPiece.side != piece?.side,
-                    attackingSquare.positionsOfAttackedSquares.contains(position) else {
-                    return false
-                }
-                
-                // Need to check the lines.
-                let attack = Move(side: attackingPiece.side, start: attackingSquare.position, end: position)
-                guard let attackPathSteps = attackingPiece.steps(for: attack) else {
-                    // There are no steps, the attack is on!
-                    return true
-                }
-                
-//                print("Move: \(attack) \(attack.start)\(attack.end) generated \(attackPathSteps)")
-                for step in attackPathSteps {
-                    if occupiedPositions.contains(step) {
-                        return false
-                    }
-                }
-
-                return true
-            })
-            return filteredSquares ?? []
-        }
+//        // Note this is a somewhat heavy computed var, grab a copy for multiple inline uses
+//        mutating func allSquaresWithValidAttackingPieces(board: Chess.Board) -> [Square] {
+//            let occupiedPositions = board.positionsForOccupiedSquares
+//            let filteredSquares = board.squares.filter({ attackingSquare -> Bool in
+//                guard let attackingPiece = attackingSquare.piece,
+//                    attackingPiece.side != piece?.side,
+//                    attackingSquare.positionsOfAttackedSquares.contains(position) else {
+//                    return false
+//                }
+//
+//                // Need to check the lines.
+//                let attack = Move(side: attackingPiece.side, start: attackingSquare.position, end: position)
+//                guard let attackPathSteps = attackingPiece.steps(for: attack) else {
+//                    // There are no steps, the attack is on!
+//                    return true
+//                }
+//
+////                print("Move: \(attack) \(attack.start)\(attack.end) generated \(attackPathSteps)")
+//                for step in attackPathSteps {
+//                    if occupiedPositions.contains(step) {
+//                        return false
+//                    }
+//                }
+//
+//                return true
+//            })
+//            return filteredSquares ?? []
+//        }
         
         func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }
@@ -114,15 +115,16 @@ extension Chess {
             self.position = position
         }
         
-        func clear()  {
+        mutating func clear()  {
             self.piece = nil
         }
         
-        var isUnderAttack: Bool {
-            return allSquaresWithValidAttackingPieces.count > 0
+        func isUnderAttack(board: inout Chess.Board, attackingSide: Chess.Side) -> Bool {
+            let attackers = board.allSquaresAttacking(self, side: attackingSide, applyVariants: true)
+            return attackers.count > 0
         }
         
-        override public var description: String {
+        public var description: String {
             return "\(position.FEN) \(piece?.FEN ?? "")"
         }
     }

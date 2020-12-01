@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Chess.Player {
+extension Chess.Robot {
     class RandomBot: Chess.Robot {
         override func evalutate(board: Chess.Board) -> Chess.Move? {
             // When in doubt, pick a random move
@@ -18,11 +18,11 @@ extension Chess.Player {
     class GreedyBot: RandomBot {
         override func evalutate(board: Chess.Board) -> Chess.Move? {
             guard let choices = board.createValidVariants(for: side) else { return nil }
-            let currentWeights = board.pieceWeights
+            let weights = board.pieceWeights()
             var bestChoice: Chess.SingleMoveVariant?
-            var bestGap = currentWeights.value(for: side) - currentWeights.value(for: side.opposingSide)
+            var bestGap = weights.value(for: side) - weights.value(for: side.opposingSide)
             for choice in choices {
-                let pieceWeights = choice.board.pieceWeights
+                let pieceWeights = choice.board.pieceWeights()
                 let choiceGap = pieceWeights.value(for: side) - pieceWeights.value(for: side.opposingSide)
                 if choiceGap > bestGap {
                     bestGap = choiceGap

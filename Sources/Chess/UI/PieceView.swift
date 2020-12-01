@@ -22,12 +22,10 @@ struct PieceView: View {
             .foregroundColor(style.fill)
         // Then outline it
         PieceShape(artwork: artwork)
-            .stroke(style.outline, lineWidth: style.lineWidth)
+            .stroke(style.outline)
         // Render the details in the highlight color
         PieceShape.Details(artwork: artwork)
-            .stroke(style.highlight, lineWidth: style.lineWidth)
-        PieceShape.Details(artwork: artwork, isLight: true)
-            .stroke(style.highlight, lineWidth: style.lineWidth / 2)
+            .stroke(style.highlight)
     }
     init(_ artwork: PieceArtwork, style: PieceStyle) {
         _style = StateObject(wrappedValue: style)
@@ -108,7 +106,7 @@ struct PieceView: View {
 
 struct PieceView_Preview: PreviewProvider {
     static var previews: some View {
-        ZStack(alignment: .center, content: {
+        ZStack {
             PieceView(.queen, style: .black)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: -50)
@@ -121,7 +119,8 @@ struct PieceView_Preview: PreviewProvider {
             PieceView(.knight, style: .black)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 50)
-        })
+        }
+        .frame(width: 200, height: 200, alignment: .center)
     }
 }
 

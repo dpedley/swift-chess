@@ -9,14 +9,16 @@ import SwiftUI
 
 struct Rook_Preview: PreviewProvider {
     static var previews: some View {
-        ZStack(alignment: .center, content: {
+        ZStack {
             PieceView(.rook, style: .black)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: 0)
             PieceView(.rook, style: .white)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 0)
-        })
+        }
+        .frame(width: 200, height: 200, alignment: .center)
+
     }
 }
 
@@ -62,10 +64,10 @@ extension PieceArtwork {
         ]
         let highlights = [
             Highlight(.xy(0.55, -0.4), stroke: .to(.xy(-0.55, -0.4))),
-            Highlight(.xy(0.5, 0.5), stroke: .to(.xy(-0.5, 0.5)), isLight: true),
+            Highlight(.xy(0.5, 0.5), stroke: .to(.xy(-0.5, 0.5))),
             Highlight(.xy(0.5, 0.625), stroke: .to(.xy(-0.5, 0.625))),
-            Highlight(.xy(0.4, -0.3), stroke: .to(.xy(-0.4, -0.3)), isLight: true),
-            Highlight(.xy(0.4, 0.35), stroke: .to(.xy(-0.4, 0.35)), isLight: true),
+            Highlight(.xy(0.4, -0.3), stroke: .to(.xy(-0.4, -0.3))),
+            Highlight(.xy(0.4, 0.35), stroke: .to(.xy(-0.4, 0.35))),
         ]
         return PieceArtwork(start: start,
                                   strokes: strokes,

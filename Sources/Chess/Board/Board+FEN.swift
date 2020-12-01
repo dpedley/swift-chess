@@ -51,7 +51,7 @@ extension Chess.Board {
         return fen
     }
 
-    func resetBoard(FEN: String = Chess.Board.startingFEN) {
+    mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
         turns.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
         guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {

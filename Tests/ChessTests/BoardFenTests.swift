@@ -33,8 +33,8 @@ final class BoardFenTests: XCTestCase {
         // A board in a position where white has only three legal moves
         // and after the move, the game is a draw
         let zugDraw = "k7/2q2p2/1Q3p2/KP3P1p/P6P/8/8/8 w - - 0 1"
-        let board = Chess.Board(FEN: zugDraw)
-        let moves = board.createValidVariants(for: board.playingSide)
+        var board = Chess.Board(FEN: zugDraw)
+        let moves = board.createValidVariants(for: board.playingSide, deepVariants: true)
         var moveStrings: [String] = []
         if let moves = moves {
             for move in moves {

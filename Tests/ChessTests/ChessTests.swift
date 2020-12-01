@@ -10,7 +10,7 @@ final class ChessTests: XCTestCase {
     
     func testFastestMate() {
         // Scholars mate test
-        let board = Chess.Board(FEN: Chess.Board.startingFEN)
+        var board = Chess.Board(FEN: Chess.Board.startingFEN)
         var move = Chess.Move.white.e2.e4 // Kings pawn opens
         TestMove(board.attemptMove(&move))
         move = Chess.Move.black.e7.e5 // Blacks pawn meets white
@@ -25,7 +25,7 @@ final class ChessTests: XCTestCase {
         TestMove(board.attemptMove(&move))
         move = Chess.Move.white.f3.f7 // The queen mates in 4
         TestMove(board.attemptMove(&move))
-        XCTAssertTrue(board.squareForActiveKing.isUnderAttack, "Expected king to be attacked and in mate.")
+        XCTAssertTrue(board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: .white), "Expected king to be attacked and in mate.")
         XCTAssertFalse(board.areThereAnyValidMoves(), "Expected no moves available in mate.")
     }
 

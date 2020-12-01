@@ -14,21 +14,19 @@ extension Chess {
         case moveMade(move: Move)
         case moveFailed(move: Move, reason: Move.Limitation)
     }
-    
-    class BoardSimulation: Board {}
-    
+        
     class BoardVariant: NSObject {
         let originalFEN: String
         let changes: [BoardChange]
-        let board: BoardSimulation
-        init(originalFEN: String, changesToAttempt: [BoardChange]) {
+        var board: Board
+        init(originalFEN: String, changesToAttempt: [BoardChange], deepVariant: Bool) {
             self.originalFEN = originalFEN
-            board = BoardSimulation(FEN: originalFEN)
+            board = Board(FEN: originalFEN)
             var actualChanges: [BoardChange] = []
             for change in changesToAttempt {
                 switch change {
-                case .moveMade(let move):
-                    let result = board.shallowAttemptMove(move)
+                case .moveMade(var move):
+                    let result = board.attemptMove(&move, applyVariants: deepVariant)
                     switch result {
                     case .failed(let reason):
                         actualChanges.append(.moveFailed(move: move, reason: reason))

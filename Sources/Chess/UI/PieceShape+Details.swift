@@ -12,13 +12,9 @@ extension PieceShape {
     struct Details: Shape {
         var inset: CGFloat = 20
         let artwork: PieceArtwork
-        let isLight: Bool
         func path(in rect: CGRect) -> Path {
             return Path { path in
                 for highlight in artwork.highlights {
-                    guard highlight.isLight == isLight else {
-                        continue
-                    }
                     let point = highlight.point.mapped(in: rect, inset: inset)
                     guard let stroke = highlight.stroke else {
                         // we only have a point, draw a dot there.
@@ -47,9 +43,8 @@ extension PieceShape {
                 }
             }
         }
-        init(artwork: PieceArtwork, isLight: Bool = false) {
+        init(artwork: PieceArtwork) {
             self.artwork = artwork
-            self.isLight = isLight
         }
     }
 }

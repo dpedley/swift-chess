@@ -10,14 +10,15 @@ import SwiftUI
 
 struct Bishop_Preview: PreviewProvider {
     static var previews: some View {
-        ZStack(alignment: .center, content: {
+        ZStack {
             Chess.UI.Piece.blackBishop.asView()
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: 0)
             Chess.UI.Piece.whiteBishop.asView()
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 0)
-        })
+        }
+        .frame(width: 200, height: 200, alignment: .center)
     }
 }
 
