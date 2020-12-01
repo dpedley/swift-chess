@@ -22,7 +22,8 @@ extension Chess.Board  {
                 // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
                     let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
-                    let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
+                    let boardChange = Chess.BoardChange.moveMade(move: moveAttempt)
+                    let variant = Chess.SingleMoveVariant(originalFEN: self.FEN, changesToAttempt: [boardChange], deepVariant: true)
                     if let _ = variant.move {
                         return true
                     }
@@ -32,7 +33,7 @@ extension Chess.Board  {
         return false
     }
     
-    func createValidVariants(for side: Chess.Side) -> [Chess.SingleMoveVariant]? {
+    func createValidVariants(for side: Chess.Side, deepVariants: Bool = false) -> [Chess.SingleMoveVariant]? {
         var boards: [Chess.SingleMoveVariant] = []
         let currentFEN = self.FEN
 
@@ -42,11 +43,12 @@ extension Chess.Board  {
                     // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
                     var moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
-                    let tmpBoard = Chess.Board(FEN: currentFEN)
+                    var tmpBoard = Chess.Board(FEN: currentFEN)
                     let attempt = tmpBoard.attemptMove(&moveAttempt)
                     switch attempt {
                     case .success:
-                        let variant: Chess.SingleMoveVariant = self.variant(with: moveAttempt)
+                        let change = Chess.BoardChange.moveMade(move: moveAttempt.clone())
+                        let variant = Chess.SingleMoveVariant(originalFEN: self.FEN, changesToAttempt: [change], deepVariant: deepVariants)
                         if let _ = variant.move {
                             boards.append(variant)
                         }
@@ -62,26 +64,6 @@ extension Chess.Board  {
         return boards
     }
     
-    // This doesn't check deep lines, just basic chess mechanics. (no pins, side effects etc.)
-    func shallowAttemptMove(_ move: Chess.Move) -> Chess.Move.Result {
-        // Make a mutable copy for any side effects, these will not propogate to the caller.
-        var shallowMove = move
-        if let failedResult = prepareMove(&shallowMove) { return failedResult }
-
-        // Simulations aren't fully vetted, but still allowed to be commited
-        move.setSimulated()
-        
-        // Before we `commit` the move grab the destination square's piece (if there is one) `commit` will over write it.
-        let capturedPiece = squares[move.end].piece
-        commit(move, capturedPiece: capturedPiece)
-        return .success(capturedPiece: capturedPiece)
-    }
-    
-    func variant(with move: Chess.Move) -> Chess.SingleMoveVariant {
-        let change = Chess.BoardChange.moveMade(move: move.cloneForSimulation())
-        return Chess.SingleMoveVariant(originalFEN: self.FEN, changesToAttempt: [change])
-    }
-    
     func areThereAnyValidMoves() -> Bool {
         let currentFEN = self.FEN
         for square in squares {
@@ -91,7 +73,7 @@ extension Chess.Board  {
             }
             
             for toSquare in toSquares {
-                let tmpBoard = Chess.Board(FEN: currentFEN)
+                var tmpBoard = Chess.Board(FEN: currentFEN)
                 var moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare)
                 let attempt = tmpBoard.attemptMove(&moveAttempt)
                 switch attempt {
@@ -115,7 +97,7 @@ extension Chess.Board  {
         return indices
     }
     
-    var pieceWeights: GameAnalysis {
+    func pieceWeights() -> GameAnalysis {
         var pieceWeights: GameAnalysis = [.black: 0, .white: 0]
         for square in squares {
             guard let piece = square.piece else { continue }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Combine
 
 extension Chess {
     public enum GameStatus {
@@ -26,7 +26,7 @@ extension Chess {
     public class Game: ObservableObject {
         internal var userPaused = true
         internal var botPausedMove: Chess.Move?
-        @Published private(set) var board = Chess.Board(populateExpensiveVisuals: true)
+        @Published var board = Chess.Board(populateExpensiveVisuals: true)
         var winningSide: Side? {
             didSet {
                 if let winningSide = winningSide {
@@ -141,13 +141,13 @@ extension Chess {
                             let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
                             updates.append( Chess.UI.Update.piece(rookUpdate) )
                         }
-                    case .enPassantCapture(_, _),  .enPassantInvade(_, _), .promotion(_), .notKnown, .simulating, .noneish:
+                    case .enPassantCapture(_, _),  .enPassantInvade(_, _), .promotion(_), .notKnown, .noneish:
                         // These cases don't imply another uiUpdate is needed.
                         break
                     }
                     
                     // Check for check and mate
-                    if board.squareForActiveKing.isUnderAttack {
+                    if board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: board.playingSide) {
                         // Are we in mate?
                         switch status {
                         case .mate:

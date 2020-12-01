@@ -47,45 +47,67 @@ extension Chess.Board  {
             return .failed(reason: .noPieceToMove)
         }
         
-        if let toPiece = toSquare.piece {
-            guard piece.side != toPiece.side else {
-                return .failed(reason: .sameSideAlreadyOccupiesDestination)
+        guard let toPiece = toSquare.piece else {
+            // The square we are moving to is empty, check that it's a valid move.
+            guard piece.isMoveValid(&move, board: self) else {
+                return .failed(reason: .invalidMoveForPiece)
             }
-            guard piece.isAttackValid(&move, board: self) else {
-                return .failed(reason: .invalidAttackForPiece)
-            }
+            return nil
         }
-        guard piece.isMoveValid(&move, board: self) else {
-            return .failed(reason: .invalidMoveForPiece)
+        guard piece.side != toPiece.side else {
+            return .failed(reason: .sameSideAlreadyOccupiesDestination)
+        }
+        guard piece.isAttackValid(&move, board: self) else {
+            return .failed(reason: .invalidAttackForPiece)
         }
         return nil
     }
     
+    mutating func allSquaresAttacking(_ targetSquare: Chess.Square, side: Chess.Side, applyVariants: Bool) -> [Chess.Square] {
+        var attackers: [Chess.Square] = []
+        for square in squares {
+            guard let piece = square.piece, piece.side == side else { continue }
+            var attack = Chess.Move(side: side, start: square.position, end: targetSquare.position)
+            var tmpBoard = Chess.Board(FEN: self.FEN)
+            tmpBoard.playingSide = side
+            let result = tmpBoard.attemptMove(&attack, applyVariants: applyVariants)
+            switch result {
+            case .success:
+                attackers.append(square)
+            default:
+                break
+            }
+        }
+        return attackers
+    }
+    
     // Returns false if move cannot be made
-    func attemptMove(_ move: inout Chess.Move) -> Chess.Move.Result {
+    mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.Move.Result {
         if let failedResult = prepareMove(&move) { return failedResult }
         
         // We need to attempt the move and see if it produces a board where the king is under attack.
-        let testVariant = variant(with: move)
-        
-        // Are we defending the king properly?
-        let kingSquare = testVariant.board.findKing(move.side)
-        let attackers = kingSquare.allSquaresWithValidAttackingPieces
-        if attackers.count>0 {
-            
-            guard let loneAttacker = attackers.first else {
-                // Logic problem here
-                return .failed(reason: .unknown)
-            }
-            
-            // There should be at least one, because `kingSquare.isUnderAttack`, but if there is more than one the move will not solve check
-            if attackers.count>1 {
-                return .failed(reason: .kingWouldBeUnderAttackAfterMove)
-            }
-            
-            // There is only one attacker, but we are only a defender if this move takes out the attacker.
-            if loneAttacker.position.rank != move.end.rank || loneAttacker.position.file != move.end.file {
-                return .failed(reason: .kingWouldBeUnderAttackAfterMove)
+        if applyVariants {
+            let boardChange = Chess.BoardChange.moveMade(move: move)
+            let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN, changesToAttempt: [boardChange], deepVariant: false)
+            // Are we defending the king properly?
+            if let kingSquare = testVariant.board.findOptionalKing(move.side) {
+                let attackers = testVariant.board.allSquaresAttacking(kingSquare, side: move.side.opposingSide, applyVariants: false)
+                if attackers.count>0 {
+                    guard let loneAttacker = attackers.first else {
+                        // Logic problem here
+                        return .failed(reason: .unknown)
+                    }
+                    
+                    // There should be at least one, because `kingSquare.isUnderAttack`, but if there is more than one the move will not solve check
+                    if attackers.count>1 {
+                        return .failed(reason: .kingWouldBeUnderAttackAfterMove)
+                    }
+                    
+                    // There is only one attacker, but we are only a defender if this move takes out the attacker.
+                    if loneAttacker.position.rank != move.end.rank || loneAttacker.position.file != move.end.file {
+                        return .failed(reason: .kingWouldBeUnderAttackAfterMove)
+                    }
+                }
             }
         }
         
@@ -107,7 +129,7 @@ extension Chess.Board  {
     }
     
     // Crashes if the move cannot be made, vet using attemptMove first.
-    func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?)  {
+    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?)  {
         guard let movingPiece = squares[move.start].piece else {
             fatalError("Cannot move, no piece.")
         }
@@ -128,22 +150,19 @@ extension Chess.Board  {
         switch move.sideEffect {
         case .notKnown:
             fatalError("Cannot commit move, it's side effect is unknown. \(move)")
-        case .simulating:
-            guard let _ = self as? Chess.BoardSimulation else {
-                fatalError("Simulating moves is only unsafe on our root board.")
-            }
         case .castling(let rookIndex, let destinationIndex):
             // We need to also move the rook
-            let rookSquare = squares[rookIndex]
-            let destinationSquare = squares[destinationIndex]
-            guard let rook = rookSquare.piece else { fatalError("Cannot castle without a rook") } // Should we check type and side as well?
-            guard destinationSquare.isEmpty else {
+            guard let rook = squares[rookIndex].piece, rook.pieceType.isRook(),
+                  rook.side == move.side else {
+                    fatalError("Cannot castle without a rook")
+            }
+            guard squares[destinationIndex].isEmpty else {
                 fatalError("Destination must be empty when castling \(move)")
             }
-            unicodeString = (rookSquare.isKingSide) ? "O-O" : "O-O-O"
+            unicodeString = (squares[rookIndex].isKingSide) ? "O-O" : "O-O-O"
             pgnString = unicodeString
-            rookSquare.clear()
-            destinationSquare.piece = rook
+            squares[rookIndex].clear()
+            squares[destinationIndex].piece = rook
         case .promotion(let promotedPiece):
             // omg we're getting an upgrade.
             piece = promotedPiece

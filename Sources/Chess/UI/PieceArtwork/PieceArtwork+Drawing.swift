@@ -29,11 +29,9 @@ extension PieceArtwork {
     struct Highlight {
         let point: CGPoint
         let stroke: Stroke?
-        let isLight: Bool
-        init(_ point: CGPoint, stroke: Stroke? = nil, isLight: Bool = false) {
+        init(_ point: CGPoint, stroke: Stroke? = nil) {
             self.point = point
             self.stroke = stroke
-            self.isLight = isLight
         }
     }
 }

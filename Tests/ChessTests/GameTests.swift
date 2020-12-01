@@ -5,9 +5,9 @@ fileprivate let testTimeout: TimeInterval = 0.1
 
 final class GameTests: XCTestCase {
     func testGameSetup() {
-        let white = Chess.PlaybackPlayer(firstName: "Test", lastName: "One",
+        let white = Chess.Robot.PlaybackBot(firstName: "Test", lastName: "One",
                                          side: .white, moves: ["e2e4", ""], responseDelay: testTimeout)
-        let black = Chess.PlaybackPlayer(firstName: "Test", lastName: "Two",
+        let black = Chess.Robot.PlaybackBot(firstName: "Test", lastName: "Two",
                                          side: .black, moves: ["e7e5"], responseDelay: testTimeout)
         let game = Chess.Game(white, against: black)
         let wait = testTimeout * 2

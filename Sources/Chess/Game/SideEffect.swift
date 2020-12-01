@@ -16,34 +16,17 @@ extension Chess.Move {
         case enPassantInvade(territory: Int, invader: Int)
         case enPassantCapture(attack: Int, trespasser: Int)
         case promotion(piece: Chess.Piece)
-        case simulating // To force a move when we're in simulations
         case noneish // Don't make this none until we're done
         var isUnknown: Bool {
             switch self {
-            case .notKnown, .simulating, .noneish:
+            case .notKnown, .noneish:
                 return true
             default:
                 return false
             }
         }
     }
-    
-    
-    func cloneForSimulation() -> Chess.Move {
-        let aCopy = self.clone()
-        aCopy.setSimulated()
-        return aCopy
-    }
-    
-    func setSimulated() {
-        switch sideEffect {
-        case .notKnown:
-            sideEffect = .simulating
-        default:
-            break
-        }
-    }
-    
+        
     func setVerified() {
         switch sideEffect {
         case .notKnown:

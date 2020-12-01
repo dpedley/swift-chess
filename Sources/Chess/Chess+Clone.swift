@@ -10,7 +10,7 @@ import Foundation
 
 extension Chess.Move.SideEffect {
     enum BaseInt: Int64 {
-        case notKnown = 0, castling, enPassantInvade, enPassantCapture, promotion, simulating, none
+        case notKnown = 0, castling, enPassantInvade, enPassantCapture, promotion, none
         func annotated(with subValues: [Int]) -> Int64 {
             var updatedValue = self.rawValue
             var subValueOffset = 6
@@ -47,8 +47,6 @@ extension Chess.Move.SideEffect {
             return BaseInt.enPassantCapture.annotated(with: [attack, trespasser])
         case .promotion(let piece):
             return BaseInt.promotion.annotated(with: piece)
-        case .simulating:
-            return BaseInt.simulating.rawValue
         case .noneish:
             return BaseInt.none.rawValue
         }
@@ -80,8 +78,6 @@ extension Chess.Move.SideEffect {
                 fatalError("Couldn't parse piece FEN")
             }
             return .promotion(piece: piece)
-        case .simulating:
-            return .simulating
         case .none:
             return .noneish
         }

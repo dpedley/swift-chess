@@ -29,11 +29,11 @@ extension Chess.Game {
         }
         
         // Check for mate
-        if board.findKing(board.playingSide).isUnderAttack {
+        if board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: board.playingSide) {
             var isStuckInCheck = true
             if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
                 for boardVariant in allVariantBoards {
-                    if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack {
+                    if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack(board: &boardVariant.board, attackingSide: board.playingSide) {
                         isStuckInCheck = false
                     }
                 }
