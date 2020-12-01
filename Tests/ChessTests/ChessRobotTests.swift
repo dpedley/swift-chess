@@ -11,7 +11,7 @@ final class ChessRobotTests: XCTestCase {
         let white = Chess.Robot.RandomBot(side: .white, matchLength: 3600)
         let black = Chess.Robot.RandomBot(side: .black, matchLength: 3600)
         let game = Chess.Game(white, against: black)
-        let wait = testTimeout * 2
+        let wait = testTimeout * 5
         game.board.resetBoard()
         game.nextTurn()
         TestWait(wait)
@@ -29,7 +29,7 @@ final class ChessRobotTests: XCTestCase {
         let black = Chess.Robot.PlaybackBot(firstName: "fn1", lastName: "ln1", side: .black,
                                          moves: ["e7e5", "d7d6"], responseDelay: testTimeout)
         let game = Chess.Game(white, against: black)
-        let wait = testTimeout * 2
+        let wait = testTimeout * 5
         game.board.resetBoard()
         game.nextTurn()
         TestWait(wait)
