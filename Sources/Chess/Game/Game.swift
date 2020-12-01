@@ -113,7 +113,6 @@ extension Chess {
             let moveTry = board.attemptMove(&moveAttempt)
             switch moveTry {
             case .success(let capturedPiece):
-                print("Moved: \(move)")
                 let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
                 pgn.moves.append(annotatedMove)
                 // TODO: we may need to account for non-boardmoves

@@ -10,7 +10,7 @@ final class GameTests: XCTestCase {
         let black = Chess.Robot.PlaybackBot(firstName: "Test", lastName: "Two",
                                          side: .black, moves: ["e7e5"], responseDelay: testTimeout)
         let game = Chess.Game(white, against: black)
-        let wait = testTimeout * 2
+        let wait = testTimeout * 5
         game.board.resetBoard()
         game.nextTurn()
         TestWait(wait)
