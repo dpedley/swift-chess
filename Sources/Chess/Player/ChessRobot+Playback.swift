@@ -7,12 +7,12 @@
 
 import Foundation
 
-extension Chess {
-    public class PlaybackPlayer: Player {
+extension Chess.Robot {
+    public class PlaybackBot: Chess.Player {
         var moveStrings: [String] = []
         var currentMove = 0
         let responseDelay: TimeInterval
-        required init(firstName: String, lastName: String, side: Side, moves: [String], responseDelay: TimeInterval) {
+        required init(firstName: String, lastName: String, side: Chess.Side, moves: [String], responseDelay: TimeInterval) {
             self.responseDelay = responseDelay
             moveStrings.append(contentsOf: moves)
             super.init(side: side, matchLength: nil)

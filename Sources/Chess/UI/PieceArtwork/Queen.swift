@@ -10,14 +10,16 @@ import SwiftUI
 
 struct Queen_Preview: PreviewProvider {
     static var previews: some View {
-        ZStack(alignment: .center, content: {
+        ZStack {
             PieceView(.queen, style: .black)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: 0)
             PieceView(.queen, style: .white)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 0)
-        })
+        }
+        .frame(width: 200, height: 200, alignment: .center)
+
     }
 }
 

@@ -28,7 +28,7 @@ public protocol Chess_PieceCoordinating: class {
 }
 
 extension Chess {
-    class Board {
+    struct Board {
         let populateExpensiveVisuals: Bool
         var squares: [Square] = []
         var turns: [Turn] = []
@@ -37,7 +37,7 @@ extension Chess {
             didSet {
                 // Only do this for an active visual board, it's expensive for a NilVisualizer
                 if self.populateExpensiveVisuals {
-                    isInCheck = squareForActiveKing.isUnderAttack
+                    isInCheck = squareForActiveKing.isUnderAttack(board: &self, attackingSide: playingSide)
                 } else {
                     isInCheck = nil
                 }
@@ -59,12 +59,11 @@ extension Chess {
             self.populateExpensiveVisuals = populateExpensiveVisuals
             for index in 0...63 {
                 let newSquare = Square(position: Position.from(FENIndex: index))
-                newSquare.board = self
                 squares.append(newSquare)
             }
         }
         
-        convenience init(FEN: String, populateExpensiveVisuals: Bool = false) {
+        init(FEN: String, populateExpensiveVisuals: Bool = false) {
             self.init(populateExpensiveVisuals: populateExpensiveVisuals)
             self.resetBoard(FEN: FEN)
         }
