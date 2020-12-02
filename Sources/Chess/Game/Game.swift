@@ -8,6 +8,10 @@
 import Foundation
 import Combine
 
+public protocol ChessGameDelegate: AnyObject {
+    func send(_ action: ChessAction)
+}
+
 extension Chess {
     public enum GameStatus {
         case unknown
@@ -23,10 +27,12 @@ extension Chess {
         case paused
     }
     
-    public class Game: ObservableObject {
+    public struct Game: Identifiable {
+        public let id = UUID()
+        weak var delegate: ChessGameDelegate?
         internal var userPaused = true
         internal var botPausedMove: Chess.Move?
-        @Published var board = Chess.Board(populateExpensiveVisuals: true)
+        var board = Chess.Board(populateExpensiveVisuals: true)
         var winningSide: Side? {
             didSet {
                 if let winningSide = winningSide {
@@ -43,11 +49,10 @@ extension Chess {
             guard let winningSide = winningSide else { return nil }
             return (winningSide == .black) ? black : white
         }
-        @Published var black: Player
-        @Published var white: Player
-        @Published var round: Int = 1
+        var black: Player
+        var white: Player
+        var round: Int = 1
         var pgn: Chess.Game.PortableNotation
-        var status: GameStatus { buildCurrentStatus() }
         var activePlayer: Player? {
             switch board.playingSide {
             case .white:
@@ -56,7 +61,11 @@ extension Chess {
                 return black
             }
         }
-        public init(_ player: Player, against challenger: Player) {
+        public init(gameDelegate: ChessGameDelegate? = nil) {
+            self.init(.init(side: .white, matchLength: 0), against: .init(side: .black, matchLength: 0), gameDelegate: gameDelegate)
+        }
+        public init(_ player: Player, against challenger: Player, gameDelegate: ChessGameDelegate? = nil) {
+            self.delegate = gameDelegate
             guard player.side == challenger.side.opposingSide else {
                 fatalError("Can't play with two \(player.side)s")
             }
@@ -83,21 +92,22 @@ extension Chess {
             self.board.resetBoard()
         }
         
-        public func start() {
+        public mutating func start() {
             userPaused = false
             nextTurn()
         }
         
-        public func pause() {
+        public mutating func pause() {
             // TODO add bot check
             userPaused = true
         }
         
-        internal func nextTurn() {
-            activePlayer?.turnUpdate(game: self)
+        mutating internal func nextTurn() {
+            guard let player = activePlayer else { return }
+            player.turnUpdate(game: self)
         }
         
-        func execute(move: Chess.Move) {
+        mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
                     // TODO: do we push the resign onto [turns] and the UI stack as well here?
@@ -148,7 +158,7 @@ extension Chess {
                     // Check for check and mate
                     if board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: board.playingSide) {
                         // Are we in mate?
-                        switch status {
+                        switch status() {
                         case .mate:
                             break
                         case .unknown:
@@ -227,8 +237,8 @@ extension Chess {
             }
         }
         
-        internal func continueBasedOnStatus() {
-            switch status {
+        internal mutating func continueBasedOnStatus() {
+            switch status() {
             case .active:
                 print("FEN: \(board.FEN)")
                 nextTurn()

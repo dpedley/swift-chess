@@ -31,27 +31,28 @@ extension Chess.Robot {
         override func turnUpdate(game: Chess.Game) {
             // This bot only acts on it's own turn, no eval during opponents move time
             guard game.board.playingSide == side else { return }
+            guard let delegate = game.delegate else {
+                fatalError("Cannot run a game turn without a game delegate.")
+            }
             weak var weakSelf = self
+            weak var weakDelegate = delegate
             Thread.detachNewThread {
                 if let responseDelay = weakSelf?.responseDelay {
                     Thread.sleep(forTimeInterval: responseDelay)
                 }
                 // Notice we don't strongify until after the sleep. Otherwise we'd be holding onto self
-                guard let self = weakSelf else { return }
-                guard self.currentMove<self.moveStrings.count else { return }
+                guard let self = weakSelf, let delegate = weakDelegate,
+                      self.currentMove<self.moveStrings.count else { return }
                 let moveString = self.moveStrings[self.currentMove]
                 guard let move = self.side.twoSquareMove(fromString: moveString) else {
-                        return
+                    return
                 }
                 
                 // Make yer move.
-                game.execute(move: move)
+                delegate.send(.makeMove(move: move))
                 
-                // If the move worked, we should see it is not the opponents turn
-                if game.board.playingSide == self.side.opposingSide {
-                    // It worked, let's update our move index
-                    self.currentMove += 1
-                }
+                // Let's update our move index
+                self.currentMove += 1
             }
         }
     }
@@ -88,15 +89,12 @@ extension Chess {
             if let move = moveAttempt {
                 // Premove baby!
                 moveAttempt = nil
-                Thread.detachNewThread {
-                    DispatchQueue.main.async {
-                        Thread.sleep(forTimeInterval: HumanPlayer.minimalHumanTimeinterval)
-                        game.execute(move: move)
-                    }
-                }
+                game.delegate?.send(.makeMove(move: move))
             } else {
+                weak var weakDelegate = game.delegate
                 chessBestMoveCallback = { move in
-                    game.execute(move: move)
+                    guard let delegate = weakDelegate else { return }
+                    delegate.send(.makeMove(move: move))
                 }
             }
         }

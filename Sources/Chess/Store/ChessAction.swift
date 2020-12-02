@@ -7,8 +7,9 @@
 
 import Foundation
 
-enum ChessAction {
+public enum ChessAction {
     case startGame
     case setBoard(fen: String)
+    case makeMove(move: Chess.Move)
 }
 
