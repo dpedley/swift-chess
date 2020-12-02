@@ -1,6 +1,8 @@
 //
-//  File.swift
-//  
+//  PlaybackBot.swift
+//
+//  A chess robot meant to repeat the set of moves it was given.
+//  This would be useful or reviewing PGNs for examples.
 //
 //  Created by Douglas Pedley on 11/26/20.
 //
@@ -8,16 +10,20 @@
 import Foundation
 
 extension Chess.Robot {
+    static let playbackDelay: TimeInterval = 0.1
     public class PlaybackBot: Chess.Player {
-        var moveStrings: [String] = []
+        var moves: [Chess.Move] = []
         var currentMove = 0
         let responseDelay: TimeInterval
-        required init(firstName: String, lastName: String, side: Chess.Side, moves: [String], responseDelay: TimeInterval) {
+        required init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moves: [Chess.Move], responseDelay: TimeInterval = playbackDelay) {
             self.responseDelay = responseDelay
-            moveStrings.append(contentsOf: moves)
+            self.moves.append(contentsOf: moves)
             super.init(side: side, matchLength: nil)
-            self.firstName = firstName
-            self.lastName = lastName
+            self.firstName = firstName ?? randomFirstName()
+            self.lastName = lastName ?? side.description.capitalized
+        }
+        convenience init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moveStrings: [String], responseDelay: TimeInterval = playbackDelay) {
+            self.init(firstName: firstName, lastName: lastName, side: side, moves: moveStrings.compactMap({ side.twoSquareMove(fromString: $0) }), responseDelay: responseDelay)
         }
         
         override func isBot() -> Bool {
@@ -42,11 +48,8 @@ extension Chess.Robot {
                 }
                 // Notice we don't strongify until after the sleep. Otherwise we'd be holding onto self
                 guard let self = weakSelf, let delegate = weakDelegate,
-                      self.currentMove<self.moveStrings.count else { return }
-                let moveString = self.moveStrings[self.currentMove]
-                guard let move = self.side.twoSquareMove(fromString: moveString) else {
-                    return
-                }
+                      self.currentMove<self.moves.count else { return }
+                let move = self.moves[self.currentMove]
                 
                 // Make yer move.
                 delegate.send(.makeMove(move: move))
@@ -58,45 +61,10 @@ extension Chess.Robot {
     }
 }
 
-extension Chess {
-    public class HumanPlayer: Player {
-        static let minimalHumanTimeinterval: TimeInterval = 0.1
-        public var chessBestMoveCallback: Chess_TurnCallback?
-        public var initialPositionTapped: Chess.Position?
-        public var moveAttempt: Chess.Move? {
-            didSet {
-                if let move = moveAttempt, let callback = chessBestMoveCallback {
-                    callback(move)
-                    moveAttempt = nil
-                    initialPositionTapped = nil
-                }
-            }
-        }
-        override func isBot() -> Bool {
-            return false
-        }
-        
-        override func prepareForGame() {
-            // Washes hands
-        }
-        
-        override func timerRanOut() {
-            // TODO message human that the game is over.
-        }
-        
-        override func turnUpdate(game: Chess.Game) {
-            // TODO, this is probably where we serialize the state of the board for app restarts etc.
-            if let move = moveAttempt {
-                // Premove baby!
-                moveAttempt = nil
-                game.delegate?.send(.makeMove(move: move))
-            } else {
-                weak var weakDelegate = game.delegate
-                chessBestMoveCallback = { move in
-                    guard let delegate = weakDelegate else { return }
-                    delegate.send(.makeMove(move: move))
-                }
-            }
-        }
+extension Chess.Robot {
+    static func playback(moves: [Chess.Move]) -> Chess.Game {
+        let white = PlaybackBot(side: .white, moves: moves.filter({ $0.side == .white }))
+        let black = PlaybackBot(side: .black, moves: moves.filter({ $0.side == .black }))
+        return Chess.Game(white, against: black)
     }
 }

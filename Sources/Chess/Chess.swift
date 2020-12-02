@@ -27,7 +27,7 @@ struct Chess_Preview: PreviewProvider {
                 VStack {
                     Button("Play \(sampleStore.game.activePlayer?.lastName ?? "") next move") {
                         previewCounter += 1
-                        sampleStore.game.nextTurn()
+                        sampleStore.send(.nextTurn)
                     }
                     Text("Count: \(previewCounter)")
                 }

@@ -19,7 +19,8 @@ final class RankAndFilesTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testRanks", testRanks)
+        ("testRanks", testRanks),
+        ("testFiles", testFiles)
     ]
 }
 

@@ -14,13 +14,17 @@ typealias ChessGameReducer<Game, Action, Environment> =
 
 extension ChessStore {
     static func chessReducer(
-        game: inout ChessGame,
+        game: inout Chess.Game,
         action: ChessAction,
         environment: ChessEnvironment
     ) -> AnyPublisher<ChessAction, Never>? {
         switch action {
+        case .nextTurn:
+            print("Next up... \(game.board.playingSide)")
+            game.nextTurn()
         case .startGame:
-            print("start game")
+            print("Starting...")
+            game.start()
         case .setBoard(let fen):
             if fen==Chess.Board.startingFEN {
                 print("Resetting board")
