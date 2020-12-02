@@ -185,9 +185,6 @@ extension Chess {
                     }
                     // Lastly add this move to our ledger
                     updates.append( Chess.UI.Update.ledger(move) )
-                    if !userPaused {
-                        nextTurn()
-                    }
                 }
                 
                 continueBasedOnStatus()
@@ -240,8 +237,9 @@ extension Chess {
         internal mutating func continueBasedOnStatus() {
             switch status() {
             case .active:
-                print("FEN: \(board.FEN)")
-                nextTurn()
+                if !userPaused {
+                    delegate?.send(.nextTurn)
+                }
             case .mate:
                 winningSide = board.playingSide.opposingSide
                 print("\nMate: \n\(pgn.formattedString)")

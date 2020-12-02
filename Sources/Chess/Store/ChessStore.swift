@@ -10,17 +10,17 @@ import SwiftUI
 import Combine
 
 final class ChessStore: ObservableObject, ChessGameDelegate {
-    @Published var game: ChessGame
+    @Published var game: Chess.Game
     var theme: Chess.UI.ChessTheme {
         environment.theme
     }
     private let environment: ChessEnvironment
-    private let reducer: ChessGameReducer<ChessGame, ChessAction, ChessEnvironment>
+    private let reducer: ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment>
     private var cancellables: Set<AnyCancellable> = []
 
     init(
-        initialGame: ChessGame,
-        reducer: @escaping ChessGameReducer<ChessGame, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
+        initialGame: Chess.Game,
+        reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
     ) {
         self.game = initialGame

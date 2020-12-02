@@ -10,12 +10,12 @@ import SwiftUI
 import Combine
 
 extension PreviewProvider {
-    static func previewChessReducer(state: inout ChessGame, action: ChessAction, environment: ChessEnvironment) -> AnyPublisher<ChessAction, Never>? {
+    static func previewChessReducer(state: inout Chess.Game, action: ChessAction, environment: ChessEnvironment) -> AnyPublisher<ChessAction, Never>? {
         return nil
     }
     static var previewChessStore: ChessStore {
-        let store = ChessStore(initialGame: ChessGame(),
-                                       reducer: previewChessReducer, environment: ChessEnvironment(target: .development))
+        let store = ChessStore(initialGame: Chess.Game(),
+                               reducer: ChessStore.chessReducer, environment: ChessEnvironment())
         store.game.board.resetBoard()
         return store
     }
