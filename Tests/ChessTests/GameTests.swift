@@ -9,17 +9,17 @@ final class GameTests: XCTestCase {
                                          side: .white, moves: ["e2e4", ""], responseDelay: testTimeout)
         let black = Chess.Robot.PlaybackBot(firstName: "Test", lastName: "Two",
                                          side: .black, moves: ["e7e5"], responseDelay: testTimeout)
-        let game = Chess.Game(white, against: black)
+        let initialGame = Chess.Game(white, against: black)
+        let store = ChessStore(initialGame: initialGame)
         let wait = testTimeout * 5
-        game.board.resetBoard()
-        game.nextTurn()
+        store.game.nextTurn()
         TestWait(wait)
-        XCTAssertEqual(game.round, 1)
-        XCTAssertEqual(game.board.FEN, "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1")
-        game.nextTurn()
+        XCTAssertEqual(store.game.round, 1)
+        XCTAssertEqual(store.game.board.FEN, "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1")
+        store.game.nextTurn()
         TestWait(wait)
-        XCTAssertEqual(game.round, 1)
-        XCTAssertEqual(game.board.FEN, "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2")
+        XCTAssertEqual(store.game.round, 1)
+        XCTAssertEqual(store.game.board.FEN, "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2")
     }
 
     static var allTests = [

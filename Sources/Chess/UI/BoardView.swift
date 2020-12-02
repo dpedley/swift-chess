@@ -39,14 +39,10 @@ struct BoardView: View {
                         }
                     }
                 }
-                .frame(width: geometry.size.width - 2,
-                       height: geometry.size.width - 2,
-                       alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                .clipped()
                 Spacer()
             }
-            .frame(width: geometry.size.width,
-                    height: geometry.size.height,
+            .frame(width: geometry.size.minimumLength,
+                    height: geometry.size.minimumLength,
                     alignment: .center)
         }
     }
