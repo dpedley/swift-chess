@@ -8,7 +8,7 @@
 import Foundation
 
 extension Chess.Game {
-    func buildCurrentStatus() -> Chess.GameStatus {
+    mutating func status() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
             if board.FEN == Chess.Board.startingFEN {
                 return .notYetStarted

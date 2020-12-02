@@ -14,6 +14,7 @@ struct ChessEnvironment {
         case development
     }
     var target: TargetEnvironment = .development
+    var theme = Chess.UI.ChessTheme()
 }
 
 

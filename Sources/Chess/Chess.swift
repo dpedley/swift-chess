@@ -14,16 +14,9 @@ public enum Chess { }
 
 struct Chess_Preview: PreviewProvider {
     static var previewCounter = 0
-    static func chessSampleReducer(state: inout ChessState, action: ChessAction, environment: ChessEnvironment) -> AnyPublisher<ChessAction, Never>? {
-        return nil
-    }
     static var sampleStore: ChessStore = {
-        let sampleGame = Chess.Game.sampleGame()
-        let initialState = ChessState(player: sampleGame.white, opponent: sampleGame.black)
-        let store = ChessStore(initialState: initialState,
-                                       reducer: chessSampleReducer, environment: ChessEnvironment(target: .development))
-        store.state.game.board.resetBoard()
-        store.state.game.userPaused = true
+        let store = ChessStore(initialGame: Chess.Game.sampleGame())
+        store.game.userPaused = true
         return store
     }()
     static var previews: some View {
@@ -31,11 +24,10 @@ struct Chess_Preview: PreviewProvider {
             HStack {
                 BoardView()
                     .environmentObject(sampleStore)
-                
                 VStack {
-                    Button("Play \(sampleStore.state.game.activePlayer?.lastName ?? "") next move") {
+                    Button("Play \(sampleStore.game.activePlayer?.lastName ?? "") next move") {
                         previewCounter += 1
-                        sampleStore.state.game.nextTurn()
+                        sampleStore.game.nextTurn()
                     }
                     Text("Count: \(previewCounter)")
                 }

@@ -15,10 +15,10 @@ struct SquareView: View, Identifiable {
     var body: some View {
         Rectangle()
             .fill(color)
-        store.state.game.board.squares[position].piece?.UI.asView()
+        store.game.board.squares[position].piece?.UI.asView()
     }
     var color: Color {
-        let themeColor = store.state.theme.boardTheme.color
+        let themeColor = store.theme.boardTheme.color
         return (file + row) % 2 == 0 ? themeColor.dark : themeColor.light
     }
     var file: Int { return position / 8 }
