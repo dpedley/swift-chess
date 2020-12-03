@@ -15,6 +15,7 @@ final class MoveTests: XCTestCase {
         
         var whiteMoveForwardTwo = Chess.Move.white.f2.f4
         TestMove(board.attemptMove(&whiteMoveForwardTwo))
+        board.turns.append(Chess.Turn(white: whiteMoveForwardTwo, black: nil))
         board.playingSide = .black
         var takeEnPassant = Chess.Move.black.g4.f3
         TestMove(board.attemptMove(&takeEnPassant))
@@ -55,7 +56,7 @@ final class MoveTests: XCTestCase {
     
     func testKingSideCastles() throws {
         let bothSidesCastleFEN = "rnbqk2r/pppp1pbp/5np1/4p3/2B1P3/5N1P/PPPP1PP1/RNBQK2R w KQkq - 0 1"
-        let castledFEN = "rnbq1rk1/pppp1pbp/5np1/4p3/2B1P3/5N1P/PPPP1PP1/RNBQ1RK1 w - - 0 2"
+        let castledFEN = "rnbq1rk1/pppp1pbp/5np1/4p3/2B1P3/5N1P/PPPP1PP1/RNBQ1RK1 w - - 0 1"
         var board = Chess.Board(FEN: bothSidesCastleFEN)
         let blackKing = try XCTUnwrap(board.squares[.e8].piece)
         let whiteKing = try XCTUnwrap(board.squares[.e1].piece)
@@ -67,12 +68,13 @@ final class MoveTests: XCTestCase {
         board.playingSide = .black
         var blackCastles = Chess.Move.black.O_O // another name for castleKingside
         TestMove(board.attemptMove(&blackCastles))
+        board.playingSide = .white
         XCTAssertEqual(board.FEN, castledFEN)
     }
 
     func testQueenSideCastles() throws {
         let bothSidesCastleFEN = "r3kbnr/pppnpppp/3qb3/3p2B1/3P4/2N5/PPPQPPPP/R3KBNR w KQkq - 0 1"
-        let castledFEN = "2kr1bnr/pppnpppp/3qb3/3p2B1/3P4/2N5/PPPQPPPP/2KR1BNR w - - 0 2"
+        let castledFEN = "2kr1bnr/pppnpppp/3qb3/3p2B1/3P4/2N5/PPPQPPPP/2KR1BNR w - - 0 1"
         var board = Chess.Board(FEN: bothSidesCastleFEN)
         let blackKing = try XCTUnwrap(board.squares[.e8].piece)
         let whiteKing = try XCTUnwrap(board.squares[.e1].piece)
@@ -84,6 +86,7 @@ final class MoveTests: XCTestCase {
         board.playingSide = .black
         var blackCastles = Chess.Move.black.castleQueenside // another name for O_O_O
         TestMove(board.attemptMove(&blackCastles))
+        board.playingSide = .white
         XCTAssertEqual(board.FEN, castledFEN)
     }
 

@@ -34,6 +34,9 @@ extension Chess {
         func isBot() -> Bool {
             fatalError("This method is meant to be overriden by subclasses")
         }
+        func robot() -> RobotPlayer {
+            return self as! RobotPlayer
+        }
         
         func timerRanOut() {
             fatalError("This method is meant to be overriden by subclasses")

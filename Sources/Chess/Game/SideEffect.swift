@@ -10,7 +10,7 @@ import Foundation
 
 extension Chess.Move {
     // TECH DEBT: Might be better to move the current king in attack stuff, and create a side effect of a move that is kingAttacked
-    enum SideEffect {
+    enum SideEffect: Error {
         case notKnown
         case castling(rook: Int, destination: Int)
         case enPassantInvade(territory: Int, invader: Int)

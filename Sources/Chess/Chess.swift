@@ -13,10 +13,10 @@ import Combine
 public enum Chess { }
 
 struct Chess_Preview: PreviewProvider {
-    static var previewCounter = 0
     static var sampleStore: ChessStore = {
         let store = ChessStore(initialGame: Chess.Game.sampleGame())
         store.game.userPaused = true
+        store.game.setRobotPlaybackSpeed(0.5)
         return store
     }()
     static var previews: some View {
@@ -25,11 +25,12 @@ struct Chess_Preview: PreviewProvider {
                 BoardView()
                     .environmentObject(sampleStore)
                 VStack {
-                    Button("Play \(sampleStore.game.activePlayer?.lastName ?? "") next move") {
-                        previewCounter += 1
-                        sampleStore.send(.nextTurn)
+                    Button("Play") {
+                        sampleStore.send(.startGame)
                     }
-                    Text("Count: \(previewCounter)")
+                    Button("Pause") {
+                        sampleStore.send(.pauseGame)
+                    }
                 }
             }
         }

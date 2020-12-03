@@ -13,9 +13,10 @@ extension Chess {
         var black: Move?
     }
     public class Move: NSObject {
-        enum Limitation: String {
+        enum Limitation: String, Error {
             case unknown = "Unknown limitation."
             case noPieceToMove = "The was no piece at the starting square."
+            case notYourTurn = "The wrong side tried to move."
             case invalidAttackForPiece = "You cannot attack this way with this piece."
             case invalidMoveForPiece = "This piece doesn't move that way."
             case sameSideAlreadyOccupiesDestination = "Two pieces cannot occupy the same square."

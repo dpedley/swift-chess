@@ -8,8 +8,8 @@ fileprivate let testTimeout: TimeInterval = 0.25
 
 final class ChessRobotTests: XCTestCase {
     func testRandomBots() {
-        let white = Chess.Robot.RandomBot(side: .white, matchLength: 3600)
-        let black = Chess.Robot.RandomBot(side: .black, matchLength: 3600)
+        let white = Chess.Robot.RandomBot(side: .white)
+        let black = Chess.Robot.RandomBot(side: .black)
         let initialGame = Chess.Game(white, against: black)
         let store = ChessStore(initialGame: initialGame)
         store.send(.nextTurn)

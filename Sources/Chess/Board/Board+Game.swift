@@ -49,7 +49,7 @@ extension Chess.Board  {
         
         guard let toPiece = toSquare.piece else {
             // The square we are moving to is empty, check that it's a valid move.
-            guard piece.isMoveValid(&move, board: self) else {
+            guard canPieceMove(&move, piece: piece) else {
                 return .failed(reason: .invalidMoveForPiece)
             }
             return nil
@@ -57,7 +57,7 @@ extension Chess.Board  {
         guard piece.side != toPiece.side else {
             return .failed(reason: .sameSideAlreadyOccupiesDestination)
         }
-        guard piece.isAttackValid(&move, board: self) else {
+        guard canPieceAttack(&move, piece: piece) else {
             return .failed(reason: .invalidAttackForPiece)
         }
         return nil
@@ -123,18 +123,25 @@ extension Chess.Board  {
         default:
             capturedPiece = squares[move.end].piece
         }
-        commit(move, capturedPiece: capturedPiece)
-        
+        do {
+            try commit(move, capturedPiece: capturedPiece)
+        } catch let error {
+            guard let limitation = error as? Chess.Move.Limitation else {
+                return .failed(reason: .invalidMoveForPiece)
+            }
+            return .failed(reason: limitation)
+        }
+
         return .success(capturedPiece: capturedPiece)
     }
     
     // Crashes if the move cannot be made, vet using attemptMove first.
-    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?)  {
+    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?) throws {
         guard let movingPiece = squares[move.start].piece else {
-            fatalError("Cannot move, no piece.")
+            throw Chess.Move.Limitation.noPieceToMove
         }
         guard movingPiece.side == playingSide else {
-            fatalError("Error, \(movingPiece.side) cannot move, it's \(playingSide)'s turn.")
+            throw Chess.Move.Limitation.notYourTurn
         }
 
         var unicodeString: String?
@@ -149,15 +156,15 @@ extension Chess.Board  {
 
         switch move.sideEffect {
         case .notKnown:
-            fatalError("Cannot commit move, it's side effect is unknown. \(move)")
+            throw move.sideEffect
         case .castling(let rookIndex, let destinationIndex):
             // We need to also move the rook
             guard let rook = squares[rookIndex].piece, rook.pieceType.isRook(),
                   rook.side == move.side else {
-                    fatalError("Cannot castle without a rook")
+                throw move.sideEffect
             }
             guard squares[destinationIndex].isEmpty else {
-                fatalError("Destination must be empty when castling \(move)")
+                throw move.sideEffect
             }
             unicodeString = (squares[rookIndex].isKingSide) ? "O-O" : "O-O-O"
             pgnString = unicodeString
@@ -197,22 +204,5 @@ extension Chess.Board  {
         }
         move.unicodePGN = unicodeString
         move.PGN = pgnString
-        
-        
-        if playingSide == .black {
-            if turns.count == 0 {
-                // This should only happen in board variants.
-                turns.append(Chess.Turn(white: move, black: nil))
-            } else {
-                // This is the usual black move follows white, so the turn exists in the stack.
-                turns[turns.count - 1].black = move
-            }
-            
-            fullMoves += 1
-        } else {
-            turns.append(Chess.Turn(white: move, black: nil))
-        }
-        
-        playingSide = playingSide.opposingSide
     }
 }
