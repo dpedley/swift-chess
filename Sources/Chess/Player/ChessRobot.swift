@@ -21,7 +21,6 @@ extension Chess {
                 fatalError("Cannot run a game turn without a game delegate.")
             }
             if stopAfterMove>0 && game.board.fullMoves >= stopAfterMove {
-                print("Stopping at the \(game.board.fullMoves) full move.")
                 return
             }
             let evaluteFEN = game.board.FEN
