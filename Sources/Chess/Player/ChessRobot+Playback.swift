@@ -11,10 +11,10 @@ import Foundation
 
 extension Chess.Robot {
     static let playbackDelay: TimeInterval = 0.1
-    public class PlaybackBot: Chess.Player {
+    public class PlaybackBot: Chess.Player, RobotPlayer {
         var moves: [Chess.Move] = []
         var currentMove = 0
-        let responseDelay: TimeInterval
+        var responseDelay: TimeInterval
         required init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moves: [Chess.Move], responseDelay: TimeInterval = playbackDelay) {
             self.responseDelay = responseDelay
             self.moves.append(contentsOf: moves)

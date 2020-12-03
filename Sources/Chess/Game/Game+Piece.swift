@@ -8,39 +8,36 @@
 
 import Foundation
 
-extension Chess.Piece {
-    func isAttackValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
+extension Chess.Board {
+    func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Attacks are moves, except when they aren't
-        switch pieceType {
+        switch piece.pieceType {
         case .pawn:
-            if move.rankDirection == side.rankDirection,
+            if move.rankDirection == piece.side.rankDirection,
                 move.rankDistance == 1, move.fileDistance == 1 {
-                if let board = board {
-                    // If we are passed a board, then it's only a valid attack if a piece is present.
-                    guard let _ = board.squares[move.end].piece else {
-                        return false
-                    }
+                // It's only a valid attack if a piece is present.
+                guard let _ = squares[move.end].piece else {
+                    return false
                 }
                 return true
             }
             return false
         default:
-            return isMoveValid(&move, board: board)
+            return canPieceMove(&move, piece: piece)
         }
     }
     
-    func isMoveValid(_ move: inout Chess.Move, board: Chess.Board? = nil) -> Bool {
-        
+    func canPieceMove(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Make sure it's a move
         if (move.rankDistance==0) && (move.fileDistance==0) {
             return false
         }
         
-        switch pieceType {
+        switch piece.pieceType {
         case .pawn(let hasMoved):
             // Only forward
-            if move.rankDirection == side.rankDirection {
-                if let _ = board?.squares[move.end].piece {
+            if move.rankDirection == piece.side.rankDirection {
+                if let _ = squares[move.end].piece {
                     // There is a piece at the destination, pawns only move to empty squares (this is not an attack)
                     return false
                 }
@@ -54,7 +51,7 @@ extension Chess.Piece {
                     }
                     // Ensure the pawn isn't trying to jump a piece
                     let jumpPosition = (move.start + move.end) / 2
-                    if let _ = board?.squares[jumpPosition].piece {
+                    if let _ = squares[jumpPosition].piece {
                         // There is a piece in the spot one space forward, we can't move 2 spaces.
                         return false
                     }
@@ -66,10 +63,102 @@ extension Chess.Piece {
                 
                 // Check the special case of EnPassant. The code would come through because the
                 // destination square is empty. Which the system sees as a move, not an attack.
-                if let enPassantPosition = board?.enPassantPosition, move.end == enPassantPosition, move.rankDistance == 1, move.fileDistance == 1 {
+                if let enPassantPosition = enPassantPosition, move.end == enPassantPosition, move.rankDistance == 1, move.fileDistance == 1 {
                     // We're capturing EnPassant, attach the SideEffect here.
                     move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
                                                                       trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
+                    return true
+                }
+            }
+            return false
+        case .knight:
+            return piece.isMoveValid(&move)
+        case .bishop, .rook, .queen:
+            if (piece.isMoveValid(&move)) {
+                return isMovePathOpen(move)
+            }
+            return false
+        case .king(let hasMoved):
+            if move.rankDistance<2, move.fileDistance<2 {
+                return true
+            }
+            
+            // Are we trying to castle?
+            if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
+                switch move.sideEffect {
+                case .notKnown:
+                    break
+                    // TODO: revisit what this is for?
+//                    print("Castling...")
+                default:
+                    break
+                }
+                let isKingSide: Bool = move.fileDirection > 0
+                let square = startingSquare(for: piece.side, pieceType: Chess.Piece.DefaultType.Rook, kingSide: isKingSide)
+                if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
+                    move.sideEffect = Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
+                    return true
+                }
+            }
+            return false
+        }
+    }
+    
+    private func isMovePathOpen(_ move: Chess.Move) -> Bool {
+        let travel = move.rankDistance > move.fileDistance ? move.rankDistance : move.fileDistance
+        guard travel>1 else {
+            // We didn't travel far enough to be blocked
+            return true
+        }
+        // Need to check steps between
+        for tween in 1..<travel {
+            let tweenPosition = Chess.Position.from(fileNumber: move.start.fileNumber + (tween * move.fileDirection),
+                rank: move.start.rank + (tween * move.rankDirection))
+            guard squares[tweenPosition].piece == nil else {
+                return false
+            }
+        }
+        return true
+    }
+}
+
+extension Chess.Piece {
+    func isAttackValid(_ move: inout Chess.Move) -> Bool {
+        // Attacks are moves, except when they aren't
+        switch pieceType {
+        case .pawn:
+            if move.rankDirection == side.rankDirection,
+                move.rankDistance == 1, move.fileDistance == 1 {
+                return true
+            }
+            return false
+        default:
+            return isMoveValid(&move)
+        }
+    }
+    
+    func isMoveValid(_ move: inout Chess.Move) -> Bool {
+        
+        // Make sure it's a move
+        if (move.rankDistance==0) && (move.fileDistance==0) {
+            return false
+        }
+        
+        switch pieceType {
+        case .pawn(let hasMoved):
+            // Only forward
+            if move.rankDirection == side.rankDirection {
+                if move.rankDistance == 1, move.fileDistance == 0 { // Plain vanilla pawn move
+                    return true
+                }
+                if move.rankDistance == 2, move.fileDistance == 0 {
+                    // Two step is only allow as the first move
+                    if hasMoved {
+                        return false
+                    }
+                    // The move is valid. Before we return, make sure to attach the enPassantPosition
+                    let jumpPosition = (move.start + move.end) / 2
+                    move.sideEffect = Chess.Move.SideEffect.enPassantInvade(territory: jumpPosition, invader: move.end)
                     return true
                 }
             }
@@ -82,22 +171,22 @@ extension Chess.Piece {
             return false
         case .bishop:
             if (move.rankDistance==move.fileDistance) {
-                return isMovePathOpen(move, board: board)
+                return true
             }
             return false
         case .rook:
             if (move.rankDistance==0) || (move.fileDistance==0) {
-                return isMovePathOpen(move, board: board)
+                return true
             }
             return false
         case .queen:
             // Like a bishop
             if (move.rankDistance==move.fileDistance) {
-                return isMovePathOpen(move, board: board)
+                return true
             }
             // Like a rook
             if (move.rankDistance==0) || (move.fileDistance==0) {
-                return isMovePathOpen(move, board: board)
+                return true
             }
             return false
         case .king(let hasMoved):
@@ -106,22 +195,11 @@ extension Chess.Piece {
             }
             
             // Are we trying to castle?
-            if !hasMoved, let board = board,
-                move.rankDistance == 0, move.fileDistance == 2 {
-                switch move.sideEffect {
-                case .notKnown:
-                    break
-                    // TODO: revisit what this is for?
-//                    print("Castling...")
-                default:
-                    break
-                }
-                let isKingSide: Bool = move.fileDirection > 0
-                let square = board.startingSquare(for: side, pieceType: DefaultType.Rook, kingSide: isKingSide)
-                if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
-                    move.sideEffect = Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
-                    return true
-                }
+            if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
+                let rookDistance = move.fileDirection < 0 ? 2 : 1
+                let rook = move.end + (move.fileDirection * rookDistance)
+                move.sideEffect = Chess.Move.SideEffect.castling(rook: rook, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
+                return true
             }
             return false
         }

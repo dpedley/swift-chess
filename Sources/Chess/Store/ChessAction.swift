@@ -10,6 +10,7 @@ import Foundation
 public enum ChessAction {
     case nextTurn
     case startGame
+    case pauseGame
     case setBoard(fen: String)
     case makeMove(move: Chess.Move)
 }

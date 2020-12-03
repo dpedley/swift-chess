@@ -7,6 +7,22 @@
 
 import Foundation
 
+extension Chess {
+    public enum GameStatus {
+        case unknown
+        case notYetStarted
+        case active
+        case mate
+        case resign
+        case timeout
+        case drawByRepetition
+        case drawByMoves
+        case drawBecauseOfInsufficientMatingMaterial
+        case stalemate
+        case paused
+    }
+}
+
 extension Chess.Game {
     mutating func status() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
