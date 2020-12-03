@@ -28,7 +28,8 @@ public protocol Chess_PieceCoordinating: class {
 }
 
 extension Chess {
-    struct Board {
+    struct Board: Identifiable {
+        let id = UUID()
         let populateExpensiveVisuals: Bool
         var squares: [Square] = []
         var turns: [Turn] = []

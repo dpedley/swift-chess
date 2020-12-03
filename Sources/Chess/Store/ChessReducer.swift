@@ -20,21 +20,23 @@ extension ChessStore {
     ) -> AnyPublisher<ChessAction, Never>? {
         switch action {
         case .nextTurn:
-            print("Next up... \(game.board.playingSide)")
+//            print("nextTurn: \(game.board.playingSide)")
             game.nextTurn()
         case .startGame:
-            print("Starting...")
+//            print("startGame: Starting...")
             game.start()
+        case .pauseGame:
+//            print("pauseGame: Pausing...")
+            game.userPaused = true
         case .setBoard(let fen):
-            if fen==Chess.Board.startingFEN {
-                print("Resetting board")
-            } else {
-                print("Board setup as: \(fen)")
-            }
+//            print("setBoard: Board setup as: \(fen)")
             game.board.resetBoard(FEN: fen)
         case .makeMove(let move):
-            print("Moved: \(move.description)")
+//            print("makeMove: \(move.side) \(move.description)")
             game.execute(move: move)
+            if game.board.lastMove == move {
+                game.changeSides(move.side.opposingSide)
+            }
         }
         return nil
     }

@@ -49,7 +49,7 @@ extension Chess.Board  {
         
         guard let toPiece = toSquare.piece else {
             // The square we are moving to is empty, check that it's a valid move.
-            guard piece.isMoveValid(&move, board: self) else {
+            guard canPieceMove(&move, piece: piece) else {
                 return .failed(reason: .invalidMoveForPiece)
             }
             return nil
@@ -57,7 +57,7 @@ extension Chess.Board  {
         guard piece.side != toPiece.side else {
             return .failed(reason: .sameSideAlreadyOccupiesDestination)
         }
-        guard piece.isAttackValid(&move, board: self) else {
+        guard canPieceAttack(&move, piece: piece) else {
             return .failed(reason: .invalidAttackForPiece)
         }
         return nil
@@ -123,18 +123,25 @@ extension Chess.Board  {
         default:
             capturedPiece = squares[move.end].piece
         }
-        commit(move, capturedPiece: capturedPiece)
-        
+        do {
+            try commit(move, capturedPiece: capturedPiece)
+        } catch let error {
+            guard let limitation = error as? Chess.Move.Limitation else {
+                return .failed(reason: .invalidMoveForPiece)
+            }
+            return .failed(reason: limitation)
+        }
+
         return .success(capturedPiece: capturedPiece)
     }
     
     // Crashes if the move cannot be made, vet using attemptMove first.
-    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?)  {
+    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?) throws {
         guard let movingPiece = squares[move.start].piece else {
-            fatalError("Cannot move, no piece.")
+            throw Chess.Move.Limitation.noPieceToMove
         }
         guard movingPiece.side == playingSide else {
-            fatalError("Error, \(movingPiece.side) cannot move, it's \(playingSide)'s turn.")
+            throw Chess.Move.Limitation.notYourTurn
         }
 
         var unicodeString: String?
@@ -149,15 +156,15 @@ extension Chess.Board  {
 
         switch move.sideEffect {
         case .notKnown:
-            fatalError("Cannot commit move, it's side effect is unknown. \(move)")
+            throw move.sideEffect
         case .castling(let rookIndex, let destinationIndex):
             // We need to also move the rook
             guard let rook = squares[rookIndex].piece, rook.pieceType.isRook(),
                   rook.side == move.side else {
-                    fatalError("Cannot castle without a rook")
+                throw move.sideEffect
             }
             guard squares[destinationIndex].isEmpty else {
-                fatalError("Destination must be empty when castling \(move)")
+                throw move.sideEffect
             }
             unicodeString = (squares[rookIndex].isKingSide) ? "O-O" : "O-O-O"
             pgnString = unicodeString
@@ -197,22 +204,117 @@ extension Chess.Board  {
         }
         move.unicodePGN = unicodeString
         move.PGN = pgnString
-        
-        
-        if playingSide == .black {
-            if turns.count == 0 {
-                // This should only happen in board variants.
-                turns.append(Chess.Turn(white: move, black: nil))
-            } else {
-                // This is the usual black move follows white, so the turn exists in the stack.
-                turns[turns.count - 1].black = move
+    }
+    
+    func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
+        // Attacks are moves, except when they aren't
+        switch piece.pieceType {
+        case .pawn:
+            if move.rankDirection == piece.side.rankDirection,
+                move.rankDistance == 1, move.fileDistance == 1 {
+                // It's only a valid attack if a piece is present.
+                guard let _ = squares[move.end].piece else {
+                    return false
+                }
+                return true
             }
-            
-            fullMoves += 1
-        } else {
-            turns.append(Chess.Turn(white: move, black: nil))
+            return false
+        default:
+            return canPieceMove(&move, piece: piece)
+        }
+    }
+    
+    func canPieceMove(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
+        // Make sure it's a move
+        if (move.rankDistance==0) && (move.fileDistance==0) {
+            return false
         }
         
-        playingSide = playingSide.opposingSide
+        switch piece.pieceType {
+        case .pawn(let hasMoved):
+            // Only forward
+            if move.rankDirection == piece.side.rankDirection {
+                if let _ = squares[move.end].piece {
+                    // There is a piece at the destination, pawns only move to empty squares (this is not an attack)
+                    return false
+                }
+                if move.rankDistance == 1, move.fileDistance == 0 { // Plain vanilla pawn move
+                    return true
+                }
+                if move.rankDistance == 2, move.fileDistance == 0 {
+                    // Two step is only allow as the first move
+                    if hasMoved {
+                        return false
+                    }
+                    // Ensure the pawn isn't trying to jump a piece
+                    let jumpPosition = (move.start + move.end) / 2
+                    if let _ = squares[jumpPosition].piece {
+                        // There is a piece in the spot one space forward, we can't move 2 spaces.
+                        return false
+                    }
+                    
+                    // The move is valid. Before we return, make sure to attach the enPassantPosition
+                    move.sideEffect = Chess.Move.SideEffect.enPassantInvade(territory: jumpPosition, invader: move.end)
+                    return true
+                }
+                
+                // Check the special case of EnPassant. The code would come through because the
+                // destination square is empty. Which the system sees as a move, not an attack.
+                if let enPassantPosition = enPassantPosition, move.end == enPassantPosition, move.rankDistance == 1, move.fileDistance == 1 {
+                    // We're capturing EnPassant, attach the SideEffect here.
+                    move.sideEffect = Chess.Move.SideEffect.enPassantCapture(attack: move.end,
+                                                                      trespasser: move.start.adjacentPosition(rankOffset: 0, fileOffset: move.fileDirection) )
+                    return true
+                }
+            }
+            return false
+        case .knight:
+            return piece.isMoveValid(&move)
+        case .bishop, .rook, .queen:
+            if (piece.isMoveValid(&move)) {
+                return isMovePathOpen(move)
+            }
+            return false
+        case .king(let hasMoved):
+            if move.rankDistance<2, move.fileDistance<2 {
+                return true
+            }
+            
+            // Are we trying to castle?
+            if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
+                switch move.sideEffect {
+                case .notKnown:
+                    break
+                    // TODO: revisit what this is for?
+//                    print("Castling...")
+                default:
+                    break
+                }
+                let isKingSide: Bool = move.fileDirection > 0
+                let square = startingSquare(for: piece.side, pieceType: Chess.Piece.DefaultType.Rook, kingSide: isKingSide)
+                if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
+                    move.sideEffect = Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
+                    return true
+                }
+            }
+            return false
+        }
+    }
+    
+    private func isMovePathOpen(_ move: Chess.Move) -> Bool {
+        let travel = move.rankDistance > move.fileDistance ? move.rankDistance : move.fileDistance
+        guard travel>1 else {
+            // We didn't travel far enough to be blocked
+            return true
+        }
+        // Need to check steps between
+        for tween in 1..<travel {
+            let tweenPosition = Chess.Position.from(fileNumber: move.start.fileNumber + (tween * move.fileDirection),
+                rank: move.start.rank + (tween * move.rankDirection))
+            guard squares[tweenPosition].piece == nil else {
+                return false
+            }
+        }
+        return true
     }
 }

@@ -12,21 +12,7 @@ public protocol ChessGameDelegate: AnyObject {
     func send(_ action: ChessAction)
 }
 
-extension Chess {
-    public enum GameStatus {
-        case unknown
-        case notYetStarted
-        case active
-        case mate
-        case resign
-        case timeout
-        case drawByRepetition
-        case drawByMoves
-        case drawBecauseOfInsufficientMatingMaterial
-        case stalemate
-        case paused
-    }
-    
+extension Chess {    
     public struct Game: Identifiable {
         public let id = UUID()
         weak var delegate: ChessGameDelegate?
@@ -184,17 +170,25 @@ extension Chess {
                         }
                     }
                     // Lastly add this move to our ledger
-                    updates.append( Chess.UI.Update.ledger(move) )
+                    updates.append(Chess.UI.Update.ledger(move))
+                    if board.playingSide == .black {
+                        if board.turns.count == 0 {
+                            // This should only happen in board variants.
+                            board.turns.append(Chess.Turn(white: move, black: nil))
+                        } else {
+                            // This is the usual black move follows white, so the turn exists in the stack.
+                            board.turns[board.turns.count - 1].black = move
+                        }
+                        board.fullMoves += 1
+                    } else {
+                        board.turns.append(Chess.Turn(white: move, black: nil))
+                    }
                 }
                 
-                continueBasedOnStatus()
             case .failed(reason: let reason):
                 print("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     updateBoard(human: human, failed: move, with: reason)
-                    
-                    // Try again human.
-                    continueBasedOnStatus()
                 } else {
                     // a bot failed to move, for some this means resign
                     
@@ -223,7 +217,7 @@ extension Chess {
         internal func updateBoard(human: Chess.HumanPlayer, failed move: Chess.Move, with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
-            case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove, .sameSideAlreadyOccupiesDestination:
+            case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove, .notYourTurn, .sameSideAlreadyOccupiesDestination:
                 // Nothing to see here, just humans
                 break
             case .kingWouldBeUnderAttackAfterMove:
@@ -234,17 +228,33 @@ extension Chess {
             }
         }
         
+        mutating func changeSides(_ side: Chess.Side) {
+            board.playingSide = side
+            // TODO: this is where the clock updates might happen
+            continueBasedOnStatus()
+        }
+        
         internal mutating func continueBasedOnStatus() {
-            switch status() {
+            let status = self.status()
+            switch status {
             case .active:
                 if !userPaused {
-                    delegate?.send(.nextTurn)
+                    nextTurn()
                 }
             case .mate:
                 winningSide = board.playingSide.opposingSide
                 print("\nMate: \n\(pgn.formattedString)")
             default:
                 break
+            }
+        }
+        
+        mutating func setRobotPlaybackSpeed(_ responseDelay: TimeInterval) {
+            if var white = white as? RobotPlayer {
+                white.responseDelay = responseDelay
+            }
+            if var black = black as? RobotPlayer {
+                black.responseDelay = responseDelay
             }
         }
     }

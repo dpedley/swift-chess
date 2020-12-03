@@ -22,10 +22,10 @@ struct PieceView: View {
             .foregroundColor(style.fill)
         // Then outline it
         PieceShape(artwork: artwork)
-            .stroke(style.outline)
+            .stroke(style.outline, lineWidth: 5)
         // Render the details in the highlight color
         PieceShape.Details(artwork: artwork)
-            .stroke(style.highlight)
+            .stroke(style.highlight, lineWidth: 5)
     }
     init(_ artwork: PieceArtwork, style: PieceStyle) {
         _style = StateObject(wrappedValue: style)

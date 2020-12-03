@@ -52,7 +52,8 @@ final class BoardFenTests: XCTestCase {
         
         var qtq = Chess.Move.white.b6.c7
         TestMove(board.attemptMove(&qtq))
-        
+        board.playingSide = qtq.side.opposingSide
+
         XCTAssertNotNil(queenTakesQueen, "Cannot find critical move, queen takes queen")
         guard var move = queenTakesQueen?.move else {
             XCTFail("No move for queen to take queen.")
