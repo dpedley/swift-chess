@@ -21,7 +21,7 @@ final class GameTests: XCTestCase {
         let initialGame = Chess.Game.sampleGame()
         let store = ChessStore(initialGame: initialGame)
         store.send(.startGame)
-        TestWait(testTimeout * 40) // 60 moves per side?
+        TestWait(testTimeout * 80) // 60 moves per side?
         XCTAssertEqual(store.game.board.FEN, "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 0 43")
     }
 

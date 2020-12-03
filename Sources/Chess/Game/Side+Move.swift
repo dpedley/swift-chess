@@ -48,7 +48,6 @@ extension Chess.Side {
                     return nil
             }
             promotingMove.sideEffect = .promotion(piece: promotedPiece)
-            print("Promoting \(fromString) \(promotingMove) \(promotedPiece)")
             return promotingMove
         }
         let startPosition = String(fromString.dropLast(2))
