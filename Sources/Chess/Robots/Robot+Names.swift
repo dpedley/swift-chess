@@ -8,6 +8,8 @@
 import Foundation
 
 extension Chess.Robot {
+    /// A utllity function to give the bots some unique first names.
+    /// - Returns: A random string, one of the names below.
     static func randomFirstName() -> String {
         return [
             "Sherice",

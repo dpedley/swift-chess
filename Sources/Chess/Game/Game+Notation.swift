@@ -104,8 +104,10 @@ extension Chess.Game {
     }
     
     static func sampleGame() -> Chess.Game {
-        let fischer = Chess.Robot.PlaybackBot(firstName: "Robert J.", lastName: "Fischer", side: .white, moveStrings: [ "e2e4", "g1f3", "f1b5", "b5a4", "O-O", "f1e1", "a4b3", "c2c3", "h2h3", "d2d4", "c3c4", "c4b5", "b1c3", "c1g5", "c3b1", "g5h4", "d4e5", "h4e7", "e5d6", "b1d2", "d2c4", "b3c4", "f3e5", "c4f7", "e5f7", "d1e1", "e1e3", "e3g5", "b2b3", "a2a3", "a3b4", "a1a5", "f2f3", "g1f2", "a5a7", "a7a6", "f2e1", "g2g3", "e1d2", "a6d6", "d6a6", "g3g4", "a6e6"], responseDelay: 0.05)
-        let spassky = Chess.Robot.PlaybackBot(firstName: "Boris V.", lastName: "Spassky", side: .black, moveStrings: [ "e7e5", "b8c6", "a7a6", "g8f6", "f8e7", "b7b5", "d7d6", "O-O", "c6b8", "b8d7", "c7c6", "a6b5", "c8b7", "b5b4", "h7h6", "c6c5", "f6e4", "d8e7", "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5", "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5", "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"], responseDelay: 0.05)
+        let fischer = Chess.Robot.PlaybackBot(firstName: "Robert J.", lastName: "Fischer", side: .white, moveStrings: [ "e2e4", "g1f3", "f1b5", "b5a4", "O-O", "f1e1", "a4b3", "c2c3", "h2h3", "d2d4", "c3c4", "c4b5", "b1c3", "c1g5", "c3b1", "g5h4", "d4e5", "h4e7", "e5d6", "b1d2", "d2c4", "b3c4", "f3e5", "c4f7", "e5f7", "d1e1", "e1e3", "e3g5", "b2b3", "a2a3", "a3b4", "a1a5", "f2f3", "g1f2", "a5a7", "a7a6", "f2e1", "g2g3", "e1d2", "a6d6", "d6a6", "g3g4", "a6e6"])
+        let spassky = Chess.Robot.PlaybackBot(firstName: "Boris V.", lastName: "Spassky", side: .black, moveStrings: [ "e7e5", "b8c6", "a7a6", "g8f6", "f8e7", "b7b5", "d7d6", "O-O", "c6b8", "b8d7", "c7c6", "a6b5", "c8b7", "b5b4", "h7h6", "c6c5", "f6e4", "d8e7", "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5", "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5", "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"])
+        fischer.responseDelay = 0.05
+        spassky.responseDelay = 0.05
         return Chess.Game(fischer, against: spassky)
     }
 }
