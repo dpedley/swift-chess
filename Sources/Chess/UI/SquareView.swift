@@ -28,7 +28,9 @@ struct SquareView: View, Identifiable {
 struct SquareView_Preview: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center, content: {
-            SquareView(position: 3).environmentObject(previewChessStore)
+            SquareView(position: 3)
+                .environmentObject(previewChessStore)
+        // See ChessStore+Preview.swift for ^^ this
         })
         .background(Color.gray)
         .frame(width: 300,

@@ -51,5 +51,6 @@ struct BoardView: View {
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
         BoardView().environmentObject(previewChessStore)
+        // See ChessStore+Preview.swift for ^^ this
     }
 }

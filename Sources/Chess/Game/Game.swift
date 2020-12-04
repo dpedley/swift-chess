@@ -250,10 +250,10 @@ extension Chess {
         }
         
         mutating func setRobotPlaybackSpeed(_ responseDelay: TimeInterval) {
-            if var white = white as? RobotPlayer {
+            if let white = white as? Chess.Robot {
                 white.responseDelay = responseDelay
             }
-            if var black = black as? RobotPlayer {
+            if let black = black as? Chess.Robot {
                 black.responseDelay = responseDelay
             }
         }
