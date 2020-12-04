@@ -69,11 +69,19 @@ extension Chess {
             self.side = side
             self.start = start
             self.end = end
+            self.timeElapsed = ponderTime
+            
+            guard !end.isResign else {
+                self.rankDistance = 0
+                self.fileDistance = 0
+                self.rankDirection = 0
+                self.fileDirection = 0
+                return
+            }
             self.rankDistance = start.rankDistance(from: end)
             self.fileDistance = start.fileDistance(from: end)
             self.rankDirection = (start.rank == end.rank) ? 0 : (start.rank < end.rank) ? 1 : -1
             self.fileDirection = (start.file == end.file) ? 0 : (start.file < end.file) ? 1 : -1
-            self.timeElapsed = ponderTime
         }
     }
 }

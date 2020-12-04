@@ -1,21 +1,16 @@
 //
-//  RandomBot.swift
-//  
+//  GreedyBot.swift
 //
-//  Created by Douglas Pedley on 11/26/20.
+// As the name implies, greedy bot looks to grab pieces
+// at any opportunity. It takes risks without looking at
+// the consequences.
+//
+//  Created by Douglas Pedley on 12/3/20.
 //
 
 import Foundation
-import SwiftUI
 
 extension Chess.Robot {
-    class RandomBot: Chess.Robot {
-        override func evalutate(board: Chess.Board) -> Chess.Move? {
-            // When in doubt, pick a random move
-            return board.createValidVariants(for: side)?.randomElement()?.move
-        }
-    }
-
     class GreedyBot: RandomBot {
         let noBackupMove = Double.nan
         override func evalutate(board: Chess.Board) -> Chess.Move? {
@@ -59,29 +54,3 @@ extension Chess.Robot {
     }
 }
 
-struct RandomBotGamePreview: PreviewProvider {
-    static var store: ChessStore = {
-        let white = Chess.Robot.GreedyBot(side: .white, stopAfterMove: 32)
-        let black = Chess.Robot.GreedyBot(side: .black, stopAfterMove: 32)
-        let store = ChessStore(initialGame: .init(white, against: black))
-        store.game.userPaused = true
-        store.game.setRobotPlaybackSpeed(3)
-        return store
-    }()
-    static var previews: some View {
-        GeometryReader { geometry in
-            HStack {
-                BoardView()
-                    .environmentObject(store)
-                VStack {
-                    Button("Play") {
-                        store.send(.startGame)
-                    }
-                    Button("Pause") {
-                        store.send(.pauseGame)
-                    }
-                }
-            }
-        }
-    }
-}

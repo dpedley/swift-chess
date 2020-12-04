@@ -1,22 +1,37 @@
 //
-//  File.swift
-//  
+//  ChessRobot.swift
+//
+//  A Chess Robot is a base class that negotiates the interations
+//  between the game being played, and the ChessStore where the
+//  Player's interactions are handled.
+//
+//  The main assumption is that subclasses will provide an evaluation
+//  function. See: evalutate(board: Chess.Board) -> Chess.Move?
 //
 //  Created by Douglas Pedley on 11/26/20.
 //
 
 import Foundation
 
-protocol RobotPlayer {
-    var responseDelay: TimeInterval { get set }
-}
-
 extension Chess {
-    // A base robot, the evaluate is meant for subclasses
-    class Robot: Chess.Player, RobotPlayer {
-        var responseDelay: TimeInterval = 0.0
+    /// A base robot, the evaluate is meant for subclasses
+    class Robot: Chess.Player {
+        var responseDelay: TimeInterval = 0.0 // How long to wait before starting to process the evaluation 0 = immediate
         var stopAfterMove: Int
+        
+        /// A few overrides from Chess.Player
+        override func isBot() -> Bool { return true }
+        override func prepareForGame() { }
+        override func timerRanOut() {}
+        /// The main override from Chess.Player
+        ///
+        /// This is called by the game engine when this Robot Player should make a move.
+        /// After a delay it evaulates the board that it was given.
+        /// The move from the evaluation is sent to the ChessStore
+        ///
+        /// - Parameter game: The game that is being played. This is immutable. The ChessStore is used for updates.
         override func turnUpdate(game: Chess.Game) {
+            guard game.board.playingSide == side else { return }
             guard let delegate = game.delegate else {
                 fatalError("Cannot run a game turn without a game delegate.")
             }
@@ -45,13 +60,22 @@ extension Chess {
                 delegate.send(.makeMove(move: move))
             }
         }
+        /// Evaluate board for the optimal move
+        /// This is meant to be overriden by subclasses as the main game play
+        /// interaction for chess robots.
+        ///
+        /// - Parameter board: The board waiting for a move to be player by this bot.
+        /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
         func evalutate(board: Chess.Board) -> Chess.Move? {
             fatalError("This is meant to be overridden.")
         }
-        override func isBot() -> Bool { return true }
-        override func prepareForGame() { }
-        override func timerRanOut() {}
-        required init(side: Chess.Side, stopAfterMove: Int = 100) {
+        /// The required initializer for the Robot subclasses.
+        /// let fred = RandomBot(.white)
+        /// let jane = GreedyBot(.black)
+        ///
+        /// - Parameter side: The `Chess.Side` that this bot should play.
+        /// - Parameter stopAfterMove: To keep things from running amok, you can set a move, and the bot will stop after that move has been performed.
+        init(side: Chess.Side, stopAfterMove: Int = 100) {
             self.stopAfterMove = stopAfterMove
             super.init(side: side, matchLength: nil)
         }
