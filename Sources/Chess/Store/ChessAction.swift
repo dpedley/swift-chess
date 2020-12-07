@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChessAction.swift
 //  
 //
 //  Created by Douglas Pedley on 11/26/20.

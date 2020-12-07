@@ -2,48 +2,44 @@
 //  ChessRobotTests.swift
 //  
 import XCTest
+import Combine
 @testable import Chess
 
 fileprivate let testTimeout: TimeInterval = 0.25
 
 final class ChessRobotTests: XCTestCase {
+    var store: ChessStore? = nil
+    var cancellables = Set<AnyCancellable>()
     func testRandomBots() {
-        let white = Chess.Robot.RandomBot(side: .white)
-        let black = Chess.Robot.RandomBot(side: .black)
+        let moveCount = 13
+        let white = Chess.Robot.RandomBot(side: .white, stopAfterMove: moveCount)
+        let black = Chess.Robot.RandomBot(side: .black, stopAfterMove: moveCount)
         let initialGame = Chess.Game(white, against: black)
         let store = ChessStore(initialGame: initialGame)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 1)
-        XCTAssertEqual(store.game.board.playingSide, .black)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 2)
-        XCTAssertEqual(store.game.board.playingSide, .white)
+        let gameCompleted = expectation(description: "testRandomBots")
+        store.$game.sink(receiveValue: { game in
+            guard game.board.fullMoves == moveCount else { return }
+            gameCompleted.fulfill()
+        }).store(in: &cancellables)
+        store.send(.startGame)
+        self.store = store
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
+
     func testPlaybackBot() {
-        let initialGame = Chess.Robot.playback(moves: [
-            Chess.Move.white.e2.e4, Chess.Move.black.e7.e5,
-            Chess.Move.white.d2.d3, Chess.Move.black.d7.d6])
+        let initialGame = Chess.Game.sampleGame()
         let store = ChessStore(initialGame: initialGame)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 1)
-        XCTAssertEqual(store.game.board.playingSide, .black)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 2)
-        XCTAssertEqual(store.game.board.playingSide, .white)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 2)
-        XCTAssertEqual(store.game.board.playingSide, .black)
-        store.send(.nextTurn)
-        TestWait(testTimeout)
-        XCTAssertEqual(store.game.board.fullMoves, 3)
-        XCTAssertEqual(store.game.board.playingSide, .white)
-        XCTAssertEqual(store.game.board.FEN, "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3")
+        let gameCompleted = expectation(description: "testPlaybackBot")
+        var fulfilled = false
+        store.$game.sink(receiveValue: { game in
+            guard game.board.FEN == "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 0 43", !fulfilled else { return }
+            fulfilled = true
+            gameCompleted.fulfill()
+        }).store(in: &cancellables)
+        store.send(.startGame)
+        self.store = store
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     static var allTests = [
