@@ -68,7 +68,7 @@ extension Chess {
             guard let piece = self.piece else { return nil }
             var destinations: [Chess.Position] = []
             for fenIndex in 0..<64 {
-                let end = Chess.Position.from(FENIndex: fenIndex)
+                let end = Chess.Position(fenIndex)
                 guard end != position else { continue }
                 var move = Chess.Move(side: piece.side, start: position, end: end)
                 if piece.isMoveValid(&move) {

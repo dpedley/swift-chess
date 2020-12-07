@@ -48,7 +48,7 @@ extension Chess {
             }
         }
         public init(gameDelegate: ChessGameDelegate? = nil) {
-            self.init(.init(side: .white, matchLength: 0), against: .init(side: .black, matchLength: 0), gameDelegate: gameDelegate)
+            self.init(.init(side: .white), against: .init(side: .black), gameDelegate: gameDelegate)
         }
         public init(_ player: Player, against challenger: Player, gameDelegate: ChessGameDelegate? = nil) {
             self.delegate = gameDelegate
