@@ -39,8 +39,11 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
         }
 
         effect
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink(receiveValue: send)
             .store(in: &cancellables)
     }
+    
+    
+    
 }
