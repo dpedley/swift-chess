@@ -59,7 +59,7 @@ extension Chess {
         init(populateExpensiveVisuals: Bool = false) {
             self.populateExpensiveVisuals = populateExpensiveVisuals
             for index in 0...63 {
-                let newSquare = Square(position: Position.from(FENIndex: index))
+                let newSquare = Square(position: Position(index))
                 squares.append(newSquare)
             }
         }

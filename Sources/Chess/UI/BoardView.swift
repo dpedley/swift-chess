@@ -8,42 +8,33 @@
 import SwiftUI
 import Combine
 
-struct BoardView: View {
+struct BoardView: View, Identifiable {
     let id = UUID()
     @EnvironmentObject var store: ChessStore
-    var squares: [SquareView] {
-        var squares: [SquareView] = []
-        for i in 0..<64 {
-            let squareView = SquareView(position: i)
-            _ = squareView.environmentObject(store)
-            squares.append(squareView)
-        }
-        return squares
+    let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
+    var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
+    func color(for index: Int) -> Color {
+        return (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0 ? themeColor.dark : themeColor.light
     }
-    static let oneEighth = CGAffineTransform(scaleX: 0.125, y: 0.125)
-    func move(_ position: Int, in geometry: GeometryProxy) -> CGAffineTransform {
-        return Self.oneEighth
-            .translatedBy(x: CGFloat(position % 8) * geometry.size.width,
-                          y: CGFloat(position / 8) * geometry.size.height)
-    }
-
     var body: some View {
         GeometryReader { geometry in
-            VStack() {
-                Spacer()
-                ZStack() {
-                    GeometryReader { boardGeometry in
-                        ForEach(squares) { square in
-                            square.transformEffect(move(square.position, in: boardGeometry))
-                                
+            ZStack() {
+                LazyVGrid(columns: columns, spacing: 0) {
+                    ForEach(0..<64) { idx in
+                        ZStack {
+                            Rectangle() // The square background
+                                .fill(color(for: idx))
+                                .aspectRatio(1, contentMode: .fill)
+                            store.game.board.squares[idx].piece?.UI.asView()
+                                .onDrag({ NSItemProvider(object:  Chess.Position(idx).FEN as NSString) })
+                            
                         }
                     }
                 }
-                Spacer()
             }
             .frame(width: geometry.size.minimumLength,
-                    height: geometry.size.minimumLength,
-                    alignment: .center)
+                   height: geometry.size.minimumLength,
+                   alignment: .center)
         }
     }
 }

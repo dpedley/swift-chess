@@ -21,7 +21,7 @@ extension Chess {
         var board: Board
         init(originalFEN: String, changesToAttempt: [BoardChange], deepVariant: Bool) {
             self.originalFEN = originalFEN
-            board = Board(FEN: originalFEN)
+            var board = Board(FEN: originalFEN)
             var actualChanges: [BoardChange] = []
             for change in changesToAttempt {
                 switch change {
@@ -39,11 +39,15 @@ extension Chess {
                     actualChanges.append(change)
                 }
             }
+            self.board = board
             self.changes = actualChanges
         }        
     }
     
     class SingleMoveVariant: BoardVariant {
+        lazy var pieceWeights: GameAnalysis = {
+            return board.pieceWeights()
+        }()
         var move: Move? {
             guard let firstChange = changes.first,
                 case .moveMade(let firstMove) = firstChange else {
