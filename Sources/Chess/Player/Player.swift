@@ -22,7 +22,7 @@ extension Chess {
             }
             return "\(lastName), \(firstName)"
         }
-        public init(side: Side, matchLength: TimeInterval?) {
+        public init(side: Side, matchLength: TimeInterval? = nil) {
             self.side = side
             self.timeLeft = matchLength
         }

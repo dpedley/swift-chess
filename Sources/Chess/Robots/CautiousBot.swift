@@ -1,25 +1,30 @@
 //
-//  GreedyBot.swift
+//  CautiousBot.swift
+//  
+// As the name implies, cautious bot will first look at
+// the consequences to an tries to find moves that aren't risky
 //
-// As the name implies, greedy bot looks to grab pieces
-// at any opportunity. It takes risks without looking at
-// the consequences.
-//
-//  Created by Douglas Pedley on 12/3/20.
+//  Created by Douglas Pedley on 12/5/20.
 //
 
 import Foundation
 
 extension Chess.Robot {
-    class GreedyBot: RandomBot {
+    class CautiousBot: RandomBot {
         override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
             guard let choices = board.createValidVariants(for: side) else { return nil }
             var theChosen: [Chess.Move] = []
             var bestGap: Double?
             for choice in choices {
                 guard let move = choice.move else { continue }
-                let pieceWeights = choice.board.pieceWeights()
-                let choiceGap = pieceWeights.value(for: side) - pieceWeights.value(for: side.opposingSide)
+                guard let responses = choice.board.createValidVariants(for: side.opposingSide),
+                      let bestResponse = responses.sorted(by: {
+                                                            $0.pieceWeights.value(for: side.opposingSide) >
+                                                                $1.pieceWeights.value(for: side.opposingSide) } ).first else {
+                    continue
+                }
+                
+                let choiceGap = bestResponse.pieceWeights.value(for: side) - bestResponse.pieceWeights.value(for: side.opposingSide)
                 guard let currentBestGap = bestGap else {
                     // first one, it is worthy
                     bestGap = choiceGap
