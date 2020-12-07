@@ -23,7 +23,7 @@ final class ChessRobotTests: XCTestCase {
         }).store(in: &cancellables)
         store.send(.startGame)
         self.store = store
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 30, handler: nil)
     }
 
 
@@ -39,7 +39,7 @@ final class ChessRobotTests: XCTestCase {
         }).store(in: &cancellables)
         store.send(.startGame)
         self.store = store
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 30, handler: nil)
     }
 
     static var allTests = [
