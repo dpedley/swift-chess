@@ -30,7 +30,6 @@ extension Chess.Board {
                     fen += "\(emptyCount)"
                     emptyCount = 0
                 }
-                
                 // No slash after the final rank
                 if square.position.rank>1 {
                     fen += "/"
@@ -50,7 +49,6 @@ extension Chess.Board {
         fen += " \(playingSide.FEN) \(castling) \(enPassantPosition?.FEN ?? "-") 0 \(fullMoves)"
         return fen
     }
-
     mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
         turns.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
@@ -61,10 +59,8 @@ extension Chess.Board {
             fatalError("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
         }
         fullMoves = moveCount
-        
-        // TODO: castling checks in the hasMoved below
-        // TODO: en passant square last move side effect additions
-        
+        // Still UNDONE: castling checks in the hasMoved below
+        // en passant square last move side effect additions
         guard let piecesString = FENParts.first else {
             fatalError("Invalid FEN")
         }
@@ -111,7 +107,6 @@ extension Chess.Board {
             rankIndex+=1
         }
         playingSide = newSide
-
         // Update the UI
         // TODO: Vet the use of the old UI update here.
 //        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })

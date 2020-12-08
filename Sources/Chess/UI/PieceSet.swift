@@ -71,17 +71,17 @@ extension Chess.UI {
         init() { self = .none }
         init(side: Chess.Side, pieceType: Chess.PieceType) {
             switch pieceType {
-            case .pawn(_):
+            case .pawn:
                 self = (side == .black) ? .blackPawn : .whitePawn
-            case .knight(_):
+            case .knight:
                 self = (side == .black) ? .blackKnight : .whiteKnight
-            case .bishop(_):
+            case .bishop:
                 self = (side == .black) ? .blackBishop : .whiteBishop
-            case .rook(_, _):
+            case .rook:
                 self = (side == .black) ? .blackRook : .whiteRook
-            case .queen(_):
+            case .queen:
                 self = (side == .black) ? .blackQueen : .whiteQueen
-            case .king(_):
+            case .king:
                 self = (side == .black) ? .blackKing : .whiteKing
             }
         }

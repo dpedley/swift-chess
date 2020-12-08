@@ -21,7 +21,10 @@ extension Chess.Robot {
             self.lastName = lastName ?? side.description.capitalized
         }
         convenience init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moveStrings: [String]) {
-            self.init(firstName: firstName, lastName: lastName, side: side, moves: moveStrings.compactMap({ side.twoSquareMove(fromString: $0) }))
+            self.init(firstName: firstName,
+                      lastName: lastName,
+                      side: side,
+                      moves: moveStrings.compactMap({ side.twoSquareMove(fromString: $0) }))
         }
         override func evalutate(board: Chess.Board) -> Chess.Move? {
             guard self.currentMove<self.moves.count else {

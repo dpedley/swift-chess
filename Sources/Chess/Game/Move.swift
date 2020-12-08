@@ -7,13 +7,14 @@
 
 import Foundation
 
+// swiftlint:disable nesting
 extension Chess {
     struct Turn {
         var white: Move?
         var black: Move?
     }
     public class Move: NSObject {
-        static func ==(lhs: Move, rhs: Move) -> Bool {
+        static func == (lhs: Move, rhs: Move) -> Bool {
             return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
         }
         enum Limitation: String, Error {
@@ -29,12 +30,11 @@ extension Chess {
             case success(capturedPiece: Piece?)
             case failed(reason: Limitation)
         }
-        
         // Core properties
         let side: Chess.Side
         let start: Chess.Position
         let end: Chess.Position
-        
+
         // Computed move constants
         var unicodePGN: String? // THis is set when the move is committed.
         var PGN: String? // THis is set when the move is committed.
@@ -42,7 +42,6 @@ extension Chess {
         let fileDistance: Int
         let rankDirection: Int
         let fileDirection: Int
-        
         var timeElapsed: TimeInterval?
         var sideEffect: SideEffect = .notKnown
         var isResign: Bool {
@@ -54,7 +53,6 @@ extension Chess {
         var continuesGameplay: Bool {
             return end.isBoardPosition
         }
-        
         override public var description: String {
             let desc: String
             if isResign {
@@ -73,7 +71,6 @@ extension Chess {
             self.start = start
             self.end = end
             self.timeElapsed = ponderTime
-            
             guard !end.isResign else {
                 self.rankDistance = 0
                 self.fileDistance = 0
@@ -88,3 +85,4 @@ extension Chess {
         }
     }
 }
+// swiftlint:enable nesting

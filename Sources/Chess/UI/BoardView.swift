@@ -8,8 +8,7 @@
 import SwiftUI
 import Combine
 
-struct BoardView: View, Identifiable {
-    let id = UUID()
+struct BoardView: View {
     @EnvironmentObject var store: ChessStore
     let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
     var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }

@@ -11,12 +11,10 @@ import SwiftUI
 extension Chess.Robot {
     class RandomBot: Chess.Robot {
         func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
-            return board.createValidVariants(for: side)?.compactMap( { $0.move })
+            return board.createValidVariants(for: side)?.compactMap { $0.move }
         }
-        
         override func evalutate(board: Chess.Board) -> Chess.Move? {
             guard board.playingSide == side else { return nil }
-            
             // When in doubt, pick a random move
             guard let worthyChoices = worthyChoices(board: board) else {
                 print("No moves chosen.")
@@ -26,4 +24,3 @@ extension Chess.Robot {
         }
     }
 }
-

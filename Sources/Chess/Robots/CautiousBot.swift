@@ -28,13 +28,13 @@ extension Chess.Robot {
                 guard let move = potentials.first?.move else { return nil }
                 return [move]
             }
-            
-            let sorted = potentials.sorted(by: { $0.pieceWeights.value(for: side.opposingSide) < $1.pieceWeights.value(for: side.opposingSide) })
+            let sorted = potentials.sorted {
+                $0.pieceWeights.value(for: side.opposingSide) < $1.pieceWeights.value(for: side.opposingSide)
+            }
             guard let firstValue = sorted.first?.pieceWeights.value(for: side.opposingSide) else { return nil }
             let filtered = sorted.filter { $0.pieceWeights.value(for: side.opposingSide) == firstValue }
-            let theChosen = filtered.compactMap( { $0.move })
+            let theChosen = filtered.compactMap { $0.move }
             return theChosen.count > 0 ? theChosen : nil
         }
     }
 }
-

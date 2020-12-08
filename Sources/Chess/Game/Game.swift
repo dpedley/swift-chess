@@ -12,9 +12,8 @@ public protocol ChessGameDelegate: AnyObject {
     func send(_ action: ChessAction)
 }
 
-extension Chess {    
-    public struct Game: Identifiable {
-        public let id = UUID()
+extension Chess {
+    public struct Game {
         weak var delegate: ChessGameDelegate?
         internal var userPaused = true
         internal var botPausedMove: Chess.Move?
@@ -77,31 +76,26 @@ extension Chess {
             self.black = black
             self.board.resetBoard()
         }
-        
         public mutating func start() {
             userPaused = false
             nextTurn()
         }
-        
         public mutating func pause() {
-            // TODO add bot check
             userPaused = true
         }
-        
         mutating internal func nextTurn() {
             guard let player = activePlayer else { return }
             player.turnUpdate(game: self)
         }
-        
+        // swiftlint:disable function_body_length
         mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
-                    // TODO: do we push the resign onto [turns] and the UI stack as well here?
+                    // STILL UNDONE: do we push the resign onto [turns] and the UI stack as well here?
 //                        strongSelf.board.lastMove = move
                     winningSide = move.side.opposingSide
                     return
                 }
-
                 fatalError("Need to diagnose this scenario, shouldn't come here.")
             }
             // Create a mutable copy, moving may add side effects.
@@ -109,9 +103,12 @@ extension Chess {
             let moveTry = board.attemptMove(&moveAttempt)
             switch moveTry {
             case .success(let capturedPiece):
-                let annotatedMove = Chess.Game.AnnotatedMove(side: move.side, move: move.PGN ?? "??", fenAfterMove: board.FEN, annotation: nil)
+                let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
+                                                             move: move.PGN ?? "??",
+                                                             fenAfterMove: board.FEN,
+                                                             annotation: nil)
                 pgn.moves.append(annotatedMove)
-                // TODO: we may need to account for non-boardmoves
+                // STILL UNDONE: we may need to account for non-boardmoves
 //                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
 //                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
 
@@ -120,15 +117,16 @@ extension Chess {
                 if let piece = board.squares[move.end].piece {
                     let moveUpdate: Chess.UI.PieceUpdate
                     if let capturedPiece = capturedPiece {
-                        moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI, from: move.start, captured: capturedPiece.UI, at: move.end)
+                        moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI,
+                                                                  from: move.start,
+                                                                  captured: capturedPiece.UI,
+                                                                  at: move.end)
                     } else {
                         moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
                     }
-                    
                     // Update the board with the move
                     var updates = [Chess.UI.Update.piece(moveUpdate)]
                     updates.append(Chess.UI.Update.highlight([move.start, move.end]))
-                    
                     // Add any side effects
                     switch move.sideEffect {
                     case .castling(let rookStart, let rookEnd):
@@ -136,11 +134,10 @@ extension Chess {
                             let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
                             updates.append( Chess.UI.Update.piece(rookUpdate) )
                         }
-                    case .enPassantCapture(_, _),  .enPassantInvade(_, _), .promotion(_), .notKnown, .noneish:
+                    case .enPassantCapture, .enPassantInvade, .promotion, .notKnown, .noneish:
                         // These cases don't imply another uiUpdate is needed.
                         break
                     }
-                    
                     // Check for check and mate
                     if board.square(board.squareForActiveKing.position, canBeAttackedBy: board.playingSide) {
                         // Are we in mate?
@@ -184,40 +181,37 @@ extension Chess {
                         board.turns.append(Chess.Turn(white: move, black: nil))
                     }
                 }
-                
             case .failed(reason: let reason):
                 print("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     updateBoard(human: human, failed: move, with: reason)
                 } else {
                     // a bot failed to move, for some this means resign
-                    
-                
-                    // TODO message user
+                    // STILL UNDONE message user
                     winningSide = board.playingSide.opposingSide
                     print("\nUnknown: \n\(pgn.formattedString)")
                 }
             }
-
         }
-        
+        // swiftlint:enable function_body_length
         internal func clearActivePlayerSelections() {
-            // TODO: Vet the use of the old UI update here.
+            // STILL UNDONE: Vet the use of the old UI update here.
 //            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        
         internal func flashKing() {
-            // TODO: Vet the use of the old UI update here.
+            // STILL UNDONE: Vet the use of the old UI update here.
 //            let kingPosition = board.squareForActiveKing.position
 //            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        
-        internal func updateBoard(human: Chess.HumanPlayer, failed move: Chess.Move, with reason: Chess.Move.Limitation) {
+        internal func updateBoard(human: Chess.HumanPlayer,
+                                  failed move: Chess.Move,
+                                  with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
-            case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove, .notYourTurn, .sameSideAlreadyOccupiesDestination:
+            case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove,
+                 .notYourTurn, .sameSideAlreadyOccupiesDestination:
                 // Nothing to see here, just humans
                 break
             case .kingWouldBeUnderAttackAfterMove:
@@ -227,13 +221,11 @@ extension Chess {
                 print("Human's move had unknown limitation.")
             }
         }
-        
         mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
-            // TODO: this is where the clock updates might happen
+            // STILL UNDONE: this is where the clock updates might happen
             continueBasedOnStatus()
         }
-        
         internal mutating func continueBasedOnStatus() {
             let status = self.status()
             switch status {
@@ -248,7 +240,6 @@ extension Chess {
                 break
             }
         }
-        
         mutating func setRobotPlaybackSpeed(_ responseDelay: TimeInterval) {
             if let white = white as? Chess.Robot {
                 white.responseDelay = responseDelay

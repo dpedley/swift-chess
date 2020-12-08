@@ -14,4 +14,3 @@ public enum ChessAction {
     case setBoard(fen: String)
     case makeMove(move: Chess.Move)
 }
-

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// swiftlint:disable function_body_length
 extension Chess.Robot {
     /// A utllity function to give the bots some unique first names.
     /// - Returns: A random string, one of the names below.
@@ -65,3 +66,4 @@ extension Chess.Robot {
         ].randomElement() ?? "Doug"
     }
 }
+// swiftlint:enable function_body_length

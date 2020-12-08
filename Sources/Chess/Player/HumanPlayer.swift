@@ -10,7 +10,7 @@ import Foundation
 extension Chess {
     public class HumanPlayer: Player {
         static let minimalHumanTimeinterval: TimeInterval = 0.1
-        public var chessBestMoveCallback: Chess_TurnCallback?
+        public var chessBestMoveCallback: ChessTurnCallback?
         public var initialPositionTapped: Chess.Position?
         public var moveAttempt: Chess.Move? {
             didSet {
@@ -21,20 +21,8 @@ extension Chess {
                 }
             }
         }
-        override func isBot() -> Bool {
-            return false
-        }
-        
-        override func prepareForGame() {
-            // Washes hands
-        }
-        
-        override func timerRanOut() {
-            // TODO message human that the game is over.
-        }
-        
+        override func isBot() -> Bool { return false }
         override func turnUpdate(game: Chess.Game) {
-            // TODO, this is probably where we serialize the state of the board for app restarts etc.
             if let move = moveAttempt {
                 // Premove baby!
                 moveAttempt = nil
@@ -46,6 +34,12 @@ extension Chess {
                     delegate.send(.makeMove(move: move))
                 }
             }
+        }
+        override func prepareForGame() {
+            // Washes hands
+        }
+        override func timerRanOut() {
+            // This is where we will message the human that the game is over.
         }
     }
 }

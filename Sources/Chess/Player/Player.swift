@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias Chess_TurnCallback = (Chess.Move) -> Void
+public typealias ChessTurnCallback = (Chess.Move) -> Void
 
 extension Chess {
     public class Player {
@@ -26,18 +26,15 @@ extension Chess {
             self.side = side
             self.timeLeft = matchLength
         }
-        
         func prepareForGame() {
             fatalError("This method is meant to be overriden by subclasses")
         }
-        
         func isBot() -> Bool {
             fatalError("This method is meant to be overriden by subclasses")
         }
         func timerRanOut() {
             fatalError("This method is meant to be overriden by subclasses")
         }
-        
         func turnUpdate(game: Chess.Game) {
             fatalError("This method is meant to be overriden by subclasses")
         }

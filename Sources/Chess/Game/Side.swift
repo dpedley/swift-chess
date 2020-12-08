@@ -25,7 +25,6 @@ extension Chess {
         var description: String {
             return self == .black ? "black" : "white"
         }
-        
         var opposingSide: Side {
             return (self == .black) ? .white : .black
         }

@@ -1,6 +1,5 @@
 //
 //  PieceType.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/9/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -18,7 +17,12 @@ extension Chess {
         case king(hasMoved: Bool)
         var hasMoved: Bool {
             switch self {
-            case .pawn(let hasMoved), .knight(let hasMoved), .bishop(let hasMoved), .rook(let hasMoved, _), .queen(let hasMoved), .king(let hasMoved):
+            case .pawn(let hasMoved),
+                 .knight(let hasMoved),
+                 .bishop(let hasMoved),
+                 .rook(let hasMoved, _),
+                 .queen(let hasMoved),
+                 .king(let hasMoved):
                 return hasMoved
             }
         }
@@ -45,7 +49,6 @@ extension Chess {
             }
             return self
         }
-        
         func fen(_ side: Side = .black) -> String {
             let upper: String
             switch self {
@@ -64,7 +67,6 @@ extension Chess {
             }
             return side == .white ? upper : upper.lowercased()
         }
-        
         func isKing() -> Bool {
             switch self {
             case .king:
@@ -73,7 +75,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isQueen() -> Bool {
             switch self {
             case .queen:
@@ -82,7 +83,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isRook() -> Bool {
             switch self {
             case .rook:
@@ -91,7 +91,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isBishop() -> Bool {
             switch self {
             case .bishop:
@@ -100,7 +99,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isKnight() -> Bool {
             switch self {
             case .knight:
@@ -109,7 +107,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isPawn() -> Bool {
             switch self {
             case .pawn:
@@ -120,4 +117,3 @@ extension Chess {
         }
     }
 }
-

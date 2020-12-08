@@ -16,9 +16,11 @@ import Foundation
 extension Chess {
     /// A base robot, the evaluate is meant for subclasses
     class Robot: Chess.Player {
-        var responseDelay: TimeInterval = 0.0 // How long to wait before starting to process the evaluation 0 = immediate
+        /// How long to wait before starting to process the evaluation 0 = immediate
+        var responseDelay: TimeInterval = 0.0
+        /// This is the last move that will be played.
         var stopAfterMove: Int
-        
+
         /// A few overrides from Chess.Player
         override func isBot() -> Bool { return true }
         override func prepareForGame() { }
@@ -74,7 +76,8 @@ extension Chess {
         /// let jane = GreedyBot(.black)
         ///
         /// - Parameter side: The `Chess.Side` that this bot should play.
-        /// - Parameter stopAfterMove: To keep things from running amok, you can set a move, and the bot will stop after that move has been performed.
+        /// - Parameter stopAfterMove: To keep things from running amok, you can set a move,
+        /// and the bot will stop after that move has been performed.
         init(side: Chess.Side, stopAfterMove: Int = 100) {
             self.stopAfterMove = stopAfterMove
             super.init(side: side, matchLength: nil)
