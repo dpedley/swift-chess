@@ -21,6 +21,7 @@ extension Chess.Move {
     static let white = Chess.MoveStartSide(side: .white)
 }
 
+// swiftlint:disable identifier_name
 extension Chess {
     struct MoveStart {
         let side: Chess.Side
@@ -242,3 +243,4 @@ extension Chess.MoveStart {
     var h7: Chess.Move { return .init(side: side, start: position, end: .h7) }
     var h8: Chess.Move { return .init(side: side, start: position, end: .h8) }
 }
+// swiftlint:enable identifier_name

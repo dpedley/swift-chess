@@ -10,7 +10,7 @@ import Foundation
 extension Chess {
     public struct Square {
         let position: Position
-        var piece: Piece? = nil {
+        var piece: Piece? {
             willSet {
                 // Note this order, deselect first to catch the attackedSquareIndices referred squares before clearing.
                 if selected { selected = false }
@@ -37,7 +37,7 @@ extension Chess {
         // occupying this space. It is based on being the only piece on the board, so the piece's path to this
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
-        private var cachesPositionsOfAttackedSquares: [Chess.Position]? = nil
+        private var cachesPositionsOfAttackedSquares: [Chess.Position]?
         mutating func positionsOfAttackedSquares(board: Chess.Board) -> [Chess.Position] {
             guard let positions = cachesPositionsOfAttackedSquares else {
                 // Need to build the positions

@@ -2,10 +2,8 @@ import XCTest
 import Combine
 @testable import Chess
 
-fileprivate let testTimeout: TimeInterval = 0.2
-
 final class GameTests: XCTestCase {
-    var store: ChessStore? = nil
+    var store: ChessStore?
     var cancellables = Set<AnyCancellable>()
     func testGameSetup() {
         // The Chess robots are excersized more thoroughtly in their own tests, we play back a few moves here

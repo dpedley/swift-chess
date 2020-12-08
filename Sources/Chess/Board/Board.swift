@@ -33,7 +33,7 @@ extension Chess {
         let populateExpensiveVisuals: Bool
         var squares: [Square] = []
         var turns: [Turn] = []
-        var isInCheck: Bool? = nil
+        var isInCheck: Bool?
         var playingSide: Side = .white {
             didSet {
                 // Only do this for an active visual board, it's expensive for a NilVisualizer

@@ -26,7 +26,7 @@ extension Chess.Board  {
     }
     
     internal func findOptionalKing(_ side: Chess.Side) -> Chess.Square? {
-        var kingSearch: Chess.Square? = nil
+        var kingSearch: Chess.Square?
         squares.forEach {
             if let piece = $0.piece, piece.side == side {
                 switch piece.pieceType {

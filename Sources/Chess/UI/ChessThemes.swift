@@ -49,7 +49,7 @@ extension Chess.UI {
     }
 }
 
-fileprivate extension Color {
+private extension Color {
     static func HexColor(r: Int, g: Int, b: Int) -> Color {
         return Color(red: Double(r)/256.0, green: Double(b)/256.0, blue: Double(b)/256.0)
     }
