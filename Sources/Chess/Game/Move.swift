@@ -13,6 +13,9 @@ extension Chess {
         var black: Move?
     }
     public class Move: NSObject {
+        static func ==(lhs: Move, rhs: Move) -> Bool {
+            return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
+        }
         enum Limitation: String, Error {
             case unknown = "Unknown limitation."
             case noPieceToMove = "The was no piece at the starting square."

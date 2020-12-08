@@ -15,8 +15,14 @@ extension Chess.Robot {
         }
         
         override func evalutate(board: Chess.Board) -> Chess.Move? {
+            guard board.playingSide == side else { return nil }
+            
             // When in doubt, pick a random move
-            return worthyChoices(board: board)?.randomElement()
+            guard let worthyChoices = worthyChoices(board: board) else {
+                print("No moves chosen.")
+                return nil
+            }
+            return worthyChoices.randomElement()
         }
     }
 }

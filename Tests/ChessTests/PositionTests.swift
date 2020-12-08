@@ -152,6 +152,7 @@ final class PositionTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testNamedPositions", testNamedPositions),
+        ("testFENIndex", testFENIndex),
+        ("testNamedPositions", testNamedPositions)
     ]
 }

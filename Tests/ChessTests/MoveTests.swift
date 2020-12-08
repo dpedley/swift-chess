@@ -2,6 +2,12 @@ import XCTest
 @testable import Chess
 
 final class MoveTests: XCTestCase {
+    func testMoveEquality() {
+        let e2e4 = Chess.Move.white.e2.e4
+        let alsoE2E4 = Chess.Move(side: .white, start: Chess.Position.from(rankAndFile: "e2"), end: Chess.Position.from(rankAndFile: "e4"))
+        XCTAssertTrue(e2e4==alsoE2E4)
+    }
+    
     func testEnPassant() throws {
         // The kings with one pawn each remaining
         // White's pawn hasn't moved, and upon moving 2

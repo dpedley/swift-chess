@@ -90,11 +90,6 @@ extension Chess {
             self.piece = nil
         }
         
-        func isUnderAttack(board: inout Chess.Board, attackingSide: Chess.Side) -> Bool {
-            let attackers = board.allSquaresAttacking(self, side: attackingSide, applyVariants: true)
-            return attackers.count > 0
-        }
-        
         public var description: String {
             return "\(position.FEN) \(piece?.FEN ?? "")"
         }

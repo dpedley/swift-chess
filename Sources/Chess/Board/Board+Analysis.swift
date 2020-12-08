@@ -64,6 +64,20 @@ extension Chess.Board  {
         return boards
     }
     
+    func square(_ position: Chess.Position, canBeAttackedBy side: Chess.Side) -> Bool {
+        var shallowCopy = Chess.Board(FEN: createCurrentFENString())
+        let attackers = shallowCopy.allSquaresAttacking(squares[position], side: side, applyVariants: true)
+        return attackers.count > 0
+    }
+    
+    func square(_ position: Chess.Position, isDefendedBy side: Chess.Side) -> Bool {
+        var shallowCopy = Chess.Board(FEN: createCurrentFENString())
+        // Make sure the spot can be attacked in our test by placing an opposing pawn there.
+        shallowCopy.squares[position].piece = Chess.Piece(side: side.opposingSide, pieceType: .pawn(hasMoved: true))
+        let attackers = shallowCopy.allSquaresAttacking(squares[position], side: side, applyVariants: true)
+        return attackers.count > 0
+    }
+
     func areThereAnyValidMoves() -> Bool {
         let currentFEN = self.FEN
         for square in squares {

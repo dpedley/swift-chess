@@ -38,7 +38,7 @@ extension Chess {
             didSet {
                 // Only do this for an active visual board, it's expensive for a NilVisualizer
                 if self.populateExpensiveVisuals {
-                    isInCheck = squareForActiveKing.isUnderAttack(board: &self, attackingSide: playingSide)
+                    isInCheck = square(squareForActiveKing.position, canBeAttackedBy: playingSide)
                 } else {
                     isInCheck = nil
                 }

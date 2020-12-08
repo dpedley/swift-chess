@@ -45,11 +45,12 @@ extension Chess.Game {
         }
         
         // Check for mate
-        if board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: board.playingSide) {
+        if board.square(board.squareForActiveKing.position, canBeAttackedBy: board.playingSide) {
             var isStuckInCheck = true
             if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
                 for boardVariant in allVariantBoards {
-                    if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide), !kingSquare.isUnderAttack(board: &boardVariant.board, attackingSide: board.playingSide) {
+                    if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide),
+                       boardVariant.board.square(kingSquare.position, canBeAttackedBy: board.playingSide) {
                         isStuckInCheck = false
                     }
                 }
