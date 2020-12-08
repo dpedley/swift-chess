@@ -97,6 +97,7 @@ final class MoveTests: XCTestCase {
     }
 
     static var allTests = [
+        ("testMoveEquality", testMoveEquality),
         ("testEnPassant", testEnPassant),
         ("testPinnedPieces", testPinnedPieces),
         ("testKingSideCastles", testKingSideCastles),
