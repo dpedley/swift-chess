@@ -16,5 +16,3 @@ struct ChessEnvironment {
     var target: TargetEnvironment = .development
     var theme = Chess.UI.ChessTheme()
 }
-
-

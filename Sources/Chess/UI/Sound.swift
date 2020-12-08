@@ -19,8 +19,11 @@ import AVFoundation
 
 extension Chess {
     enum Sounds {
-        private static func Sound(url: URL) -> AVAudioPlayer {
-            return try! AVAudioPlayer(contentsOf: url)
+        private static func sound(url: URL) -> AVAudioPlayer {
+            guard let player = try? AVAudioPlayer(contentsOf: url) else {
+                fatalError("Couldn't load \(url)")
+            }
+            return player
         }
         private static let BerserkURL = Bundle.main.url(forResource: "Berserk", withExtension: "mp3")!
         private static let CaptureURL = Bundle.main.url(forResource: "Capture", withExtension: "mp3")!
@@ -29,13 +32,13 @@ extension Chess {
         private static let DefeatURL = Bundle.main.url(forResource: "Defeat", withExtension: "mp3")!
         private static let MoveURL = Bundle.main.url(forResource: "Move", withExtension: "mp3")!
         private static let VictoryURL = Bundle.main.url(forResource: "Victory", withExtension: "mp3")!
-        public static let Berserk = Sound(url: BerserkURL)
-        public static let Capture = Sound(url: CaptureURL)
-        public static let Check = Sound(url: CheckURL)
-        public static let Confirmation = Sound(url: ConfirmationURL)
-        public static let Defeat = Sound(url: DefeatURL)
-        public static let Victory = Sound(url: VictoryURL)
-        public static let Move = Sound(url: MoveURL)
+        public static let Berserk = sound(url: BerserkURL)
+        public static let Capture = sound(url: CaptureURL)
+        public static let Check = sound(url: CheckURL)
+        public static let Confirmation = sound(url: ConfirmationURL)
+        public static let Defeat = sound(url: DefeatURL)
+        public static let Victory = sound(url: VictoryURL)
+        public static let Move = sound(url: MoveURL)
 //        Capture.mp3
 //        Check.mp3
 //        Confirmation.mp3

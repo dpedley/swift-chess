@@ -1,6 +1,5 @@
 //
 //  PieceType.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/9/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -18,34 +17,39 @@ extension Chess {
         case king(hasMoved: Bool)
         var hasMoved: Bool {
             switch self {
-            case .pawn(let hasMoved), .knight(let hasMoved), .bishop(let hasMoved), .rook(let hasMoved, _), .queen(let hasMoved), .king(let hasMoved):
+            case .pawn(let hasMoved),
+                 .knight(let hasMoved),
+                 .bishop(let hasMoved),
+                 .rook(let hasMoved, _),
+                 .queen(let hasMoved),
+                 .king(let hasMoved):
                 return hasMoved
             }
         }
+        // swiftlint:disable cyclomatic_complexity
         func pieceMoved() -> PieceType {
             switch self {
             case .pawn(let hasMoved):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .pawn(hasMoved: true)
             case .rook(let hasMoved, let isKingSide):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .rook(hasMoved: true, isKingSide: isKingSide)
             case .king(let hasMoved):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .king(hasMoved: true)
             case .knight(let hasMoved):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .knight(hasMoved: true)
             case .bishop(let hasMoved):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .bishop(hasMoved: true)
             case .queen(let hasMoved):
-                if hasMoved { break }
+                guard !hasMoved else { return self }
                 return .queen(hasMoved: true)
             }
-            return self
         }
-        
+        // swiftlint:enable cyclomatic_complexity
         func fen(_ side: Side = .black) -> String {
             let upper: String
             switch self {
@@ -64,7 +68,6 @@ extension Chess {
             }
             return side == .white ? upper : upper.lowercased()
         }
-        
         func isKing() -> Bool {
             switch self {
             case .king:
@@ -73,7 +76,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isQueen() -> Bool {
             switch self {
             case .queen:
@@ -82,7 +84,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isRook() -> Bool {
             switch self {
             case .rook:
@@ -91,7 +92,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isBishop() -> Bool {
             switch self {
             case .bishop:
@@ -100,7 +100,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isKnight() -> Bool {
             switch self {
             case .knight:
@@ -109,7 +108,6 @@ extension Chess {
                 return false
             }
         }
-        
         func isPawn() -> Bool {
             switch self {
             case .pawn:
@@ -120,4 +118,3 @@ extension Chess {
         }
     }
 }
-

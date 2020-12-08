@@ -9,12 +9,10 @@
 import Foundation
 
 extension Chess {
-    
     enum BoardChange {
         case moveMade(move: Move)
         case moveFailed(move: Move, reason: Move.Limitation)
     }
-        
     class BoardVariant: NSObject {
         let originalFEN: String
         let changes: [BoardChange]
@@ -30,7 +28,7 @@ extension Chess {
                     switch result {
                     case .failed(let reason):
                         actualChanges.append(.moveFailed(move: move, reason: reason))
-                    case .success(_): // piece
+                    case .success:
                         // Note about warning, we may want to include the piece loss for variant analysis stuff here.
                         actualChanges.append(.moveMade(move: move))
                     }
@@ -41,9 +39,8 @@ extension Chess {
             }
             self.board = board
             self.changes = actualChanges
-        }        
+        }
     }
-    
     class SingleMoveVariant: BoardVariant {
         lazy var pieceWeights: GameAnalysis = {
             return board.pieceWeights()

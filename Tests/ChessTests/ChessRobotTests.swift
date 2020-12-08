@@ -5,10 +5,8 @@ import XCTest
 import Combine
 @testable import Chess
 
-fileprivate let testTimeout: TimeInterval = 0.25
-
 final class ChessRobotTests: XCTestCase {
-    var store: ChessStore? = nil
+    var store: ChessStore?
     var cancellables = Set<AnyCancellable>()
     func testRandomBots() {
         let moveCount = 13
@@ -82,7 +80,7 @@ final class ChessRobotTests: XCTestCase {
         }
         XCTAssertFalse(cautiousMove==riskyTake)
     }
-    
+
     func testCautiousBots() {
         let white = Chess.Robot.CautiousBot(side: .white, stopAfterMove: 3)
         let black = Chess.Robot.CautiousBot(side: .black, stopAfterMove: 2)
@@ -101,7 +99,7 @@ final class ChessRobotTests: XCTestCase {
         self.store = store
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+
     static var allTests = [
         ("testPlaybackBots", testPlaybackBot),
         ("testCautiousBot", testCautiousBot),

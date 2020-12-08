@@ -23,7 +23,7 @@ extension Chess.Side {
             }
             return Chess.Move(side: self, start: kingsPosition, end: kingsDestination)
         }
-        
+
         if fromString == "O-O-O" { // Queenside castle
             let kingsPosition: Chess.Position
             let kingsDestination: Chess.Position
@@ -37,7 +37,6 @@ extension Chess.Side {
             }
             return Chess.Move(side: self, start: kingsPosition, end: kingsDestination)
         }
-        
 
         if fromString.count != 4 {
             // Is this a promotion? eg. a2a1q
@@ -60,7 +59,7 @@ extension Chess.Side {
     func resigns(king: Chess.Position) -> Chess.Move {
         return Chess.Move(side: self, start: king, end: Chess.Position.resignedPosition)
     }
-    
+
     func requestsBreak(king: Chess.Position) -> Chess.Move {
         return Chess.Move(side: self, start: king, end: Chess.Position.pausedPosition)
     }

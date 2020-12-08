@@ -11,6 +11,7 @@ import Foundation
 extension Chess.Board {
     static let startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     private static let CharZero = Unicode.Scalar("0").value
+    // swiftlint:disable cyclomatic_complexity
     internal func createCurrentFENString() -> String {
         var fen = ""
         var emptyCount = 0
@@ -30,7 +31,6 @@ extension Chess.Board {
                     fen += "\(emptyCount)"
                     emptyCount = 0
                 }
-                
                 // No slash after the final rank
                 if square.position.rank>1 {
                     fen += "/"
@@ -50,7 +50,6 @@ extension Chess.Board {
         fen += " \(playingSide.FEN) \(castling) \(enPassantPosition?.FEN ?? "-") 0 \(fullMoves)"
         return fen
     }
-
     mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
         turns.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
@@ -61,10 +60,8 @@ extension Chess.Board {
             fatalError("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
         }
         fullMoves = moveCount
-        
-        // TODO: castling checks in the hasMoved below
-        // TODO: en passant square last move side effect additions
-        
+        // Still UNDONE: castling checks in the hasMoved below
+        // en passant square last move side effect additions
         guard let piecesString = FENParts.first else {
             fatalError("Invalid FEN")
         }
@@ -80,7 +77,6 @@ extension Chess.Board {
                     // unicodeScalar error?
                     fatalError("FEN Character \(fenChar) invalid")
                 }
-                
                 // If it's a digit, it represents the number of empty squares
                 if CharacterSet.decimalDigits.contains(unicodeScalar) {
                     var emptySpots = unicodeScalar.value - Chess.Board.CharZero
@@ -96,14 +92,12 @@ extension Chess.Board {
                     guard let piece = Chess.Piece.from(fen: String(fenChar)) else {
                         fatalError("FEN Character \(fenChar) invalid at: [\(fenIndex)] \(Chess.Position(fenIndex).FEN)")
                     }
-                    
                     let updatedPiece: Chess.Piece
                     if !isValid(startingSquare: squares[fenIndex], for: piece) {
                         updatedPiece = Chess.Piece(side: piece.side, pieceType: piece.pieceType.pieceMoved())
                     } else {
                         updatedPiece = piece
                     }
-                    
                     self.squares[fenIndex].piece = updatedPiece
                     fileIndex+=1
                 }
@@ -111,10 +105,10 @@ extension Chess.Board {
             rankIndex+=1
         }
         playingSide = newSide
-
         // Update the UI
-        // TODO: Vet the use of the old UI update here.
+        // STILL UNDONE: Vet the use of the old UI update here.
 //        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
 //        self.ui.apply(board: self, updates: [uiUpdate])
     }
+    // swiftlint:enable cyclomatic_complexity
 }

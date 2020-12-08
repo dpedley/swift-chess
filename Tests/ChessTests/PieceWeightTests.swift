@@ -21,17 +21,14 @@ final class PieceWeightTests: XCTestCase {
         weights.append(board.pieceWeights())
         board.squares[7].piece = nil // Remove black rook
         weights.append(board.pieceWeights())
-        
-        for i in 1..<weights.count {
-            let a = weights[i-1]
-            let b = weights[i]
-            XCTAssertEqual(a.value(for: .white), b.value(for: .white))
-            XCTAssertTrue(a.value(for: .black) > b.value(for: .black))
+        for idx in 1..<weights.count {
+            let first = weights[idx-1]
+            let second = weights[idx]
+            XCTAssertEqual(first.value(for: .white), second.value(for: .white))
+            XCTAssertTrue(first.value(for: .black) > second.value(for: .black))
         }
     }
-    
     static var allTests = [
         ("testSideLosingPieces", testSideLosingPieces)
     ]
 }
-

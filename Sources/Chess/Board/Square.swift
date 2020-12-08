@@ -10,11 +10,10 @@ import Foundation
 extension Chess {
     public struct Square {
         let position: Position
-        var piece: Piece? = nil {
+        var piece: Piece? {
             willSet {
                 // Note this order, deselect first to catch the attackedSquareIndices referred squares before clearing.
                 if selected { selected = false }
-                
                 // We need to rebuild the attacked squares index list.
                 self.cachesPositionsOfAttackedSquares = nil
             }
@@ -23,7 +22,7 @@ extension Chess {
         var isEmpty: Bool { return piece==nil }
         var selected: Bool = false {
             didSet {
-                // TODO: this needs to be done elsewhere.
+                // STILL UNDONE: this needs to be done elsewhere.
                 // Need to update the other squares that are attached by this one.
 //                attackedSquares?.forEach( { $0.attackedBySelected = selected } )
             }
@@ -37,7 +36,7 @@ extension Chess {
         // occupying this space. It is based on being the only piece on the board, so the piece's path to this
         // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
         // board.
-        private var cachesPositionsOfAttackedSquares: [Chess.Position]? = nil
+        private var cachesPositionsOfAttackedSquares: [Chess.Position]?
         mutating func positionsOfAttackedSquares(board: Chess.Board) -> [Chess.Position] {
             guard let positions = cachesPositionsOfAttackedSquares else {
                 // Need to build the positions
@@ -63,7 +62,6 @@ extension Chess {
             guard !positions.isEmpty else { return nil }
             return positions.map { board.squares[$0] }
         }
-        
         func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }
             var destinations: [Chess.Position] = []
@@ -81,15 +79,12 @@ extension Chess {
             guard destinations.count>0 else { return nil }
             return destinations
         }
-        
         init(position: Position) {
             self.position = position
         }
-        
-        mutating func clear()  {
+        mutating func clear() {
             self.piece = nil
         }
-        
         public var description: String {
             return "\(position.FEN) \(piece?.FEN ?? "")"
         }

@@ -33,14 +33,12 @@ extension Chess.Game {
         case draw = "1/2-1/2"
         case other = "*"
     }
-    
     public struct AnnotatedMove {
         var side: Chess.Side
         var move: String
         var fenAfterMove: String
-        var annotation: String? = nil
+        var annotation: String?
     }
-    
     public struct PortableNotation { // PGN
         var eventName: String // the name of the tournament or match event.
         var site: String      // the location of the event. This is in City, Region COUNTRY format,
@@ -55,18 +53,19 @@ extension Chess.Game {
                               // or * (other, e.g., the game is ongoing).
         var tags: [String: String] = [:]
         var moves: [AnnotatedMove]
-        
         var formattedString: String {
-            var PGN = "[Event \"\(eventName)\"]\n[Site \"\(site)\"]\n[Date \"\(date)\"]\n[Round \"\(round)\"]\n[White \"\(white)\"]\n[Black \"\(black)\"]\n[Result \"\(result.rawValue)\"]\n"
+            var PGN = "[Event \"\(eventName)\"]\n" +
+                "[Site \"\(site)\"]\n[Date \"\(date)\"]\n[Round \"\(round)\"]\n" +
+                "[White \"\(white)\"]\n[Black \"\(black)\"]\n[Result \"\(result.rawValue)\"]\n"
             for (key, value) in tags {
                 PGN.append("[\(key) \"\(value)\"]\n")
             }
             var numberPrefix = 1
             var lineLength = 0
             for move in moves {
-                // TODO annotations
+                // We haven't finished annotations yet.
                 let movePrefix: String
-                if (move.side == .white) {
+                if move.side == .white {
                     movePrefix = "\(numberPrefix). "
                     numberPrefix += 1
                 } else {
@@ -87,7 +86,6 @@ extension Chess.Game {
             PGN.append(" \(result.rawValue)")
             return PGN
         }
-        
         // When creating game PGNs we note the device info for elo stats.
         // No personal information is tapped here, the string created is in the format "iPhone10,1"
         // See https://stackoverflow.com/questions/11197509/how-to-get-device-make-and-model-on-ios
@@ -102,15 +100,21 @@ extension Chess.Game {
             return identifier
         }
     }
-    
     static func sampleGame() -> Chess.Game {
-        let fischer = Chess.Robot.PlaybackBot(firstName: "Robert J.", lastName: "Fischer", side: .white, moveStrings: [ "e2e4", "g1f3", "f1b5", "b5a4", "O-O", "f1e1", "a4b3", "c2c3", "h2h3", "d2d4", "c3c4", "c4b5", "b1c3", "c1g5", "c3b1", "g5h4", "d4e5", "h4e7", "e5d6", "b1d2", "d2c4", "b3c4", "f3e5", "c4f7", "e5f7", "d1e1", "e1e3", "e3g5", "b2b3", "a2a3", "a3b4", "a1a5", "f2f3", "g1f2", "a5a7", "a7a6", "f2e1", "g2g3", "e1d2", "a6d6", "d6a6", "g3g4", "a6e6"])
-        let spassky = Chess.Robot.PlaybackBot(firstName: "Boris V.", lastName: "Spassky", side: .black, moveStrings: [ "e7e5", "b8c6", "a7a6", "g8f6", "f8e7", "b7b5", "d7d6", "O-O", "c6b8", "b8d7", "c7c6", "a6b5", "c8b7", "b5b4", "h7h6", "c6c5", "f6e4", "d8e7", "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5", "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5", "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"])
+        let fischer = Chess.Robot.PlaybackBot(firstName: "Robert J.", lastName: "Fischer", side: .white, moveStrings: [
+                                                "e2e4", "g1f3", "f1b5", "b5a4", "O-O", "f1e1", "a4b3", "c2c3", "h2h3",
+                                                "d2d4", "c3c4", "c4b5", "b1c3", "c1g5", "c3b1", "g5h4", "d4e5", "h4e7",
+                                                "e5d6", "b1d2", "d2c4", "b3c4", "f3e5", "c4f7", "e5f7", "d1e1", "e1e3",
+                                                "e3g5", "b2b3", "a2a3", "a3b4", "a1a5", "f2f3", "g1f2", "a5a7", "a7a6",
+                                                "f2e1", "g2g3", "e1d2", "a6d6", "d6a6", "g3g4", "a6e6"])
+        let spassky = Chess.Robot.PlaybackBot(firstName: "Boris V.", lastName: "Spassky", side: .black, moveStrings: [
+                                                "e7e5", "b8c6", "a7a6", "g8f6", "f8e7", "b7b5", "d7d6", "O-O", "c6b8",
+                                                "b8d7", "c7c6", "a6b5", "c8b7", "b5b4", "h7h6", "c6c5", "f6e4", "d8e7",
+                                                "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5",
+                                                "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5",
+                                                "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"])
         fischer.responseDelay = 0.05
         spassky.responseDelay = 0.05
         return Chess.Game(fischer, against: spassky)
     }
 }
-
-/* Mikhail Tal vs Mikhail Botvinnik
- 1.e4e62.d4d53.Nc3Bb44.e5c55.a3Bxc3+6.bxc3Qc77.Qg4f58.Qg3Ne79.Qxg7Rg810.Qxh7cxd411.Kd1Bd712.Qh5+Ng613.Ne2d314.cxd3Ba4+15.Ke1Qxe516.Bg5Nc617.d4Qc718.h4e519.Rh3Qf720.dxe5Ncxe521.Re3Kd722.Rb1b623.Nf4Rae824.Rb4Bc625.Qd1Nxf426.Rxf4Ng627.Rd4Rxe3+28.fxe3Kc729.c4dxc430.Bxc4Qg731.Bxg8Qxg832.h5 */
