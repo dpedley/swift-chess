@@ -34,7 +34,6 @@ extension Chess.Move.SideEffect {
             return updatedValue
         }
     }
-    
     func asInt64() -> Int64 {
         switch self {
         case .notKnown:
@@ -51,7 +50,6 @@ extension Chess.Move.SideEffect {
             return BaseInt.none.rawValue
         }
     }
-    
     static func from(Int64 value: Int64) -> Chess.Move.SideEffect? {
         let baseValue = Int(value & 63)
         guard let baseInt = BaseInt(rawValue: Int64(baseValue)) else {
@@ -82,7 +80,6 @@ extension Chess.Move.SideEffect {
             return .noneish
         }
     }
-    
     func clone() -> Chess.Move.SideEffect {
         return Chess.Move.SideEffect.from(Int64: self.asInt64())!
     }

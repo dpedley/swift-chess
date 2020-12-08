@@ -15,7 +15,6 @@ final class GameTests: XCTestCase {
         var fen1: String? = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
         let move2Expectation = expectation(description: "e7e5")
         var fen2: String? = "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2"
-        
         // Setup our game test listener to see if the moves are completed
         store.$game.sink(receiveValue: { game in
             let testFEN = game.board.FEN
@@ -24,18 +23,17 @@ final class GameTests: XCTestCase {
                 fen1 = nil // So we don't match re than once.
                 guard game.board.fullMoves == 1,
                       game.board.playingSide == .black else {
-                    XCTFail()
+                    XCTFail("Move 1: The board isn't in the right state.")
                     return
                 }
                 move1Expectation.fulfill()
             }
-            
             // Check if the second move has finished.
             if testFEN == fen2 {
                 fen2 = nil // So we don't match re than once.
                 guard game.board.fullMoves == 2,
                       game.board.playingSide == .white else {
-                    XCTFail()
+                    XCTFail("Move 2: The board isn't in the right state.")
                     return
                 }
                 move2Expectation.fulfill()
@@ -46,6 +44,6 @@ final class GameTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testGameSetup", testGameSetup),
+        ("testGameSetup", testGameSetup)
     ]
 }

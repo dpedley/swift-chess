@@ -21,14 +21,12 @@ extension Chess.Piece {
             return isMoveValid(&move)
         }
     }
-    
+    // swiftlint:disable function_body_length
     func isMoveValid(_ move: inout Chess.Move) -> Bool {
-        
         // Make sure it's a move
-        if (move.rankDistance==0) && (move.fileDistance==0) {
+        if move.rankDistance==0, move.fileDistance==0 {
             return false
         }
-        
         switch pieceType {
         case .pawn(let hasMoved):
             // Only forward
@@ -55,41 +53,40 @@ extension Chess.Piece {
             }
             return false
         case .bishop:
-            if (move.rankDistance==move.fileDistance) {
+            if move.rankDistance==move.fileDistance {
                 return true
             }
             return false
         case .rook:
-            if (move.rankDistance==0) || (move.fileDistance==0) {
+            if move.rankDistance==0 || move.fileDistance==0 {
                 return true
             }
             return false
         case .queen:
-            // Like a bishop
-            if (move.rankDistance==move.fileDistance) {
-                return true
+            if move.rankDistance==move.fileDistance {
+                return true // Like a bishop
             }
-            // Like a rook
-            if (move.rankDistance==0) || (move.fileDistance==0) {
-                return true
+            if move.rankDistance==0 || move.fileDistance==0 {
+                return true // Like a rook
             }
             return false
         case .king(let hasMoved):
             if move.rankDistance<2, move.fileDistance<2 {
                 return true
             }
-            
             // Are we trying to castle?
             if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
                 let rookDistance = move.fileDirection < 0 ? 2 : 1
                 let rook = move.end + (move.fileDirection * rookDistance)
-                move.sideEffect = Chess.Move.SideEffect.castling(rook: rook, destination: move.end - move.fileDirection) // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
+                move.sideEffect = Chess.Move.SideEffect.castling(rook: rook,
+                                                                 destination: move.end - move.fileDirection)
+                // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
                 return true
             }
             return false
         }
     }
-    
+    // swiftlint:enable function_body_length
     func isLastRank(_ position: Chess.Position) -> Bool {
         // Attacks are moves, except when they aren't
         switch pieceType {
@@ -101,7 +98,6 @@ extension Chess.Piece {
             return false
         }
     }
-    
     // The FEN Indices for the sqaures this piece will pass through when making this move.
     func steps(for move: Chess.Move) -> [Chess.Position]? {
         switch self.pieceType {
@@ -110,14 +106,15 @@ extension Chess.Piece {
             return nil
         default:
             var squaresInBetween: [Chess.Position] = []
-            var nextPosition: Chess.Position = move.start.adjacentPosition(rankOffset: move.rankDirection, fileOffset: move.fileDirection)
-            while (nextPosition != move.end) {
+            var nextPosition: Chess.Position = move.start.adjacentPosition(rankOffset: move.rankDirection,
+                                                                           fileOffset: move.fileDirection)
+            while nextPosition != move.end {
                 squaresInBetween.append(nextPosition)
-                nextPosition = nextPosition.adjacentPosition(rankOffset: move.rankDirection, fileOffset: move.fileDirection)
+                nextPosition = nextPosition.adjacentPosition(rankOffset: move.rankDirection,
+                                                             fileOffset: move.fileDirection)
             }
             guard squaresInBetween.count > 0 else { return nil }
             return squaresInBetween
         }
     }
-
 }

@@ -42,4 +42,3 @@ extension Chess.Robot {
         }
     }
 }
-

@@ -107,6 +107,8 @@ extension Chess {
         let h6: Chess.MoveStart
         let h7: Chess.MoveStart
         let h8: Chess.MoveStart
+
+        // swiftlint:disable function_body_length
         init(side: Chess.Side) {
             self.side = side
             self.a1 = .init(side: side, position: .a1)
@@ -174,6 +176,7 @@ extension Chess {
             self.h7 = .init(side: side, position: .h7)
             self.h8 = .init(side: side, position: .h8)
         }
+        // swiftlint:enable function_body_length
     }
 }
 

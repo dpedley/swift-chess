@@ -18,20 +18,17 @@ struct RobotGamePreview: PreviewProvider {
         return store
     }()
     static var previews: some View {
-        GeometryReader { geometry in
-            HStack {
-                BoardView()
-                    .environmentObject(store)
-                VStack {
-                    Button("Play") {
-                        store.send(.startGame)
-                    }
-                    Button("Pause") {
-                        store.send(.pauseGame)
-                    }
+        HStack {
+            BoardView()
+                .environmentObject(store)
+            VStack {
+                Button("Play") {
+                    store.send(.startGame)
+                }
+                Button("Pause") {
+                    store.send(.pauseGame)
                 }
             }
         }
     }
 }
-

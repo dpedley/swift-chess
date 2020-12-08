@@ -22,35 +22,36 @@ extension Chess_Index {
 }
 
 extension Chess.Board {
+    // swiftlint:disable nesting
     enum Black {
-        enum King:       Chess_Index { static let index: Int = 4 }
-        enum Queen:      Chess_Index { static let index: Int = 3 }
+        enum King: Chess_Index { static let index: Int = 4 }
+        enum Queen: Chess_Index { static let index: Int = 3 }
         enum KingsSide {
-            enum Rook:   Chess_Index { static let index: Int = 7 }
+            enum Rook: Chess_Index { static let index: Int = 7 }
             enum Knight: Chess_Index { static let index: Int = 6 }
             enum Bishop: Chess_Index { static let index: Int = 5 }
         }
         enum QueensSide {
-            enum Rook:   Chess_Index { static let index: Int = 0 }
+            enum Rook: Chess_Index { static let index: Int = 0 }
             enum Knight: Chess_Index { static let index: Int = 1 }
             enum Bishop: Chess_Index { static let index: Int = 2 }
         }
     }
     enum White {
-        enum King:       Chess_Index { static let index: Int = 60 }
-        enum Queen:      Chess_Index { static let index: Int = 59 }
+        enum King: Chess_Index { static let index: Int = 60 }
+        enum Queen: Chess_Index { static let index: Int = 59 }
         enum KingsSide {
-            enum Rook:   Chess_Index { static let index: Int = 63 }
+            enum Rook: Chess_Index { static let index: Int = 63 }
             enum Knight: Chess_Index { static let index: Int = 62 }
             enum Bishop: Chess_Index { static let index: Int = 61 }
         }
         enum QueensSide {
-            enum Rook:   Chess_Index { static let index: Int = 56 }
+            enum Rook: Chess_Index { static let index: Int = 56 }
             enum Knight: Chess_Index { static let index: Int = 57 }
             enum Bishop: Chess_Index { static let index: Int = 58 }
         }
     }
-    
+    // swiftlint:enable nesting
     func startingSquare(for side: Chess.Side, pieceType: Chess.PieceType, kingSide: Bool = true) -> Chess.Square {
         switch pieceType {
         case .pawn:
@@ -100,7 +101,6 @@ extension Chess.Board {
             return Chess.Board.White.King.square(on: self)
         }
     }
-    
     func isValid(startingSquare square: Chess.Square, for piece: Chess.Piece) -> Bool {
         switch piece.pieceType {
         case .pawn:
@@ -110,7 +110,7 @@ extension Chess.Board {
             if square.position.rank==2 && piece.side == .white {
                 return true
             }
-            return false;
+            return false
         case .knight:
             if piece.side == .black {
                 return (square.position == Chess.Board.Black.QueensSide.Knight.index) ||
@@ -144,5 +144,4 @@ extension Chess.Board {
             return square.position == Chess.Board.White.King.index
         }
     }
-    
 }

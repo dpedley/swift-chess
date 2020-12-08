@@ -7,29 +7,8 @@
 
 import Foundation
 
-public protocol Chess_GameVisualizing: class {
-    func apply(board: Chess_PieceCoordinating, status: Chess.UI.Status)
-    func apply(board: Chess_PieceCoordinating, updates: [Chess.UI.Update])
-    var humanInteracting: Bool { get }
-}
-
-extension Chess_GameVisualizing {
-    var humanInteracting: Bool {
-        return false
-    }
-}
-public protocol Chess_PieceCoordinating: class {
-    var squareForActiveKing: Chess.Square { get }
-    var squares: [Chess.Square] { get }
-    var positionsForOccupiedSquares: [Chess.Position] { get }
-    var playingSide: Chess.Side { get }
-    var lastMove: Chess.Move? { get }
-    var ui: Chess_GameVisualizing { get }
-}
-
 extension Chess {
-    struct Board: Identifiable {
-        let id = UUID()
+    struct Board {
         let populateExpensiveVisuals: Bool
         var squares: [Square] = []
         var turns: [Turn] = []
@@ -55,7 +34,6 @@ extension Chess {
         var FEN: String { return createCurrentFENString() }
         var enPassantPosition: Position? { return lastEnPassantPosition() }
         var squareForActiveKing: Chess.Square { return findKing(playingSide) }
-
         init(populateExpensiveVisuals: Bool = false) {
             self.populateExpensiveVisuals = populateExpensiveVisuals
             for index in 0...63 {
@@ -63,7 +41,6 @@ extension Chess {
                 squares.append(newSquare)
             }
         }
-        
         init(FEN: String, populateExpensiveVisuals: Bool = false) {
             self.init(populateExpensiveVisuals: populateExpensiveVisuals)
             self.resetBoard(FEN: FEN)

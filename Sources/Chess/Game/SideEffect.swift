@@ -9,7 +9,6 @@
 import Foundation
 
 extension Chess.Move {
-    // TECH DEBT: Might be better to move the current king in attack stuff, and create a side effect of a move that is kingAttacked
     enum SideEffect: Error {
         case notKnown
         case castling(rook: Int, destination: Int)
@@ -26,7 +25,6 @@ extension Chess.Move {
             }
         }
     }
-        
     func setVerified() {
         switch sideEffect {
         case .notKnown:
