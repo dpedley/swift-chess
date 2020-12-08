@@ -38,7 +38,7 @@ extension Chess.Game {
         var side: Chess.Side
         var move: String
         var fenAfterMove: String
-        var annotation: String? = nil
+        var annotation: String?
     }
     
     public struct PortableNotation { // PGN

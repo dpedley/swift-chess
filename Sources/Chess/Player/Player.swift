@@ -12,10 +12,10 @@ public typealias Chess_TurnCallback = (Chess.Move) -> Void
 extension Chess {
     public class Player {
         let side: Side
-        var timeLeft: TimeInterval? = nil
-        var currentMoveStartTime: Date? = nil
-        var firstName: String? = nil
-        var lastName: String? = nil
+        var timeLeft: TimeInterval?
+        var currentMoveStartTime: Date?
+        var firstName: String?
+        var lastName: String?
         var pgnName: String {
             guard let firstName = firstName, let lastName = lastName else {
                 return "??"

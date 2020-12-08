@@ -7,6 +7,7 @@
 
 import Foundation
 
+// swiftlint:disable identifier_name
 extension Chess.Position {
     static let a1: Chess.Position = 56
     static let a2: Chess.Position = 48
@@ -80,3 +81,4 @@ extension Chess.Position {
     static let h7: Chess.Position = 15
     static let h8: Chess.Position = 7
 }
+// swiftlint:enable identifier_name

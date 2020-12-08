@@ -44,7 +44,7 @@ extension Chess {
             }
             let lower = fen.lowercased()
             let side: Side = (lower == fen) ? .black : .white
-            var foundType: PieceType? = nil
+            var foundType: PieceType?
             if lower == "p" {
                 foundType = .pawn(hasMoved: false)
             } else if lower == "n" {
