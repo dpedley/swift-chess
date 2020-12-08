@@ -52,6 +52,7 @@ extension Chess.Board {
         }
     }
     // swiftlint:enable nesting
+    // swiftlint:disable cyclomatic_complexity
     func startingSquare(for side: Chess.Side, pieceType: Chess.PieceType, kingSide: Bool = true) -> Chess.Square {
         switch pieceType {
         case .pawn:
@@ -144,4 +145,5 @@ extension Chess.Board {
             return square.position == Chess.Board.White.King.index
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 }

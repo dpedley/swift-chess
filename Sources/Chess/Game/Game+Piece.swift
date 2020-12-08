@@ -22,6 +22,7 @@ extension Chess.Piece {
         }
     }
     // swiftlint:disable function_body_length
+    // swiftlint:disable cyclomatic_complexity
     func isMoveValid(_ move: inout Chess.Move) -> Bool {
         // Make sure it's a move
         if move.rankDistance==0, move.fileDistance==0 {
@@ -86,6 +87,7 @@ extension Chess.Piece {
             return false
         }
     }
+    // swiftlint:enable cyclomatic_complexity
     // swiftlint:enable function_body_length
     func isLastRank(_ position: Chess.Position) -> Bool {
         // Attacks are moves, except when they aren't

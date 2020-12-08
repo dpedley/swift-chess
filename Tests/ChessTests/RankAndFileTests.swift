@@ -23,4 +23,3 @@ final class RankAndFilesTests: XCTestCase {
         ("testFiles", testFiles)
     ]
 }
-

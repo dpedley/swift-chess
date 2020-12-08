@@ -11,6 +11,7 @@ import Foundation
 extension Chess.Board {
     static let startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     private static let CharZero = Unicode.Scalar("0").value
+    // swiftlint:disable cyclomatic_complexity
     internal func createCurrentFENString() -> String {
         var fen = ""
         var emptyCount = 0
@@ -76,7 +77,6 @@ extension Chess.Board {
                     // unicodeScalar error?
                     fatalError("FEN Character \(fenChar) invalid")
                 }
-                
                 // If it's a digit, it represents the number of empty squares
                 if CharacterSet.decimalDigits.contains(unicodeScalar) {
                     var emptySpots = unicodeScalar.value - Chess.Board.CharZero
@@ -92,14 +92,12 @@ extension Chess.Board {
                     guard let piece = Chess.Piece.from(fen: String(fenChar)) else {
                         fatalError("FEN Character \(fenChar) invalid at: [\(fenIndex)] \(Chess.Position(fenIndex).FEN)")
                     }
-                    
                     let updatedPiece: Chess.Piece
                     if !isValid(startingSquare: squares[fenIndex], for: piece) {
                         updatedPiece = Chess.Piece(side: piece.side, pieceType: piece.pieceType.pieceMoved())
                     } else {
                         updatedPiece = piece
                     }
-                    
                     self.squares[fenIndex].piece = updatedPiece
                     fileIndex+=1
                 }
@@ -108,8 +106,9 @@ extension Chess.Board {
         }
         playingSide = newSide
         // Update the UI
-        // TODO: Vet the use of the old UI update here.
+        // STILL UNDONE: Vet the use of the old UI update here.
 //        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
 //        self.ui.apply(board: self, updates: [uiUpdate])
     }
+    // swiftlint:enable cyclomatic_complexity
 }

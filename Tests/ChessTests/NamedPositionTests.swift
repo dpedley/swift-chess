@@ -2,6 +2,7 @@ import XCTest
 @testable import Chess
 
 final class NamedPositionTests: XCTestCase {
+    // swiftlint:disable function_body_length
     func testPositionNames() {
         XCTAssertEqual(Chess.Position.a1, Chess.Position.from(rankAndFile: "a1"))
         XCTAssertEqual(Chess.Position.a2, Chess.Position.from(rankAndFile: "a2"))
@@ -68,6 +69,7 @@ final class NamedPositionTests: XCTestCase {
         XCTAssertEqual(Chess.Position.h7, Chess.Position.from(rankAndFile: "h7"))
         XCTAssertEqual(Chess.Position.h8, Chess.Position.from(rankAndFile: "h8"))
     }
+    // swiftlint:enable function_body_length
 
     func testMovePositions() {
         XCTAssertEqual(Chess.Move.black.a1.h8.description, "a1h8")
@@ -82,9 +84,8 @@ final class NamedPositionTests: XCTestCase {
         XCTAssertEqual(Chess.Move.black.castleQueenside.description, "e8c8")
         XCTAssertEqual(Chess.Move.white.castleKingside.description, "e1g1")
         XCTAssertEqual(Chess.Move.white.O_O_O.description, "e1c1")
-
     }
-    
+
     static var allTests = [
         ("testPositionNames", testPositionNames),
         ("testMovePositions", testMovePositions)

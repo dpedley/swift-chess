@@ -4,9 +4,7 @@
 //
 //  Created by Douglas Pedley on 11/25/20.
 //
-
 import SwiftUI
-
 
 extension Chess.UI {
     struct ChessTheme {
@@ -16,7 +14,6 @@ extension Chess.UI {
         var color: BoardColor = .blue
         var pieceSet: PieceSet
     }
-    
     enum BoardColor {
         case brown
         case blue
@@ -50,15 +47,15 @@ extension Chess.UI {
 }
 
 private extension Color {
-    static func HexColor(r: Int, g: Int, b: Int) -> Color {
-        return Color(red: Double(r)/256.0, green: Double(b)/256.0, blue: Double(b)/256.0)
+    static func hexColor(red: Int, green: Int, blue: Int) -> Color {
+        return Color(red: Double(red)/256.0, green: Double(blue)/256.0, blue: Double(blue)/256.0)
     }
-    static let chessBoardBrown = HexColor(r: 0xb5, g: 0x88, b: 0x63) // b58863
-    static let chessBoardBrownLight = HexColor(r: 0xf0, g: 0xd9, b: 0xb5) // f0d9b5
-    static let chessBoardGreen = HexColor(r: 0x86, g: 0xa6, b: 0x66) // 86a666
-    static let chessBoardGreenLight = HexColor(r: 0xff, g: 0xff, b: 0xdd) // ffffdd
-    static let chessBoardBlue = HexColor(r: 0x8c, g: 0xa2, b: 0xad) // 8ca2ad
-    static let chessBoardBlueLight = HexColor(r: 0xde, g: 0xe3, b: 0xe6) // dee3e6
-    static let chessBoardPurple = HexColor(r: 0x7d, g: 0x4a, b: 0x8d) // 7d4a8d
-    static let chessBoardPurpleLight = HexColor(r: 0x9f, g: 0x90, b: 0xb0) // 9f90b0
+    static let chessBoardBrown = hexColor(red: 0xb5, green: 0x88, blue: 0x63) // b58863
+    static let chessBoardBrownLight = hexColor(red: 0xf0, green: 0xd9, blue: 0xb5) // f0d9b5
+    static let chessBoardGreen = hexColor(red: 0x86, green: 0xa6, blue: 0x66) // 86a666
+    static let chessBoardGreenLight = hexColor(red: 0xff, green: 0xff, blue: 0xdd) // ffffdd
+    static let chessBoardBlue = hexColor(red: 0x8c, green: 0xa2, blue: 0xad) // 8ca2ad
+    static let chessBoardBlueLight = hexColor(red: 0xde, green: 0xe3, blue: 0xe6) // dee3e6
+    static let chessBoardPurple = hexColor(red: 0x7d, green: 0x4a, blue: 0x8d) // 7d4a8d
+    static let chessBoardPurpleLight = hexColor(red: 0x9f, green: 0x90, blue: 0xb0) // 9f90b0
 }

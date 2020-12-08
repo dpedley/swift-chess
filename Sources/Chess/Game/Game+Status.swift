@@ -24,6 +24,7 @@ extension Chess {
 }
 
 extension Chess.Game {
+    // swiftlint:disable cyclomatic_complexity
     mutating func status() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
             if board.FEN == Chess.Board.startingFEN {
@@ -66,4 +67,5 @@ extension Chess.Game {
         return .active
 
     }
+    // swiftlint:enable cyclomatic_complexity
 }
