@@ -11,10 +11,10 @@ import SwiftUI
 struct RobotGamePreview: PreviewProvider {
     static var store: ChessStore = {
         let white = Chess.Robot.GreedyBot(side: .white, stopAfterMove: 32)
-        let black = Chess.Robot.GreedyBot(side: .black, stopAfterMove: 32)
-        let store = ChessStore(initialGame: .init(white, against: black))
+        let black = Chess.Robot.CautiousBot(side: .black, stopAfterMove: 32)
+        let store = ChessStore(game: .init(white, against: black))
         store.game.userPaused = true
-        store.game.setRobotPlaybackSpeed(3)
+        store.game.setRobotPlaybackSpeed(1)
         return store
     }()
     static var previews: some View {

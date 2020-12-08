@@ -13,36 +13,26 @@ extension Chess.Robot {
     class CautiousBot: RandomBot {
         override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
             guard let choices = board.createValidVariants(for: side) else { return nil }
-            var theChosen: [Chess.Move] = []
-            var bestGap: Double?
+            var potentials: [Chess.SingleMoveVariant] = []
             for choice in choices {
                 guard let move = choice.move else { continue }
-                guard let responses = choice.board.createValidVariants(for: side.opposingSide),
-                      let bestResponse = responses.sorted(by: {
-                                                            $0.pieceWeights.value(for: side.opposingSide) >
-                                                                $1.pieceWeights.value(for: side.opposingSide) } ).first else {
+                if !board.squares[move.end].isEmpty,
+                   choice.board.square(move.end, isDefendedBy: side.opposingSide) {
+                    // The piece we want to take is defended... be cautious.
                     continue
                 }
-                
-                let choiceGap = bestResponse.pieceWeights.value(for: side) - bestResponse.pieceWeights.value(for: side.opposingSide)
-                guard let currentBestGap = bestGap else {
-                    // first one, it is worthy
-                    bestGap = choiceGap
-                    theChosen.append(move)
-                    continue
-                }
-                guard choiceGap < currentBestGap else {
-                    // our new chosen one
-                    bestGap = choiceGap
-                    theChosen.removeAll()
-                    theChosen.append(move)
-                    continue
-                }
-                if choiceGap==currentBestGap {
-                    // Another worthy choice
-                    theChosen.append(move)
-                }
+                potentials.append(choice)
             }
+            // If there is at most 1 potential move, we don't need to filter the list.
+            guard potentials.count > 1 else {
+                guard let move = potentials.first?.move else { return nil }
+                return [move]
+            }
+            
+            let sorted = potentials.sorted(by: { $0.pieceWeights.value(for: side.opposingSide) < $1.pieceWeights.value(for: side.opposingSide) })
+            guard let firstValue = sorted.first?.pieceWeights.value(for: side.opposingSide) else { return nil }
+            let filtered = sorted.filter { $0.pieceWeights.value(for: side.opposingSide) == firstValue }
+            let theChosen = filtered.compactMap( { $0.move })
             return theChosen.count > 0 ? theChosen : nil
         }
     }

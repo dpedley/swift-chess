@@ -32,7 +32,7 @@ final class ChessTests: XCTestCase {
         move = Chess.Move.white.f3.f7 // The queen mates in 4
         TestMove(board.attemptMove(&move))
         board.playingSide = move.side.opposingSide
-        XCTAssertTrue(board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: .white), "Expected king to be attacked and in mate.")
+        XCTAssertTrue(board.square(board.squareForActiveKing.position, canBeAttackedBy: .white), "Expected king to be attacked and in mate.")
         XCTAssertFalse(board.areThereAnyValidMoves(), "Expected no moves available in mate.")
     }
 

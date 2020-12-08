@@ -142,7 +142,7 @@ extension Chess {
                     }
                     
                     // Check for check and mate
-                    if board.squareForActiveKing.isUnderAttack(board: &board, attackingSide: board.playingSide) {
+                    if board.square(board.squareForActiveKing.position, canBeAttackedBy: board.playingSide) {
                         // Are we in mate?
                         switch status() {
                         case .mate:

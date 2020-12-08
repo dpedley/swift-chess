@@ -11,7 +11,7 @@ Here's an example of creating a ChessStore that would allow two people to play.
 let white = Chess.HumanPlayer(side: .white)
 let black = Chess.HumanPlayer(side: . black)
 let game = Chess.Game(white, against: black)
-let store = ChessStore(initialGame: game)
+let store = ChessStore(game: game)
 ```
 
 You might then use the store as the environment variable for a BoardView. 
