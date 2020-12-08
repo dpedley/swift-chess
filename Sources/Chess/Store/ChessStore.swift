@@ -34,30 +34,12 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
     }
 
     func send(_ action: ChessAction) {
-        let queue = DispatchQueue(label: "ChessReducer")
-        queue.async {
-            guard let effect = self.reducer(&self.game, action, self.environment) else {
-                return
-            }
-            effect
-                .receive(on: DispatchQueue.main)
-                .subscribe(on: queue)
-                .sink(receiveValue: self.send)
-                .store(in: &self.cancellables)
+        guard let effect = self.reducer(&self.game, action, self.environment) else {
+            return
         }
+        effect
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: self.send)
+            .store(in: &self.cancellables)
     }
-    
-    func send2(_ action: ChessAction) {
-        DispatchQueue.main.async {
-            guard let effect = self.reducer(&self.game, action, self.environment) else {
-                return
-            }
-            effect
-                .sink(receiveValue: self.send)
-                .store(in: &self.cancellables)
-        }
-    }
-    
-    
-    
 }
