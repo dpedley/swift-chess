@@ -17,14 +17,16 @@ extension CGPoint {
         guard x <= 1 && -1 <= x && y <= 1 && -1 <= y else {
             fatalError("Misconfigured relative point")
         }
-        let dx = x * (rect.width - (2 * inset)) / 2
-        let dy = y * (rect.height - (2 * inset)) / 2
-        return CGPoint(x: dx + rect.midX,
-                       y: dy + rect.midY)
+        let xOffset = x * (rect.width - (2 * inset)) / 2
+        let yOffset = y * (rect.height - (2 * inset)) / 2
+        return CGPoint(x: xOffset + rect.midX,
+                       y: yOffset + rect.midY)
     }
+    // swiftlint:disable identifier_name
     static func xy(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
         return .init(x: x, y: y)
     }
+    // swiftlint:enable identifier_name
 }
 
 extension CGSize {

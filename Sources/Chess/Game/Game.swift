@@ -88,6 +88,7 @@ extension Chess {
             player.turnUpdate(game: self)
         }
         // swiftlint:disable function_body_length
+        // swiftlint:disable cyclomatic_complexity
         mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
@@ -118,11 +119,11 @@ extension Chess {
                     let moveUpdate: Chess.UI.PieceUpdate
                     if let capturedPiece = capturedPiece {
                         moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI,
-                                                                  from: move.start,
+                                                                  start: move.start,
                                                                   captured: capturedPiece.UI,
-                                                                  at: move.end)
+                                                                  end: move.end)
                     } else {
-                        moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, from: move.start, to: move.end)
+                        moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, start: move.start, end: move.end)
                     }
                     // Update the board with the move
                     var updates = [Chess.UI.Update.piece(moveUpdate)]
@@ -131,7 +132,7 @@ extension Chess {
                     switch move.sideEffect {
                     case .castling(let rookStart, let rookEnd):
                         if let rook = board.squares[rookEnd].piece {
-                            let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, from: rookStart, to: rookEnd)
+                            let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, start: rookStart, end: rookEnd)
                             updates.append( Chess.UI.Update.piece(rookUpdate) )
                         }
                     case .enPassantCapture, .enPassantInvade, .promotion, .notKnown, .noneish:
@@ -193,6 +194,7 @@ extension Chess {
                 }
             }
         }
+        // swiftlint:enable cyclomatic_complexity
         // swiftlint:enable function_body_length
         internal func clearActivePlayerSelections() {
             // STILL UNDONE: Vet the use of the old UI update here.

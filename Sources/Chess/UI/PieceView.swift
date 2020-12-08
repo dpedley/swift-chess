@@ -31,7 +31,6 @@ struct PieceView: View {
         _style = StateObject(wrappedValue: style)
         _artwork = StateObject(wrappedValue: artwork)
     }
-    
     init(_ pieceType: Chess.PieceType, side: Chess.Side) {
         let style: PieceStyle
         let artwork: PieceArtwork
@@ -61,41 +60,27 @@ struct PieceView: View {
         let style: PieceStyle
         let artwork: PieceArtwork
         switch piece {
-        case .blackKing:
+        case .blackKing, .blackQueen, .blackRook,
+             .blackBishop, .blackKnight, .blackPawn:
             style = .black
+        case .whiteKing, .whiteQueen, .whiteRook,
+             .whiteBishop, .whiteKnight, .whitePawn:
+            style = .white
+        case .none:
+            return nil
+        }
+        switch piece {
+        case .blackKing, .whiteKing:
             artwork = .king
-        case .blackQueen:
-            style = .black
+        case .blackQueen, .whiteQueen:
             artwork = .queen
-        case .blackRook:
-            style = .black
+        case .blackRook, .whiteRook:
             artwork = .rook
-        case .blackBishop:
-            style = .black
+        case .blackBishop, .whiteBishop:
             artwork = .bishop
-        case .blackKnight:
-            style = .black
+        case .blackKnight, .whiteKnight:
             artwork = .knight
-        case .blackPawn:
-            style = .black
-            artwork = .pawn
-        case .whiteKing:
-            style = .white
-            artwork = .king
-        case .whiteQueen:
-            style = .white
-            artwork = .queen
-        case .whiteRook:
-            style = .white
-            artwork = .rook
-        case .whiteBishop:
-            style = .white
-            artwork = .bishop
-        case .whiteKnight:
-            style = .white
-            artwork = .knight
-        case .whitePawn:
-            style = .white
+        case .blackPawn, .whitePawn:
             artwork = .pawn
         case .none:
             return nil
@@ -104,7 +89,9 @@ struct PieceView: View {
     }
 }
 
-struct PieceView_Preview: PreviewProvider {
+// False positives disabled.
+// swiftlint:disable line_length colon
+struct PieceViewPreview: PreviewProvider {
     static var previews: some View {
         ZStack {
             PieceView(.queen, style: .black)
@@ -123,4 +110,4 @@ struct PieceView_Preview: PreviewProvider {
         .frame(width: 200, height: 200, alignment: .center)
     }
 }
-
+// swiftlint:enable line_length colon

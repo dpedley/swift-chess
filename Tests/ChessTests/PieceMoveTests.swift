@@ -9,9 +9,8 @@ final class PieceMoveTests: XCTestCase {
         XCTAssertTrue(pawn.isMoveValid(&e2e4))
         XCTAssertFalse(pawn.isMoveValid(&b6h7))
     }
-    
+
     static var allTests = [
         ("testPawns", testPawns)
     ]
 }
-

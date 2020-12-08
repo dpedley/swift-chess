@@ -10,8 +10,8 @@ import Foundation
 
 extension Chess.UI {
     public enum PieceUpdate {
-        case moved(piece: Chess.UI.Piece, from: Chess.Position, to: Chess.Position)
-        case capture(piece: Chess.UI.Piece, from: Chess.Position, captured: Chess.UI.Piece, at: Chess.Position)
+        case moved(piece: Chess.UI.Piece, start: Chess.Position, end: Chess.Position)
+        case capture(piece: Chess.UI.Piece, start: Chess.Position, captured: Chess.UI.Piece, end: Chess.Position)
     }
     public enum Update {
         case clearSquare(_ squarePosition: Chess.Position)

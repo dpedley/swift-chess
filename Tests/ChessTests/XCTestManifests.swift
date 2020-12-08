@@ -3,7 +3,7 @@ import Combine
 @testable import Chess
 
 extension XCTestCase {
-    func TestMove(_ attempt: Chess.Move.Result) {
+    func testMove(_ attempt: Chess.Move.Result) {
         switch attempt {
         case .failed(let reason):
             XCTFail(reason.rawValue)
@@ -11,7 +11,7 @@ extension XCTestCase {
             break
         }
     }
-    func TestMoveFails(_ attempt: Chess.Move.Result) -> Chess.Move.Limitation? {
+    func testMoveFails(_ attempt: Chess.Move.Result) -> Chess.Move.Limitation? {
         switch attempt {
         case .failed(let reason):
             return reason

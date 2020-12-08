@@ -28,7 +28,7 @@ final class BoardFenTests: XCTestCase {
         XCTAssertEqual(board.squares[62].piece?.UI, Chess.UI.Piece.whiteKnight)
         XCTAssertEqual(board.squares[63].piece?.UI, Chess.UI.Piece.whiteRook)
     }
-    
+
     func testZugDraw() {
         // A board in a position where white has only three legal moves
         // and after the move, the game is a draw
@@ -42,16 +42,18 @@ final class BoardFenTests: XCTestCase {
                 moveStrings.append(moveString)
             }
         }
-        XCTAssertTrue(moves?.count==3, "Expected a board situation with only three possible moves, got \(String(describing: moves?.count))")
+        XCTAssertTrue(moves?.count==3, "Expected a board situation with only three possible moves," +
+                        " got \(String(describing: moves?.count))")
         let queenTakesQueen = moves?.first(where: { variant -> Bool in
-            guard let start = variant.move?.start, let piece = board.squares[start].piece?.pieceType else {
+            guard let start = variant.move?.start,
+                  let piece = board.squares[start].piece?.pieceType else {
                 return false
             }
             return piece.isQueen()
         })
-        
+
         var qtq = Chess.Move.white.b6.c7
-        TestMove(board.attemptMove(&qtq))
+        testMove(board.attemptMove(&qtq))
         board.playingSide = qtq.side.opposingSide
 
         XCTAssertNotNil(queenTakesQueen, "Cannot find critical move, queen takes queen")
@@ -66,11 +68,12 @@ final class BoardFenTests: XCTestCase {
         default:
             break
         }
-        XCTAssertFalse(board.areThereAnyValidMoves(), "Expected the board to be in a draw state after queen takes queen.")
+        XCTAssertFalse(board.areThereAnyValidMoves(),
+                       "Expected the board to be in a draw state after queen takes queen.")
     }
 
     static var allTests = [
         ("testBoardstartingFEN", testBoardstartingFEN),
-        ("testZugDraw",testZugDraw)
+        ("testZugDraw", testZugDraw)
     ]
 }

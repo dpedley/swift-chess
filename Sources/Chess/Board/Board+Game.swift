@@ -77,6 +77,7 @@ extension Chess.Board {
         }
         return attackers
     }
+    // swiftlint:disable cyclomatic_complexity
     // Returns false if move cannot be made
     mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.Move.Result {
         if let failedResult = prepareMove(&move) { return failedResult }
@@ -193,6 +194,7 @@ extension Chess.Board {
         move.PGN = pgnString
     }
     // swiftlint:enable function_body_length
+    // swiftlint:enable cyclomatic_complexity
     func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Attacks are moves, except when they aren't
         switch piece.pieceType {
@@ -210,6 +212,7 @@ extension Chess.Board {
             return canPieceMove(&move, piece: piece)
         }
     }
+    // swiftlint:disable cyclomatic_complexity
     func canPieceMove(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Make sure it's a move
         if (move.rankDistance==0) && (move.fileDistance==0) {
@@ -274,6 +277,7 @@ extension Chess.Board {
             return false
         }
     }
+    // swiftlint:enable cyclomatic_complexity
     private func isMovePathOpen(_ move: Chess.Move) -> Bool {
         let travel = move.rankDistance > move.fileDistance ? move.rankDistance : move.fileDistance
         guard travel>1 else {

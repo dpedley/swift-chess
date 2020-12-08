@@ -13,11 +13,12 @@ struct BoardView: View {
     let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
     var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
     func color(for index: Int) -> Color {
-        return (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0 ? themeColor.dark : themeColor.light
+        let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
+        return evenSquare ? themeColor.dark : themeColor.light
     }
     var body: some View {
         GeometryReader { geometry in
-            ZStack() {
+            ZStack {
                 LazyVGrid(columns: columns, spacing: 0) {
                     ForEach(0..<64) { idx in
                         ZStack {
@@ -25,8 +26,7 @@ struct BoardView: View {
                                 .fill(color(for: idx))
                                 .aspectRatio(1, contentMode: .fill)
                             store.game.board.squares[idx].piece?.UI.asView()
-                                .onDrag({ NSItemProvider(object:  Chess.Position(idx).FEN as NSString) })
-                            
+                                .onDrag({ NSItemProvider(object: Chess.Position(idx).FEN as NSString) })
                         }
                     }
                 }
@@ -38,7 +38,7 @@ struct BoardView: View {
     }
 }
 
-struct BoardView_Previews: PreviewProvider {
+struct BoardViewPreviews: PreviewProvider {
     static var previews: some View {
         BoardView().environmentObject(previewChessStore)
         // See ChessStore+Preview.swift for ^^ this
