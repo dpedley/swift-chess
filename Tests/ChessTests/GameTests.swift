@@ -10,8 +10,8 @@ final class GameTests: XCTestCase {
     func testGameSetup() {
         // The Chess robots are excersized more thoroughtly in their own tests, we play back a few moves here
         // to verify the basic game mechanics.
-        let initialGame = Chess.Robot.playback(moves: [Chess.Move.white.e2.e4, Chess.Move.black.e7.e5])
-        let store = ChessStore(initialGame: initialGame)
+        let game = Chess.Robot.playback(moves: [Chess.Move.white.e2.e4, Chess.Move.black.e7.e5])
+        let store = ChessStore(game: game)
         self.store = store
         let move1Expectation = expectation(description: "e2e4")
         var fen1: String? = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"

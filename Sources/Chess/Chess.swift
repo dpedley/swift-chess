@@ -14,7 +14,7 @@ public enum Chess { }
 
 struct Chess_Preview: PreviewProvider {
     static var sampleStore: ChessStore = {
-        let store = ChessStore(initialGame: Chess.Game.sampleGame())
+        let store = ChessStore(game: Chess.Game.sampleGame())
         store.game.userPaused = true
         store.game.setRobotPlaybackSpeed(0.5)
         return store

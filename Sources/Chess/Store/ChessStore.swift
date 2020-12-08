@@ -19,29 +19,43 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
     private var cancellables: Set<AnyCancellable> = []
 
     init(
-        initialGame: Chess.Game,
+        game: Chess.Game,
         reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
     ) {
-        self.game = initialGame
+        self.game = game
         self.reducer = reducer
         self.environment = environment
         // If the initial board is empty, let's set up the pieces.
-        if !game.board.squares.contains(where: { !$0.isEmpty }) {
-            game.board.resetBoard()
+        if !self.game.board.squares.contains(where: { !$0.isEmpty }) {
+            self.game.board.resetBoard()
         }
-        game.delegate = self
+        self.game.delegate = self
     }
 
     func send(_ action: ChessAction) {
-        guard let effect = reducer(&game, action, environment) else {
-            return
+        let queue = DispatchQueue(label: "ChessReducer")
+        queue.async {
+            guard let effect = self.reducer(&self.game, action, self.environment) else {
+                return
+            }
+            effect
+                .receive(on: DispatchQueue.main)
+                .subscribe(on: queue)
+                .sink(receiveValue: self.send)
+                .store(in: &self.cancellables)
         }
-
-        effect
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: send)
-            .store(in: &cancellables)
+    }
+    
+    func send2(_ action: ChessAction) {
+        DispatchQueue.main.async {
+            guard let effect = self.reducer(&self.game, action, self.environment) else {
+                return
+            }
+            effect
+                .sink(receiveValue: self.send)
+                .store(in: &self.cancellables)
+        }
     }
     
     
