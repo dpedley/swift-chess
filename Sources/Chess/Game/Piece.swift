@@ -108,14 +108,3 @@ extension Chess {
         }()
     }
 }
-
-extension Chess.Piece {
-    enum DefaultType {
-        static let Pawn = Chess.PieceType.pawn(hasMoved: false)
-        static let Knight = Chess.PieceType.knight
-        static let Bishop = Chess.PieceType.bishop
-        static let Rook = Chess.PieceType.rook(hasMoved: false, isKingSide: false)
-        static let Queen = Chess.PieceType.queen
-        static let King = Chess.PieceType.king(hasMoved: false)
-    }
-}
