@@ -10,8 +10,8 @@ import Foundation
 
 extension Chess.Board {
     static let startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-    private static let CharZero = Unicode.Scalar("0").value
-    internal func createCurrentFENString() -> String {
+    var FEN: String { return createCurrentFENString() }
+    private func createCurrentFENString() -> String {
         var fen = ""
         var emptyCount = 0
         for square in squares {
@@ -20,7 +20,7 @@ extension Chess.Board {
         fen += " \(playingSide.FEN) \(createCastlingString()) \(enPassantPosition?.FEN ?? "-") 0 \(fullMoves)"
         return fen
     }
-    internal func createCastlingString() -> String {
+    private func createCastlingString() -> String {
         var castling = ""
         // whiteKing = .e1
         if squares[.e1].piece?.hasMoved == false {
@@ -38,7 +38,8 @@ extension Chess.Board {
 }
 /// Board FEN hydration
 extension Chess.Board {
-    mutating internal func processFENRankString(_ rankString: String, rankIndex: Int) {
+    private static let CharZero = Unicode.Scalar("0").value
+    mutating private func processFENRankString(_ rankString: String, rankIndex: Int) {
         var fileIndex = 0
         for fenChar in rankString {
             guard let unicodeScalar = fenChar.unicodeScalars.first else {

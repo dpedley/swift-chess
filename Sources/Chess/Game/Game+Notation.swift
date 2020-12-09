@@ -89,7 +89,7 @@ extension Chess.Game {
         // When creating game PGNs we note the device info for elo stats.
         // No personal information is tapped here, the string created is in the format "iPhone10,1"
         // See https://stackoverflow.com/questions/11197509/how-to-get-device-make-and-model-on-ios
-        internal static func deviceSite() -> String {
+        static func deviceSite() -> String {
             var systemInfo = utsname()
             uname(&systemInfo)
             let machineMirror = Mirror(reflecting: systemInfo.machine)
