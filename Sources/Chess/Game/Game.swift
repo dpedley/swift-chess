@@ -15,8 +15,8 @@ public protocol ChessGameDelegate: AnyObject {
 extension Chess {
     public struct Game {
         weak var delegate: ChessGameDelegate?
-        internal var userPaused = true
-        internal var botPausedMove: Chess.Move?
+        var userPaused = true
+        private var botPausedMove: Chess.Move?
         var board = Chess.Board(populateExpensiveVisuals: true)
         var winningSide: Side? {
             didSet {
@@ -83,12 +83,12 @@ extension Chess {
         public mutating func pause() {
             userPaused = true
         }
-        mutating internal func nextTurn() {
+        mutating func nextTurn() {
             guard let player = activePlayer else { return }
             player.turnUpdate(game: self)
         }
 
-        mutating internal func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
+        mutating private func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
                                                          fenAfterMove: board.FEN,
@@ -170,20 +170,20 @@ extension Chess {
                 }
             }
         }
-        internal func clearActivePlayerSelections() {
+        private func clearActivePlayerSelections() {
             // STILL UNDONE: Vet the use of the old UI update here.
 //            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        internal func flashKing() {
+        private func flashKing() {
             // STILL UNDONE: Vet the use of the old UI update here.
 //            let kingPosition = board.squareForActiveKing.position
 //            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        internal func updateBoard(human: Chess.HumanPlayer,
-                                  failed move: Chess.Move,
-                                  with reason: Chess.Move.Limitation) {
+        private func updateBoard(human: Chess.HumanPlayer,
+                                 failed move: Chess.Move,
+                                 with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
             case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove,
@@ -202,7 +202,7 @@ extension Chess {
             // STILL UNDONE: this is where the clock updates might happen
             continueBasedOnStatus()
         }
-        internal mutating func continueBasedOnStatus() {
+        private mutating func continueBasedOnStatus() {
             let status = self.status()
             switch status {
             case .active:
