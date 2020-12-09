@@ -37,6 +37,7 @@ public struct BoardView: View {
         let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
         return evenSquare ? themeColor.dark : themeColor.light
     }
+    public init() {}
 }
 
 struct BoardViewPreviews: PreviewProvider {
