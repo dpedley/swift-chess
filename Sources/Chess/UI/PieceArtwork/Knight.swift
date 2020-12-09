@@ -70,12 +70,15 @@ extension PieceArtwork {
 // swiftlint:disable line_length
 // swiftlint:disable colon
 struct KnightPreview: PreviewProvider {
+    static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
-            PieceView(.knight, style: .black)
+            PieceView(position: .b8)
+                .environmentObject(store)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: 0)
-            PieceView(.knight, style: .white)
+            PieceView(position: .b1)
+                .environmentObject(store)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 0)
         }

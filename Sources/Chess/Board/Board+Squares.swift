@@ -22,128 +22,26 @@ extension Chess_Index {
 }
 
 extension Chess.Board {
-    // swiftlint:disable nesting
-    enum Black {
-        enum King: Chess_Index { static let index: Int = 4 }
-        enum Queen: Chess_Index { static let index: Int = 3 }
-        enum KingsSide {
-            enum Rook: Chess_Index { static let index: Int = 7 }
-            enum Knight: Chess_Index { static let index: Int = 6 }
-            enum Bishop: Chess_Index { static let index: Int = 5 }
-        }
-        enum QueensSide {
-            enum Rook: Chess_Index { static let index: Int = 0 }
-            enum Knight: Chess_Index { static let index: Int = 1 }
-            enum Bishop: Chess_Index { static let index: Int = 2 }
-        }
-    }
-    enum White {
-        enum King: Chess_Index { static let index: Int = 60 }
-        enum Queen: Chess_Index { static let index: Int = 59 }
-        enum KingsSide {
-            enum Rook: Chess_Index { static let index: Int = 63 }
-            enum Knight: Chess_Index { static let index: Int = 62 }
-            enum Bishop: Chess_Index { static let index: Int = 61 }
-        }
-        enum QueensSide {
-            enum Rook: Chess_Index { static let index: Int = 56 }
-            enum Knight: Chess_Index { static let index: Int = 57 }
-            enum Bishop: Chess_Index { static let index: Int = 58 }
-        }
-    }
-    // swiftlint:enable nesting
-    // swiftlint:disable cyclomatic_complexity
-    func startingSquare(for side: Chess.Side, pieceType: Chess.PieceType, kingSide: Bool = true) -> Chess.Square {
-        switch pieceType {
-        case .pawn:
-            fatalError("Pawns don't have unique squares.")
-        case .knight:
-            if side == .black {
-                if kingSide {
-                    return Chess.Board.Black.KingsSide.Knight.square(on: self)
-                }
-                return Chess.Board.Black.QueensSide.Knight.square(on: self)
-            }
-            if kingSide {
-                return Chess.Board.White.KingsSide.Knight.square(on: self)
-            }
-            return Chess.Board.White.QueensSide.Knight.square(on: self)
-        case .bishop:
-            if side == .black {
-                if kingSide {
-                    return Chess.Board.Black.KingsSide.Bishop.square(on: self)
-                }
-                return Chess.Board.Black.QueensSide.Bishop.square(on: self)
-            }
-            if kingSide {
-                return Chess.Board.White.KingsSide.Bishop.square(on: self)
-            }
-            return Chess.Board.White.QueensSide.Bishop.square(on: self)
-        case .rook:
-            if side == .black {
-                if kingSide {
-                    return Chess.Board.Black.KingsSide.Rook.square(on: self)
-                }
-                return Chess.Board.Black.QueensSide.Rook.square(on: self)
-            }
-            if kingSide {
-                return Chess.Board.White.KingsSide.Rook.square(on: self)
-            }
-            return Chess.Board.White.QueensSide.Rook.square(on: self)
-        case .queen:
-            if side == .black {
-                return Chess.Board.Black.Queen.square(on: self)
-            }
-            return Chess.Board.White.Queen.square(on: self)
-        case .king:
-            if side == .black {
-                return Chess.Board.Black.King.square(on: self)
-            }
-            return Chess.Board.White.King.square(on: self)
-        }
-    }
     func isValid(startingSquare square: Chess.Square, for piece: Chess.Piece) -> Bool {
         switch piece.pieceType {
         case .pawn:
-            if square.position.rank==7 && piece.side == .black {
-                return true
-            }
-            if square.position.rank==2 && piece.side == .white {
-                return true
-            }
-            return false
+            return piece.side == .black ? square.position.rank==7 : square.position.rank==2
         case .knight:
-            if piece.side == .black {
-                return (square.position == Chess.Board.Black.QueensSide.Knight.index) ||
-                    (square.position == Chess.Board.Black.KingsSide.Knight.index)
-            }
-            return (square.position == Chess.Board.White.QueensSide.Knight.index) ||
-                (square.position == Chess.Board.White.KingsSide.Knight.index)
+            return piece.side == .black ?
+                Chess.Rules.startingPositionsForBlackKnights.contains(square.position) :
+                Chess.Rules.startingPositionsForWhiteKnights.contains(square.position)
         case .bishop:
-            if piece.side == .black {
-                return (square.position == Chess.Board.Black.QueensSide.Bishop.index) ||
-                    (square.position == Chess.Board.Black.KingsSide.Bishop.index)
-            }
-            return (square.position == Chess.Board.White.QueensSide.Bishop.index) ||
-                (square.position == Chess.Board.White.KingsSide.Bishop.index)
+            return piece.side == .black ?
+                Chess.Rules.startingPositionsForBlackBishops.contains(square.position) :
+                Chess.Rules.startingPositionsForWhiteBishops.contains(square.position)
         case .rook:
-            if piece.side == .black {
-                return (square.position == Chess.Board.Black.QueensSide.Rook.index) ||
-                    (square.position == Chess.Board.Black.KingsSide.Rook.index)
-            }
-            return (square.position == Chess.Board.White.QueensSide.Rook.index) ||
-                (square.position == Chess.Board.White.KingsSide.Rook.index)
+            return piece.side == .black ?
+                Chess.Rules.startingPositionsForBlackRooks.contains(square.position) :
+                Chess.Rules.startingPositionsForWhiteRooks.contains(square.position)
         case .queen:
-            if piece.side == .black {
-                return square.position == Chess.Board.Black.Queen.index
-            }
-            return square.position == Chess.Board.White.Queen.index
+            return piece.side == .black ? square.position == .d8 : square.position == .d1
         case .king:
-            if piece.side == .black {
-                return square.position == Chess.Board.Black.King.index
-            }
-            return square.position == Chess.Board.White.King.index
+            return piece.side == .black ? square.position == .e8 : square.position == .e1
         }
     }
-    // swiftlint:enable cyclomatic_complexity
 }

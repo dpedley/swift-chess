@@ -24,7 +24,6 @@ extension Chess {
 }
 
 extension Chess.Game {
-    // swiftlint:disable cyclomatic_complexity
     mutating func status() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
             if board.FEN == Chess.Board.startingFEN {
@@ -32,30 +31,10 @@ extension Chess.Game {
             }
             return .unknown
         }
-        if userPaused {
-            return .paused
-        }
-        if lastMove.isTimeout {
-            return .timeout
-        }
-        if lastMove.isResign {
-            return .resign
-        }
-        // Check for mate
-        if board.square(board.squareForActiveKing.position, canBeAttackedBy: board.playingSide) {
-            var isStuckInCheck = true
-            if let allVariantBoards = board.createValidVariants(for: board.playingSide) {
-                for boardVariant in allVariantBoards {
-                    if let kingSquare = boardVariant.board.findOptionalKing(board.playingSide),
-                       boardVariant.board.square(kingSquare.position, canBeAttackedBy: board.playingSide) {
-                        isStuckInCheck = false
-                    }
-                }
-            }
-            if isStuckInCheck {
-                return .mate
-            }
-        }
+        guard !userPaused else { return .paused }
+        guard !lastMove.isTimeout else { return .timeout }
+        guard !lastMove.isResign else { return .resign }
+        guard !board.isKingMated() else { return .mate }
         // Does the active side have any valid moves?
         guard board.validVariantExists(for: board.playingSide) else {
             return .stalemate
@@ -65,7 +44,5 @@ extension Chess.Game {
 //            case drawByMoves
 //            case drawBecauseOfInsufficientMatingMaterial
         return .active
-
     }
-    // swiftlint:enable cyclomatic_complexity
 }

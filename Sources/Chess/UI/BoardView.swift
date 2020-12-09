@@ -25,7 +25,8 @@ struct BoardView: View {
                             Rectangle() // The square background
                                 .fill(color(for: idx))
                                 .aspectRatio(1, contentMode: .fill)
-                            store.game.board.squares[idx].piece?.UI.asView()
+                            PieceView(position: idx)
+                                .environmentObject(store)
                                 .onDrag({ NSItemProvider(object: Chess.Position(idx).FEN as NSString) })
                         }
                     }

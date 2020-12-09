@@ -87,8 +87,61 @@ extension Chess {
             guard let player = activePlayer else { return }
             player.turnUpdate(game: self)
         }
-        // swiftlint:disable function_body_length
-        // swiftlint:disable cyclomatic_complexity
+
+        mutating internal func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
+            let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
+                                                         move: move.PGN ?? "??",
+                                                         fenAfterMove: board.FEN,
+                                                         annotation: nil)
+            pgn.moves.append(annotatedMove)
+            // STILL UNDONE: we may need to account for non-boardmoves
+//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
+//                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
+
+            // we need to update the UI here
+            // Note piece is at `move.end` now as the move is complete.
+            if let piece = board.squares[move.end].piece {
+                let moveUpdate: Chess.UI.PieceUpdate
+                if let capturedPiece = capturedPiece {
+                    moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI,
+                                                              start: move.start,
+                                                              captured: capturedPiece.UI,
+                                                              end: move.end)
+                } else {
+                    moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, start: move.start, end: move.end)
+                }
+                // Update the board with the move
+                var updates = [Chess.UI.Update.piece(moveUpdate)]
+                updates.append(Chess.UI.Update.highlight([move.start, move.end]))
+                // Add any side effects
+                switch move.sideEffect {
+                case .castling(let rookStart, let rookEnd):
+                    if let rook = board.squares[rookEnd].piece {
+                        let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, start: rookStart, end: rookEnd)
+                        updates.append( Chess.UI.Update.piece(rookUpdate) )
+                    }
+                case .enPassantCapture, .enPassantInvade, .promotion, .notKnown, .noneish:
+                    // These cases don't imply another uiUpdate is needed.
+                    break
+                }
+                // STILL UNDONE Check for check and mate and update game
+
+                // Lastly add this move to our ledger
+                updates.append(Chess.UI.Update.ledger(move))
+                if board.playingSide == .black {
+                    if board.turns.count == 0 {
+                        // This should only happen in board variants.
+                        board.turns.append(Chess.Turn(white: move, black: nil))
+                    } else {
+                        // This is the usual black move follows white, so the turn exists in the stack.
+                        board.turns[board.turns.count - 1].black = move
+                    }
+                    board.fullMoves += 1
+                } else {
+                    board.turns.append(Chess.Turn(white: move, black: nil))
+                }
+            }
+        }
         mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
@@ -104,84 +157,7 @@ extension Chess {
             let moveTry = board.attemptMove(&moveAttempt)
             switch moveTry {
             case .success(let capturedPiece):
-                let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
-                                                             move: move.PGN ?? "??",
-                                                             fenAfterMove: board.FEN,
-                                                             annotation: nil)
-                pgn.moves.append(annotatedMove)
-                // STILL UNDONE: we may need to account for non-boardmoves
-//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
-//                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
-
-                // we need to update the UI here
-                // Note piece is at `move.end` now as the move is complete.
-                if let piece = board.squares[move.end].piece {
-                    let moveUpdate: Chess.UI.PieceUpdate
-                    if let capturedPiece = capturedPiece {
-                        moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI,
-                                                                  start: move.start,
-                                                                  captured: capturedPiece.UI,
-                                                                  end: move.end)
-                    } else {
-                        moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, start: move.start, end: move.end)
-                    }
-                    // Update the board with the move
-                    var updates = [Chess.UI.Update.piece(moveUpdate)]
-                    updates.append(Chess.UI.Update.highlight([move.start, move.end]))
-                    // Add any side effects
-                    switch move.sideEffect {
-                    case .castling(let rookStart, let rookEnd):
-                        if let rook = board.squares[rookEnd].piece {
-                            let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, start: rookStart, end: rookEnd)
-                            updates.append( Chess.UI.Update.piece(rookUpdate) )
-                        }
-                    case .enPassantCapture, .enPassantInvade, .promotion, .notKnown, .noneish:
-                        // These cases don't imply another uiUpdate is needed.
-                        break
-                    }
-                    // Check for check and mate
-                    if board.square(board.squareForActiveKing.position, canBeAttackedBy: board.playingSide) {
-                        // Are we in mate?
-                        switch status() {
-                        case .mate:
-                            break
-                        case .unknown:
-                            break
-                        case .notYetStarted:
-                            break
-                        case .active:
-                            break
-                        case .resign:
-                            break
-                        case .timeout:
-                            break
-                        case .drawByRepetition:
-                            break
-                        case .drawByMoves:
-                            break
-                        case .drawBecauseOfInsufficientMatingMaterial:
-                            break
-                        case .stalemate:
-                            break
-                        case .paused:
-                            break
-                        }
-                    }
-                    // Lastly add this move to our ledger
-                    updates.append(Chess.UI.Update.ledger(move))
-                    if board.playingSide == .black {
-                        if board.turns.count == 0 {
-                            // This should only happen in board variants.
-                            board.turns.append(Chess.Turn(white: move, black: nil))
-                        } else {
-                            // This is the usual black move follows white, so the turn exists in the stack.
-                            board.turns[board.turns.count - 1].black = move
-                        }
-                        board.fullMoves += 1
-                    } else {
-                        board.turns.append(Chess.Turn(white: move, black: nil))
-                    }
-                }
+                executeSuccess(move: move, capturedPiece: capturedPiece)
             case .failed(reason: let reason):
                 print("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
@@ -194,8 +170,6 @@ extension Chess {
                 }
             }
         }
-        // swiftlint:enable cyclomatic_complexity
-        // swiftlint:enable function_body_length
         internal func clearActivePlayerSelections() {
             // STILL UNDONE: Vet the use of the old UI update here.
 //            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
