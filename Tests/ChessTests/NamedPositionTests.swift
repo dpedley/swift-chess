@@ -33,10 +33,11 @@ final class NamedPositionTests: XCTestCase {
         // walk the board
         for square in board.squares {
             guard let piece = square.piece else { continue }
-            XCTAssertTrue(board.isValid(startingSquare: square, for: piece), "The square \(square.position.FEN) - \(square.position.rawIndex) doesn't like \(piece.FEN)")
+            XCTAssertTrue(board.isValid(startingSquare: square, for: piece),
+                          "The square \(square.position.FEN) - \(square.position.rawIndex) doesn't like \(piece.FEN)")
         }
     }
-    
+
     // swiftlint:disable function_body_length
     func testPositionNames() {
         XCTAssertEqual(Chess.Position.a1, Chess.Position.from(rankAndFile: "a1"))
