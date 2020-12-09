@@ -31,7 +31,6 @@ extension Chess {
             return lastTurn.white
         }
         var fullMoves = 1 // This is intentionally 1 even at the games start.
-        var FEN: String { return createCurrentFENString() }
         var enPassantPosition: Position? { return lastEnPassantPosition() }
         var squareForActiveKing: Chess.Square { return findKing(playingSide) }
         init(populateExpensiveVisuals: Bool = false) {

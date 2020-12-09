@@ -8,59 +8,9 @@
 import Foundation
 
 extension Chess.Board {
-    internal func lastEnPassantPosition() -> Chess.Position? {
-        guard let sideEffect = lastMove?.sideEffect else { return nil }
-        switch sideEffect {
-        case Chess.Move.SideEffect.enPassantInvade(let territory, _):
-            return territory
-        default:
-            return nil
-        }
-    }
-    internal func findKing(_ side: Chess.Side) -> Chess.Square {
-        guard let square = findOptionalKing(side) else {
-            fatalError("Tried to access the \(side) king when it wasn't on the board [\(FEN)]")
-        }
-        return square
-    }
-    internal func findOptionalKing(_ side: Chess.Side) -> Chess.Square? {
-        var kingSearch: Chess.Square?
-        squares.forEach {
-            if let piece = $0.piece, piece.side == side {
-                switch piece.pieceType {
-                case .king:
-                    kingSearch = $0
-                default:
-                    break
-                }
-            }
-        }
-        return kingSearch
-    }
-    func prepareMove(_ move: inout Chess.Move) -> Chess.Move.Result? {
-        let fromSquare = squares[move.start]
-        let toSquare = squares[move.end]
-        guard let piece = fromSquare.piece else {
-            return .failed(reason: .noPieceToMove)
-        }
-        guard let toPiece = toSquare.piece else {
-            // The square we are moving to is empty, check that it's a valid move.
-            guard canPieceMove(&move, piece: piece) else {
-                return .failed(reason: .invalidMoveForPiece)
-            }
-            return nil
-        }
-        guard piece.side != toPiece.side else {
-            return .failed(reason: .sameSideAlreadyOccupiesDestination)
-        }
-        guard canPieceAttack(&move, piece: piece) else {
-            return .failed(reason: .invalidAttackForPiece)
-        }
-        return nil
-    }
-    mutating func allSquaresAttacking(_ targetSquare: Chess.Square,
-                                      side: Chess.Side,
-                                      applyVariants: Bool) -> [Chess.Square] {
+    func allSquaresAttacking(_ targetSquare: Chess.Square,
+                             side: Chess.Side,
+                             applyVariants: Bool) -> [Chess.Square] {
         var attackers: [Chess.Square] = []
         for square in squares {
             guard let piece = square.piece, piece.side == side else { continue }
@@ -77,7 +27,56 @@ extension Chess.Board {
         }
         return attackers
     }
-    mutating internal func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
+    func lastEnPassantPosition() -> Chess.Position? {
+        guard let sideEffect = lastMove?.sideEffect else { return nil }
+        switch sideEffect {
+        case Chess.Move.SideEffect.enPassantInvade(let territory, _):
+            return territory
+        default:
+            return nil
+        }
+    }
+    func findKing(_ side: Chess.Side) -> Chess.Square {
+        guard let square = findOptionalKing(side) else {
+            fatalError("Tried to access the \(side) king when it wasn't on the board [\(FEN)]")
+        }
+        return square
+    }
+}
+extension Chess.Board {
+    func prepareMove(_ move: inout Chess.Move, applyVariants: Bool) throws {
+        let fromSquare = squares[move.start]
+        let toSquare = squares[move.end]
+        guard let piece = fromSquare.piece else {
+            throw Chess.Move.Limitation.noPieceToMove
+        }
+        guard let toPiece = toSquare.piece else {
+            // The square we are moving to is empty, check that it's a valid move.
+            guard canPieceMove(&move, piece: piece) else {
+                throw Chess.Move.Limitation.invalidMoveForPiece
+            }
+            // We need to attempt the move and see if it produces a board where the king is under attack.
+            if applyVariants {
+                try applyVariantsForMoveAttempt(move)
+            }
+            // The move passed our tests, we can commit it safely
+            move.setVerified()
+            return
+        }
+        guard piece.side != toPiece.side else {
+            throw Chess.Move.Limitation.sameSideAlreadyOccupiesDestination
+        }
+        guard canPieceAttack(&move, piece: piece) else {
+            throw Chess.Move.Limitation.invalidAttackForPiece
+        }
+        // We need to attempt the move and see if it produces a board where the king is under attack.
+        if applyVariants {
+            try applyVariantsForMoveAttempt(move)
+        }
+        // The move passed our tests, we can commit it safely
+        move.setVerified()
+    }
+    private func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
         let boardChange = Chess.BoardChange.moveMade(move: move)
         let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN,
                                                   changesToAttempt: [boardChange],
@@ -103,25 +102,23 @@ extension Chess.Board {
                 }
             }
         }
-
     }
+}
+
+/// Mutation board game methods
+extension Chess.Board {
     // Returns false if move cannot be made
     mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.Move.Result {
-        if let failedResult = prepareMove(&move) { return failedResult }
-        // We need to attempt the move and see if it produces a board where the king is under attack.
-        if applyVariants {
-            do {
-                try applyVariantsForMoveAttempt(move)
-            } catch let error {
-                guard let limitation = error as? Chess.Move.Limitation,
-                      limitation != .unknown else {
-                    fatalError("Tried to apply variants and got an unknown error \(error)")
-                }
-                return .failed(reason: limitation)
+        // We prepare the move, which will throw a limitation if the move cannot be made.
+        do {
+            try prepareMove(&move, applyVariants: applyVariants)
+        } catch let error {
+            guard let limitation = error as? Chess.Move.Limitation,
+                  limitation != .unknown else {
+                fatalError("Tried to apply variants and got an unknown error \(error)")
             }
+            return .failed(reason: limitation)
         }
-        // The move passed our tests, we can commit it safely
-        move.setVerified()
         // Before we `commit` the move grab the destination square's piece,
         // if there is one, `commit` will over write it.
         // We do this with the special EnPassant capture as well.
@@ -132,6 +129,7 @@ extension Chess.Board {
         default:
             capturedPiece = squares[move.end].piece
         }
+        // We commit the move, which will throw a limitation if the move cannot be applied to the board.
         do {
             try commit(move, capturedPiece: capturedPiece)
         } catch let error {
@@ -201,7 +199,25 @@ extension Chess.Board {
             }
         }
     }
-    func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
+}
+
+/// Board move validate methods.
+extension Chess.Board {
+    private func findOptionalKing(_ side: Chess.Side) -> Chess.Square? {
+        var kingSearch: Chess.Square?
+        squares.forEach {
+            if let piece = $0.piece, piece.side == side {
+                switch piece.pieceType {
+                case .king:
+                    kingSearch = $0
+                default:
+                    break
+                }
+            }
+        }
+        return kingSearch
+    }
+    private func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Attacks are moves, except when they aren't
         switch piece.pieceType {
         case .pawn:
@@ -218,7 +234,7 @@ extension Chess.Board {
             return canPieceMove(&move, piece: piece)
         }
     }
-    internal func canPawnMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+    private func canPawnMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
         // Only forward
         if move.rankDirection == move.side.rankDirection {
             if !squares[move.end].isEmpty {
@@ -249,7 +265,7 @@ extension Chess.Board {
         }
         return false
     }
-    internal func canKingMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+    private func canKingMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
         if move.rankDistance<2, move.fileDistance<2 {
             return true
         }
@@ -265,7 +281,7 @@ extension Chess.Board {
         }
         return false
     }
-    func canPieceMove(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
+    private func canPieceMove(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {
         // Make sure it's a move
         if (move.rankDistance==0) && (move.fileDistance==0) {
             return false
