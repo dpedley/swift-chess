@@ -9,10 +9,10 @@ import Foundation
 import SwiftUI
 import Combine
 
-typealias ChessGameReducer<Game, Action, Environment> =
+public typealias ChessGameReducer<Game, Action, Environment> =
     (inout Game, Action, Environment) -> AnyPublisher<Action, Never>?
 
-extension ChessStore {
+public extension ChessStore {
     static func chessReducer(
         game: inout Chess.Game,
         action: ChessAction,
