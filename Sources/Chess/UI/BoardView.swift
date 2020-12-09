@@ -9,9 +9,9 @@ import SwiftUI
 import Combine
 
 public struct BoardView: View {
-    @EnvironmentObject var store: ChessStore
+    @EnvironmentObject public var store: ChessStore
     let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
-    var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
+    private var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
     func color(for index: Int) -> Color {
         let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
         return evenSquare ? themeColor.dark : themeColor.light
