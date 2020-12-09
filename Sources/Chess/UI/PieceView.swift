@@ -30,7 +30,6 @@ struct PieceView: View {
 }
 
 // False positives disabled.
-// swiftlint:disable line_length colon
 struct PieceViewPreview: PreviewProvider {
     static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
@@ -55,4 +54,3 @@ struct PieceViewPreview: PreviewProvider {
         .frame(width: 200, height: 200, alignment: .center)
     }
 }
-// swiftlint:enable line_length colon
