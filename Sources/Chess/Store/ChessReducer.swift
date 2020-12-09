@@ -29,7 +29,7 @@ extension ChessStore {
 //            print("pauseGame: Pausing...")
             game.userPaused = true
         case .setBoard(let fen):
-            print("setBoard: Board setup as: \(fen)")
+//            print("setBoard: Board setup as: \(fen)")
             game.board.resetBoard(FEN: fen)
         case .makeMove(let move):
 //            print("makeMove: \(move.side) \(move.description)")
