@@ -13,10 +13,10 @@ import SwiftUI
 /// This is the view used for the chess pieces.
 /// The artwork controls which piece you see
 /// The style has the colors.
-struct PieceView: View {
+public struct PieceView: View {
     @EnvironmentObject var store: ChessStore
     let position: Chess.Position
-    var body: some View {
+    public var body: some View {
         // Paint the piece
         PieceShape(artwork: store.game.board.squares[position].piece?.artwork)
         .foregroundColor(store.game.board.squares[position].piece?.style.fill)
