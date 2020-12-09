@@ -10,12 +10,8 @@ import Combine
 
 public struct BoardView: View {
     @EnvironmentObject public var store: ChessStore
-    let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
+    public let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
     private var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
-    func color(for index: Int) -> Color {
-        let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
-        return evenSquare ? themeColor.dark : themeColor.light
-    }
     public var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -36,6 +32,10 @@ public struct BoardView: View {
                    height: geometry.size.minimumLength,
                    alignment: .center)
         }
+    }
+    public func color(for index: Int) -> Color {
+        let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
+        return evenSquare ? themeColor.dark : themeColor.light
     }
 }
 
