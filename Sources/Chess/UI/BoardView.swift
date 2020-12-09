@@ -31,6 +31,7 @@ public struct BoardView: View {
             .frame(width: geometry.size.minimumLength,
                    height: geometry.size.minimumLength,
                    alignment: .center)
+            .drawingGroup()
         }
     }
     public func color(for index: Int) -> Color {

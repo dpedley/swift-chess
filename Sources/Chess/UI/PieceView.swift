@@ -17,15 +17,18 @@ public struct PieceView: View {
     @EnvironmentObject var store: ChessStore
     let position: Chess.Position
     public var body: some View {
-        // Paint the piece
-        PieceShape(artwork: store.game.board.squares[position].piece?.artwork)
-        .foregroundColor(store.game.board.squares[position].piece?.style.fill)
-        // Then outline it
-        PieceShape(artwork: store.game.board.squares[position].piece?.artwork)?
-        .stroke(store.game.board.squares[position].piece?.style.outline ?? .clear)
-        // Render the details in the highlight color
-        PieceShape.Details(artwork: store.game.board.squares[position].piece?.artwork)?
-            .stroke(store.game.board.squares[position].piece?.style.highlight ?? .clear, lineWidth: 1.5)
+        ZStack {
+            // Paint the piece
+            PieceShape(artwork: store.game.board.squares[position].piece?.artwork)
+            .foregroundColor(store.game.board.squares[position].piece?.style.fill)
+            // Then outline it
+            PieceShape(artwork: store.game.board.squares[position].piece?.artwork)?
+            .stroke(store.game.board.squares[position].piece?.style.outline ?? .clear)
+            // Render the details in the highlight color
+            PieceShape.Details(artwork: store.game.board.squares[position].piece?.artwork)?
+                .stroke(store.game.board.squares[position].piece?.style.highlight ?? .clear, lineWidth: 1.5)
+        }
+        .drawingGroup()
     }
 }
 
