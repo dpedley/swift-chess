@@ -19,7 +19,7 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
     private var cancellables: Set<AnyCancellable> = []
 
     public init(
-        game: Chess.Game,
+        game: Chess.Game = Chess.Game(),
         reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
     ) {
