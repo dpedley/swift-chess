@@ -20,7 +20,7 @@ final class GameTests: XCTestCase {
             let testFEN = game.board.FEN
             // Check if the first move has been completed.
             if testFEN == fen1 {
-                fen1 = nil // So we don't match re than once.
+                fen1 = nil // So we don't match more than once.
                 guard game.board.fullMoves == 1,
                       game.board.playingSide == .black else {
                     XCTFail("Move 1: The board isn't in the right state.")
@@ -30,7 +30,7 @@ final class GameTests: XCTestCase {
             }
             // Check if the second move has finished.
             if testFEN == fen2 {
-                fen2 = nil // So we don't match re than once.
+                fen2 = nil // So we don't match more than once.
                 guard game.board.fullMoves == 2,
                       game.board.playingSide == .white else {
                     XCTFail("Move 2: The board isn't in the right state.")
