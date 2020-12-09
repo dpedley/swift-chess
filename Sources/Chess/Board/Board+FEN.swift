@@ -35,6 +35,9 @@ extension Chess.Board {
         if castling.count == 0 { castling = "-" }
         return castling
     }
+}
+/// Board FEN hydration
+extension Chess.Board {
     mutating internal func processFENRankString(_ rankString: String, rankIndex: Int) {
         var fileIndex = 0
         for fenChar in rankString {

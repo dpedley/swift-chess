@@ -10,57 +10,21 @@ import Foundation
 extension Chess {
     public struct Square {
         let position: Position
-        var piece: Piece? {
-            willSet {
-                // Note this order, deselect first to catch the attackedSquareIndices referred squares before clearing.
-                if selected { selected = false }
-                // We need to rebuild the attacked squares index list.
-                self.cachesPositionsOfAttackedSquares = nil
-            }
-        }
+        var piece: Piece?
         var isKingSide: Bool { return (position > 3) }
         var isEmpty: Bool { return piece==nil }
-        var selected: Bool = false {
-            didSet {
-                // STILL UNDONE: this needs to be done elsewhere.
-                // Need to update the other squares that are attached by this one.
-//                attackedSquares?.forEach( { $0.attackedBySelected = selected } )
-            }
-        }
-        var attackedBySelected: Bool = false {
-            didSet {
-                // This may need to trigger other "can move" stuff based on pins etc.
-            }
-        }
-        // Note these index numbers of 64 squares that can be potentially be moved to by the piece
-        // occupying this space. It is based on being the only piece on the board, so the piece's path to this
-        // other square aren't checked. In other words, it's the attackable squares if this piece were alone on the
-        // board.
-        private var cachesPositionsOfAttackedSquares: [Chess.Position]?
-        mutating func positionsOfAttackedSquares(board: Chess.Board) -> [Chess.Position] {
-            guard let positions = cachesPositionsOfAttackedSquares else {
-                // Need to build the positions
-                guard let piece = piece else {
-                    cachesPositionsOfAttackedSquares = []
-                    return []
+        var selected: Bool = false
+        func attackedSquares(board: Chess.Board) -> [Square]? {
+            guard let piece = piece else { return nil }
+            var positions: [Square] = []
+            for testIndex in 0..<board.squares.count {
+                let testSquare = board.squares[testIndex]
+                var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
+                if piece.isAttackValid(&moveTest) {
+                    positions.append(testSquare)
                 }
-                var positions: [Chess.Position] = []
-                for testIndex in 0..<board.squares.count {
-                    let testSquare = board.squares[testIndex]
-                    var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
-                    if piece.isAttackValid(&moveTest) {
-                        positions.append(testIndex)
-                    }
-                }
-                cachesPositionsOfAttackedSquares = positions
-                return positions
             }
-            return positions
-        }
-        mutating func attackedSquares(board: Chess.Board) -> [Square]? {
-            let positions = positionsOfAttackedSquares(board: board)
-            guard !positions.isEmpty else { return nil }
-            return positions.map { board.squares[$0] }
+            return positions.count > 0 ? positions : nil
         }
         func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }

@@ -37,6 +37,8 @@ extension Chess.Board {
         }
         return kingSearch
     }
+}
+extension Chess.Board {
     func prepareMove(_ move: inout Chess.Move) -> Chess.Move.Result? {
         let fromSquare = squares[move.start]
         let toSquare = squares[move.end]
@@ -58,9 +60,9 @@ extension Chess.Board {
         }
         return nil
     }
-    mutating func allSquaresAttacking(_ targetSquare: Chess.Square,
-                                      side: Chess.Side,
-                                      applyVariants: Bool) -> [Chess.Square] {
+    func allSquaresAttacking(_ targetSquare: Chess.Square,
+                             side: Chess.Side,
+                             applyVariants: Bool) -> [Chess.Square] {
         var attackers: [Chess.Square] = []
         for square in squares {
             guard let piece = square.piece, piece.side == side else { continue }
@@ -77,7 +79,7 @@ extension Chess.Board {
         }
         return attackers
     }
-    mutating internal func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
+    internal func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
         let boardChange = Chess.BoardChange.moveMade(move: move)
         let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN,
                                                   changesToAttempt: [boardChange],
@@ -103,8 +105,11 @@ extension Chess.Board {
                 }
             }
         }
-
     }
+}
+
+/// Mutation board game methods
+extension Chess.Board {
     // Returns false if move cannot be made
     mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.Move.Result {
         if let failedResult = prepareMove(&move) { return failedResult }
