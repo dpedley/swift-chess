@@ -11,31 +11,21 @@ extension Chess.Side {
     func twoSquareMove(fromString: String) -> Chess.Move? {
         // First check for special moves
         if fromString == "O-O" { // Kingside castle
-            let kingsPosition: Chess.Position
-            let kingsDestination: Chess.Position
             switch self {
             case .black:
-                kingsPosition = Chess.Board.Black.King.index
-                kingsDestination = Chess.Board.Black.KingsSide.Knight.index
+                return Chess.Move.black.O_O
             case .white:
-                kingsPosition = Chess.Board.White.King.index
-                kingsDestination = Chess.Board.White.KingsSide.Knight.index
+                return Chess.Move.white.O_O
             }
-            return Chess.Move(side: self, start: kingsPosition, end: kingsDestination)
         }
 
         if fromString == "O-O-O" { // Queenside castle
-            let kingsPosition: Chess.Position
-            let kingsDestination: Chess.Position
             switch self {
             case .black:
-                kingsPosition = Chess.Board.Black.King.index
-                kingsDestination = Chess.Board.Black.QueensSide.Bishop.index
+                return Chess.Move.black.O_O_O
             case .white:
-                kingsPosition = Chess.Board.White.King.index
-                kingsDestination = Chess.Board.White.QueensSide.Bishop.index
+                return Chess.Move.white.O_O_O
             }
-            return Chess.Move(side: self, start: kingsPosition, end: kingsDestination)
         }
 
         if fromString.count != 4 {

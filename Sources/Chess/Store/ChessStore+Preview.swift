@@ -29,15 +29,24 @@ struct ChessStorePreview: PreviewProvider {
         store.game.userPaused = true
         return store
     }()
+    @State static var debugLabel: String = ""
     static var previews: some View {
         HStack {
             BoardView()
                 .environmentObject(store)
-            Button(store.game.board.FEN == fen ? "Black to Mate" : "Reset") {
-                if store.game.board.FEN == fen {
-                    store.send(.makeMove(move: Chess.Move.black.f8.f1))
-                } else {
+            VStack {
+                Text(debugLabel)
+                Button("Refresh") {
+                    let fen = store.game.board.FEN
+                    debugLabel = fen
                     store.send(.setBoard(fen: fen))
+                }
+                Button(store.game.board.FEN == fen ? "Black to Mate" : "Reset") {
+                    if store.game.board.FEN == fen {
+                        store.send(.makeMove(move: Chess.Move.black.f8.f1))
+                    } else {
+                        store.send(.setBoard(fen: fen))
+                    }
                 }
             }
         }

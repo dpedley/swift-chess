@@ -2,6 +2,42 @@ import XCTest
 @testable import Chess
 
 final class NamedPositionTests: XCTestCase {
+    func testPieceGroups() {
+        let board = Chess.Board(FEN: Chess.Board.startingFEN)
+        let blackPawns = Chess.Rules.startingPositionsForBlackPawns.compactMap { board.squares[$0].piece }
+        let whitePawns = Chess.Rules.startingPositionsForWhitePawns.compactMap { board.squares[$0].piece }
+        let blackKnights = Chess.Rules.startingPositionsForBlackKnights.compactMap { board.squares[$0].piece }
+        let whiteKnights = Chess.Rules.startingPositionsForWhiteKnights.compactMap { board.squares[$0].piece }
+        let blackBishops = Chess.Rules.startingPositionsForBlackBishops.compactMap { board.squares[$0].piece }
+        let whiteBishops = Chess.Rules.startingPositionsForWhiteBishops.compactMap { board.squares[$0].piece }
+        let blackRooks = Chess.Rules.startingPositionsForBlackRooks.compactMap { board.squares[$0].piece }
+        let whiteRooks = Chess.Rules.startingPositionsForWhiteRooks.compactMap { board.squares[$0].piece }
+        XCTAssertEqual(blackPawns.count, 8)
+        XCTAssertEqual(whitePawns.count, 8)
+        XCTAssertEqual(blackKnights.count, 2)
+        XCTAssertEqual(whiteKnights.count, 2)
+        XCTAssertEqual(blackBishops.count, 2)
+        XCTAssertEqual(whiteBishops.count, 2)
+        XCTAssertEqual(blackRooks.count, 2)
+        XCTAssertEqual(whiteRooks.count, 2)
+
+        let whiteKingSideRook = Chess.Rules.startingPositionForRook(side: .white, kingSide: true)
+        let whiteQueenSideRook = Chess.Rules.startingPositionForRook(side: .white, kingSide: true)
+        let blackKingSideRook = Chess.Rules.startingPositionForRook(side: .black, kingSide: true)
+        let blackQueenSideRook = Chess.Rules.startingPositionForRook(side: .black, kingSide: true)
+        XCTAssertTrue(board.squares[whiteKingSideRook].piece?.FEN == "R")
+        XCTAssertTrue(board.squares[whiteQueenSideRook].piece?.FEN == "R")
+        XCTAssertTrue(board.squares[blackKingSideRook].piece?.FEN == "r")
+        XCTAssertTrue(board.squares[blackQueenSideRook].piece?.FEN == "r")
+
+        // walk the board
+        for square in board.squares {
+            guard let piece = square.piece else { continue }
+            XCTAssertTrue(board.isValid(startingSquare: square, for: piece),
+                          "The square \(square.position.FEN) - \(square.position.rawIndex) doesn't like \(piece.FEN)")
+        }
+    }
+
     // swiftlint:disable function_body_length
     func testPositionNames() {
         XCTAssertEqual(Chess.Position.a1, Chess.Position.from(rankAndFile: "a1"))
@@ -87,6 +123,7 @@ final class NamedPositionTests: XCTestCase {
     }
 
     static var allTests = [
+        ("testPieceGroups", testPieceGroups),
         ("testPositionNames", testPositionNames),
         ("testMovePositions", testMovePositions)
     ]

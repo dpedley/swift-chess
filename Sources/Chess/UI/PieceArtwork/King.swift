@@ -76,12 +76,15 @@ extension PieceArtwork {
 // swiftlint:disable line_length
 // swiftlint:disable colon
 struct KingPreview: PreviewProvider {
+    static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
-            Chess.UI.Piece.blackKing.asView()
+            PieceView(position: .e8)
+                .environmentObject(store)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: -50, y: 0)
-            Chess.UI.Piece.whiteKing.asView()
+            PieceView(position: .e1)
+                .environmentObject(store)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .offset(x: 50, y: 0)
         }

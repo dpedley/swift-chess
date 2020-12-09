@@ -43,7 +43,8 @@ extension PieceShape {
                 }
             }
         }
-        init(artwork: PieceArtwork) {
+        init?(artwork: PieceArtwork?) {
+            guard let artwork = artwork else { return nil }
             self.artwork = artwork
         }
     }
