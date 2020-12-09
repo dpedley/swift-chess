@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-final class ChessStore: ObservableObject, ChessGameDelegate {
+public final class ChessStore: ObservableObject, ChessGameDelegate {
     @Published var game: Chess.Game
     var theme: Chess.UI.ChessTheme {
         environment.theme
@@ -18,7 +18,7 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
     private let reducer: ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment>
     private var cancellables: Set<AnyCancellable> = []
 
-    init(
+    public init(
         game: Chess.Game,
         reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
@@ -33,7 +33,7 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
         self.game.delegate = self
     }
 
-    func send(_ action: ChessAction) {
+    public func send(_ action: ChessAction) {
         guard let effect = self.reducer(&self.game, action, self.environment) else {
             return
         }

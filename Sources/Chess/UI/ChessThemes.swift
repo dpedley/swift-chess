@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-extension Chess.UI {
+public extension Chess.UI {
     struct ChessTheme {
         var boardTheme = BoardTheme(color: .blue, pieceSet: Chess.UI.loadPieceSet(themeName: "cburnett"))
     }
