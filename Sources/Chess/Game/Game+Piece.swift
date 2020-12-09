@@ -21,74 +21,38 @@ extension Chess.Piece {
             return isMoveValid(&move)
         }
     }
-    // swiftlint:disable function_body_length
-    // swiftlint:disable cyclomatic_complexity
     func isMoveValid(_ move: inout Chess.Move) -> Bool {
-        // Make sure it's a move
-        if move.rankDistance==0, move.fileDistance==0 {
-            return false
-        }
         switch pieceType {
-        case .pawn(let hasMoved):
-            // Only forward
-            if move.rankDirection == side.rankDirection {
-                if move.rankDistance == 1, move.fileDistance == 0 { // Plain vanilla pawn move
-                    return true
-                }
-                if move.rankDistance == 2, move.fileDistance == 0 {
-                    // Two step is only allow as the first move
-                    if hasMoved {
-                        return false
-                    }
-                    // The move is valid. Before we return, make sure to attach the enPassantPosition
-                    let jumpPosition = (move.start + move.end) / 2
-                    move.sideEffect = Chess.Move.SideEffect.enPassantInvade(territory: jumpPosition, invader: move.end)
-                    return true
-                }
-            }
-            return false
         case .knight:
-            if (move.rankDistance==2 && move.fileDistance==1) ||
-                (move.rankDistance==1 && move.fileDistance==2) {
-                return true
-            }
-            return false
+            return Chess.Rules.isValidKnightMove(move)
         case .bishop:
-            if move.rankDistance==move.fileDistance {
-                return true
-            }
-            return false
+            return Chess.Rules.isValidBishopMove(move)
         case .rook:
-            if move.rankDistance==0 || move.fileDistance==0 {
-                return true
-            }
-            return false
+            return Chess.Rules.isValidRookMove(move)
         case .queen:
-            if move.rankDistance==move.fileDistance {
-                return true // Like a bishop
+            return Chess.Rules.isValidQueenMove(move)
+        case .pawn(let hasMoved):
+            do {
+                return try Chess.Rules.isValidPawnMove(move, hasMoved: hasMoved)
+            } catch let error {
+                guard let sideEffect = error as? Chess.Move.SideEffect else {
+                    fatalError("Unknown error - \(error)")
+                }
+                move.sideEffect = sideEffect
+                return true
             }
-            if move.rankDistance==0 || move.fileDistance==0 {
-                return true // Like a rook
-            }
-            return false
         case .king(let hasMoved):
-            if move.rankDistance<2, move.fileDistance<2 {
+            do {
+                return try Chess.Rules.isValidKingMove(move, hasMoved: hasMoved)
+            } catch let error {
+                guard let sideEffect = error as? Chess.Move.SideEffect else {
+                    fatalError("Unknown error - \(error)")
+                }
+                move.sideEffect = sideEffect
                 return true
             }
-            // Are we trying to castle?
-            if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
-                let rookDistance = move.fileDirection < 0 ? 2 : 1
-                let rook = move.end + (move.fileDirection * rookDistance)
-                move.sideEffect = Chess.Move.SideEffect.castling(rook: rook,
-                                                                 destination: move.end - move.fileDirection)
-                // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
-                return true
-            }
-            return false
         }
     }
-    // swiftlint:enable cyclomatic_complexity
-    // swiftlint:enable function_body_length
     func isLastRank(_ position: Chess.Position) -> Bool {
         // Attacks are moves, except when they aren't
         switch pieceType {

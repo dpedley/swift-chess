@@ -88,5 +88,29 @@ extension Chess {
         public var description: String {
             return "\(position.FEN) \(piece?.FEN ?? "")"
         }
+        func createCurrentFENString(_ emptyCount: inout Int) -> String {
+            var fen = ""
+            if let piece = piece {
+                if emptyCount>0 {
+                    fen += "\(emptyCount)"
+                    emptyCount = 0
+                }
+                fen += piece.FEN
+            } else {
+                emptyCount+=1
+            }
+            // Check if we're in the last file for this rank
+            if position.file=="h" {
+                if emptyCount>0 {
+                    fen += "\(emptyCount)"
+                    emptyCount = 0
+                }
+                // No slash after the final rank
+                if position.rank>1 {
+                    fen += "/"
+                }
+            }
+            return fen
+        }
     }
 }

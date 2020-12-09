@@ -26,30 +26,22 @@ extension Chess {
                 return hasMoved
             }
         }
-        // swiftlint:disable cyclomatic_complexity
         func pieceMoved() -> PieceType {
             switch self {
             case .pawn(let hasMoved):
-                guard !hasMoved else { return self }
-                return .pawn(hasMoved: true)
+                return hasMoved ? .pawn(hasMoved: true) : self
             case .rook(let hasMoved, let isKingSide):
-                guard !hasMoved else { return self }
-                return .rook(hasMoved: true, isKingSide: isKingSide)
+                return hasMoved ? .rook(hasMoved: true, isKingSide: isKingSide) : self
             case .king(let hasMoved):
-                guard !hasMoved else { return self }
-                return .king(hasMoved: true)
+                return hasMoved ? .king(hasMoved: true) : self
             case .knight(let hasMoved):
-                guard !hasMoved else { return self }
-                return .knight(hasMoved: true)
+                return hasMoved ? .knight(hasMoved: true) : self
             case .bishop(let hasMoved):
-                guard !hasMoved else { return self }
-                return .bishop(hasMoved: true)
+                return hasMoved ? .bishop(hasMoved: true) : self
             case .queen(let hasMoved):
-                guard !hasMoved else { return self }
-                return .queen(hasMoved: true)
+                return hasMoved ? .queen(hasMoved: true) : self
             }
         }
-        // swiftlint:enable cyclomatic_complexity
         func fen(_ side: Side = .black) -> String {
             let upper: String
             switch self {
