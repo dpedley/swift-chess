@@ -209,15 +209,19 @@ public extension Chess {
                 print("Human's move had unknown limitation.")
             }
         }
-        private mutating func continueBasedOnStatus() {
+        private func continueBasedOnStatus() {
             let status = self.status()
             switch status {
             case .active:
                 if !userPaused {
-                    nextTurn()
+                    DispatchQueue.global().async {
+                        DispatchQueue.main.async {
+                            self.delegate?.send(.nextTurn)
+                        }
+                    }
                 }
             case .mate:
-                winningSide = board.playingSide.opposingSide
+//                winningSide = board.playingSide.opposingSide
                 print("\nMate: \n\(pgn.formattedString)")
             default:
                 break
