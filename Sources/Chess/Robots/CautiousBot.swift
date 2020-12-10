@@ -29,10 +29,10 @@ extension Chess.Robot {
                 return [move]
             }
             let sorted = potentials.sorted {
-                $0.pieceWeights.value(for: side.opposingSide) < $1.pieceWeights.value(for: side.opposingSide)
+                $0.pieceWeights().value(for: side.opposingSide) < $1.pieceWeights().value(for: side.opposingSide)
             }
-            guard let firstValue = sorted.first?.pieceWeights.value(for: side.opposingSide) else { return nil }
-            let filtered = sorted.filter { $0.pieceWeights.value(for: side.opposingSide) == firstValue }
+            guard let firstValue = sorted.first?.pieceWeights().value(for: side.opposingSide) else { return nil }
+            let filtered = sorted.filter { $0.pieceWeights().value(for: side.opposingSide) == firstValue }
             let theChosen = filtered.compactMap { $0.move }
             return theChosen.count > 0 ? theChosen : nil
         }

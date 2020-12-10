@@ -87,7 +87,7 @@ extension Chess {
                 return 0.0
             }
         }
-        lazy var artwork: PieceArtwork = {
+        var artwork: PieceArtwork {
             switch self.pieceType {
             case .pawn:
                 return .pawn
@@ -102,9 +102,9 @@ extension Chess {
             case .king:
                 return .king
             }
-        }()
-        lazy var style: PieceStyle = {
+        }
+        var style: PieceStyle {
             return side == .black ? .black : .white
-        }()
+        }
     }
 }

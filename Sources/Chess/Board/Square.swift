@@ -11,7 +11,7 @@ extension Chess {
     public struct Square {
         let position: Position
         var piece: Piece?
-        var isKingSide: Bool { return (position > 3) }
+        var isKingSide: Bool { return (position.fileNumber > 3) }
         var isEmpty: Bool { return piece==nil }
         var selected: Bool = false
         func attackedSquares(board: Chess.Board) -> [Square]? {
