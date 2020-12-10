@@ -9,35 +9,36 @@ import Foundation
 import SwiftUI
 import Combine
 
-public typealias ChessGameReducer<Game, Action, Environment> =
-    (inout Game, Action, Environment) -> AnyPublisher<Action, Never>?
+public typealias ChessGameReducer = (Chess.Game, ChessAction, ChessEnvironment, PassthroughSubject<Chess.Game, Never>) -> Void
 
 public extension ChessStore {
     static func chessReducer(
-        game: inout Chess.Game,
+        game: Chess.Game,
         action: ChessAction,
-        environment: ChessEnvironment
-    ) -> AnyPublisher<ChessAction, Never>? {
+        environment: ChessEnvironment,
+        passThrough: PassthroughSubject<Chess.Game, Never>
+    ) {
+        var mutableGame = game
         switch action {
         case .nextTurn:
 //            print("nextTurn: \(game.board.playingSide)")
-            game.nextTurn()
+            mutableGame.nextTurn()
         case .startGame:
 //            print("startGame: Starting...")
-            game.start()
+            mutableGame.start()
         case .pauseGame:
 //            print("pauseGame: Pausing...")
-            game.userPaused = true
+            mutableGame.userPaused = true
         case .setBoard(let fen):
 //            print("setBoard: Board setup as: \(fen)")
-            game.board.resetBoard(FEN: fen)
+            mutableGame.board.resetBoard(FEN: fen)
         case .makeMove(let move):
 //            print("makeMove: \(move.side) \(move.description)")
-            game.execute(move: move)
-            if game.board.lastMove == move {
-                game.changeSides(move.side.opposingSide)
+            mutableGame.execute(move: move)
+            if mutableGame.board.lastMove == move {
+                mutableGame.changeSides(move.side.opposingSide)
             }
         }
-        return nil
+        passThrough.send(mutableGame)
     }
 }

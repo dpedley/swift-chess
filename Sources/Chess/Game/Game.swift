@@ -214,11 +214,7 @@ public extension Chess {
             switch status {
             case .active:
                 if !userPaused {
-                    DispatchQueue.global().async {
-                        DispatchQueue.main.async {
-                            self.delegate?.send(.nextTurn)
-                        }
-                    }
+                    self.delegate?.send(.nextTurn)
                 }
             case .mate:
 //                winningSide = board.playingSide.opposingSide

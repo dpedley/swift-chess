@@ -12,7 +12,8 @@ import Combine
 extension PreviewProvider {
     static var previewChessStore: ChessStore {
         let store = ChessStore(game: Chess.Game(),
-                               reducer: ChessStore.chessReducer, environment: ChessEnvironment())
+                               reducer: ChessStore.chessReducer,
+                               environment: ChessEnvironment())
         store.game.board.resetBoard()
         return store
     }
