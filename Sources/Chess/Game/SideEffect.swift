@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Chess.Move {
+public extension Chess.Move {
     enum SideEffect: Error {
         case notKnown
         case castling(rook: Int, destination: Int)
