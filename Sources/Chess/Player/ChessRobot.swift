@@ -56,14 +56,10 @@ public extension Chess {
                         fatalError("Misconfigured board, bot cannot find it's own king.")
                     }
                     let move = self.side.resigns(king: square.position)
-                    DispatchQueue.main.async {
-                        delegate.send(.makeMove(move: move))
-                    }
+                    delegate.send(.makeMove(move: move))
                     return
                 }
-                DispatchQueue.main.async {
-                    delegate.send(.makeMove(move: move))
-                }
+                delegate.send(.makeMove(move: move))
             }
         }
         /// Evaluate board for the optimal move

@@ -10,17 +10,21 @@ import SwiftUI
 import Combine
 
 public final class ChessStore: ObservableObject, ChessGameDelegate {
+    let passThrough = PassthroughSubject<Chess.Game, Never>()
+    var gamePublisher: AnyPublisher<Chess.Game, Never> {
+        passThrough.eraseToAnyPublisher()
+    }
     @Published public var game: Chess.Game
     var theme: Chess.UI.ChessTheme {
         environment.theme
     }
     private let environment: ChessEnvironment
-    private let reducer: ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment>
+    private let reducer: ChessGameReducer
     private var cancellables: Set<AnyCancellable> = []
 
     public init(
         game: Chess.Game = Chess.Game(),
-        reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
+        reducer: @escaping ChessGameReducer = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
     ) {
         self.game = game
@@ -34,12 +38,15 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
     }
 
     public func send(_ action: ChessAction) {
-        guard let effect = self.reducer(&self.game, action, self.environment) else {
-            return
+        // Process the message on the background, then sink back to the main thread.
+        DispatchQueue.global().async {
+            self.gamePublisher
+                .receive(on: RunLoop.main)
+                .sink { newGame in
+                    self.game = newGame
+                }
+                .store(in: &self.cancellables)
+            self.reducer(self.game, action, self.environment, self.passThrough)
         }
-        effect
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.send)
-            .store(in: &self.cancellables)
     }
 }
