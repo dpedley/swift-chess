@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Chess.Side {
+public extension Chess.Side {
     func twoSquareMove(fromString: String) -> Chess.Move? {
         // First check for special moves
         if fromString == "O-O" { // Kingside castle

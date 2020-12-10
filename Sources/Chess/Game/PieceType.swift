@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     enum PieceType {
         case pawn(hasMoved: Bool)
         case knight(hasMoved: Bool)

@@ -14,11 +14,11 @@ public protocol ChessGameDelegate: AnyObject {
 
 public extension Chess {
     struct Game {
-        weak var delegate: ChessGameDelegate?
-        var userPaused = true
         private var botPausedMove: Chess.Move?
-        var board = Chess.Board(populateExpensiveVisuals: true)
-        var winningSide: Side? {
+        weak var delegate: ChessGameDelegate?
+        public var userPaused = true
+        public var board = Chess.Board(populateExpensiveVisuals: true)
+        public var winningSide: Side? {
             didSet {
                 if let winningSide = winningSide {
                     switch winningSide {
@@ -30,15 +30,15 @@ public extension Chess {
                 }
             }
         }
-        var winner: Player? {
+        public var winner: Player? {
             guard let winningSide = winningSide else { return nil }
             return (winningSide == .black) ? black : white
         }
-        var black: Player
-        var white: Player
-        var round: Int = 1
-        var pgn: Chess.Game.PortableNotation
-        var activePlayer: Player? {
+        public var black: Player
+        public var white: Player
+        public var round: Int = 1
+        public var pgn: Chess.Game.PortableNotation
+        public var activePlayer: Player? {
             switch board.playingSide {
             case .white:
                 return white
@@ -83,11 +83,51 @@ public extension Chess {
         public mutating func pause() {
             userPaused = true
         }
-        mutating func nextTurn() {
+        public mutating func nextTurn() {
             guard let player = activePlayer else { return }
             player.turnUpdate(game: self)
         }
-
+        public mutating func changeSides(_ side: Chess.Side) {
+            board.playingSide = side
+            // STILL UNDONE: this is where the clock updates might happen
+            continueBasedOnStatus()
+        }
+        public mutating func execute(move: Chess.Move) {
+            guard move.continuesGameplay else {
+                if move.isResign || move.isTimeout {
+                    // STILL UNDONE: do we push the resign onto [turns] and the UI stack as well here?
+//                        strongSelf.board.lastMove = move
+                    winningSide = move.side.opposingSide
+                    return
+                }
+                fatalError("Need to diagnose this scenario, shouldn't come here.")
+            }
+            // Create a mutable copy, moving may add side effects.
+            var moveAttempt = move
+            let moveTry = board.attemptMove(&moveAttempt)
+            switch moveTry {
+            case .success(let capturedPiece):
+                executeSuccess(move: move, capturedPiece: capturedPiece)
+            case .failed(reason: let reason):
+                print("Move failed: \(move) \(reason)")
+                if let human = activePlayer as? Chess.HumanPlayer {
+                    updateBoard(human: human, failed: move, with: reason)
+                } else {
+                    // a bot failed to move, for some this means resign
+                    // STILL UNDONE message user
+                    winningSide = board.playingSide.opposingSide
+                    print("\nUnknown: \n\(pgn.formattedString)")
+                }
+            }
+        }
+        public mutating func setRobotPlaybackSpeed(_ responseDelay: TimeInterval) {
+            if let white = white as? Chess.Robot {
+                white.responseDelay = responseDelay
+            }
+            if let black = black as? Chess.Robot {
+                black.responseDelay = responseDelay
+            }
+        }
         mutating private func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
@@ -142,34 +182,6 @@ public extension Chess {
                 }
             }
         }
-        mutating func execute(move: Chess.Move) {
-            guard move.continuesGameplay else {
-                if move.isResign || move.isTimeout {
-                    // STILL UNDONE: do we push the resign onto [turns] and the UI stack as well here?
-//                        strongSelf.board.lastMove = move
-                    winningSide = move.side.opposingSide
-                    return
-                }
-                fatalError("Need to diagnose this scenario, shouldn't come here.")
-            }
-            // Create a mutable copy, moving may add side effects.
-            var moveAttempt = move
-            let moveTry = board.attemptMove(&moveAttempt)
-            switch moveTry {
-            case .success(let capturedPiece):
-                executeSuccess(move: move, capturedPiece: capturedPiece)
-            case .failed(reason: let reason):
-                print("Move failed: \(move) \(reason)")
-                if let human = activePlayer as? Chess.HumanPlayer {
-                    updateBoard(human: human, failed: move, with: reason)
-                } else {
-                    // a bot failed to move, for some this means resign
-                    // STILL UNDONE message user
-                    winningSide = board.playingSide.opposingSide
-                    print("\nUnknown: \n\(pgn.formattedString)")
-                }
-            }
-        }
         private func clearActivePlayerSelections() {
             // STILL UNDONE: Vet the use of the old UI update here.
 //            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
@@ -197,11 +209,6 @@ public extension Chess {
                 print("Human's move had unknown limitation.")
             }
         }
-        mutating func changeSides(_ side: Chess.Side) {
-            board.playingSide = side
-            // STILL UNDONE: this is where the clock updates might happen
-            continueBasedOnStatus()
-        }
         private mutating func continueBasedOnStatus() {
             let status = self.status()
             switch status {
@@ -214,14 +221,6 @@ public extension Chess {
                 print("\nMate: \n\(pgn.formattedString)")
             default:
                 break
-            }
-        }
-        mutating func setRobotPlaybackSpeed(_ responseDelay: TimeInterval) {
-            if let white = white as? Chess.Robot {
-                white.responseDelay = responseDelay
-            }
-            if let black = black as? Chess.Robot {
-                black.responseDelay = responseDelay
             }
         }
     }

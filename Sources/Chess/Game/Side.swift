@@ -7,11 +7,11 @@
 
 import Foundation
 
-extension Chess {
-    public enum Side: String {
+public extension Chess {
+    enum Side: String {
         case black = "b"
         case white = "w"
-        var rankDirection: Int {
+        public var rankDirection: Int {
             switch self {
             case .black:
                 return -1
@@ -19,13 +19,13 @@ extension Chess {
                 return 1
             }
         }
-        var FEN: String {
+        public var FEN: String {
             return self.rawValue
         }
-        var description: String {
+        public var description: String {
             return self == .black ? "black" : "white"
         }
-        var opposingSide: Side {
+        public var opposingSide: Side {
             return (self == .black) ? .white : .black
         }
     }
