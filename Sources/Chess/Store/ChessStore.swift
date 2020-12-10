@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 public final class ChessStore: ObservableObject, ChessGameDelegate {
-    @Published var game: Chess.Game
+    @Published public var game: Chess.Game
     var theme: Chess.UI.ChessTheme {
         environment.theme
     }
