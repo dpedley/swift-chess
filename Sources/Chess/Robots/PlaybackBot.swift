@@ -11,22 +11,22 @@ import Foundation
 
 public extension Chess.Robot {
     class PlaybackBot: Chess.Robot {
-        var moves: [Chess.Move] = []
-        var currentMove = 0
-        required init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moves: [Chess.Move]) {
+        public var moves: [Chess.Move] = []
+        public var currentMove = 0
+        public required init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moves: [Chess.Move]) {
             super.init(side: side)
             self.responseDelay = responseDelay
             self.moves.append(contentsOf: moves)
             self.firstName = firstName ?? Chess.Robot.randomFirstName()
             self.lastName = lastName ?? side.description.capitalized
         }
-        convenience init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moveStrings: [String]) {
+        public convenience init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moveStrings: [String]) {
             self.init(firstName: firstName,
                       lastName: lastName,
                       side: side,
                       moves: moveStrings.compactMap({ side.twoSquareMove(fromString: $0) }))
         }
-        override func evalutate(board: Chess.Board) -> Chess.Move? {
+        public override func evalutate(board: Chess.Board) -> Chess.Move? {
             guard self.currentMove<self.moves.count else {
                 return nil
             }
