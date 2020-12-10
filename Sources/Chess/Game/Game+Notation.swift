@@ -26,20 +26,20 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2
 
 import Foundation
 
-extension Chess.Game {
-    public enum PGNResult: String {
+public extension Chess.Game {
+    enum PGNResult: String {
         case blackWon = "0-1"
         case whiteWon = "1-0"
         case draw = "1/2-1/2"
         case other = "*"
     }
-    public struct AnnotatedMove {
+    struct AnnotatedMove {
         var side: Chess.Side
         var move: String
         var fenAfterMove: String
         var annotation: String?
     }
-    public struct PortableNotation { // PGN
+    struct PortableNotation { // PGN
         var eventName: String // the name of the tournament or match event.
         var site: String      // the location of the event. This is in City, Region COUNTRY format,
                               // where COUNTRY is the three-letter International Olympic Committee code

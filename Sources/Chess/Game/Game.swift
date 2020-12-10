@@ -12,8 +12,8 @@ public protocol ChessGameDelegate: AnyObject {
     func send(_ action: ChessAction)
 }
 
-extension Chess {
-    public struct Game {
+public extension Chess {
+    struct Game {
         weak var delegate: ChessGameDelegate?
         var userPaused = true
         private var botPausedMove: Chess.Move?
