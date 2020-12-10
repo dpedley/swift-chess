@@ -36,14 +36,27 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         }
         self.game.delegate = self
     }
-
+    let gameProcessingTime = 50
+    func processChanges(_ updatedGame: Chess.Game) {
+        let opposingSide = self.game.board.playingSide.opposingSide
+        self.game = updatedGame
+        guard opposingSide == self.game.board.playingSide else {
+            // The turn didn't update, no need to continue.
+            return
+        }
+        guard !game.userPaused else {
+            return
+        }
+        send(.nextTurn)
+    }
     public func send(_ action: ChessAction) {
         // Process the message on the background, then sink back to the main thread.
         DispatchQueue.global().async {
             self.gamePublisher
+                .debounce(for: .milliseconds(self.gameProcessingTime), scheduler: RunLoop.main)
                 .receive(on: RunLoop.main)
                 .sink { newGame in
-                    self.game = newGame
+                    self.processChanges(newGame)
                 }
                 .store(in: &self.cancellables)
             self.reducer(self.game, action, self.environment, self.passThrough)

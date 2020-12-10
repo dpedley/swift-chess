@@ -90,7 +90,6 @@ public extension Chess {
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
             // STILL UNDONE: this is where the clock updates might happen
-            continueBasedOnStatus()
         }
         public mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
@@ -209,19 +208,19 @@ public extension Chess {
                 print("Human's move had unknown limitation.")
             }
         }
-        private func continueBasedOnStatus() {
-            let status = self.status()
-            switch status {
-            case .active:
-                if !userPaused {
-                    self.delegate?.send(.nextTurn)
-                }
-            case .mate:
-//                winningSide = board.playingSide.opposingSide
-                print("\nMate: \n\(pgn.formattedString)")
-            default:
-                break
-            }
-        }
+//        private func continueBasedOnStatus() {
+//            let status = self.status()
+//            switch status {
+//            case .active:
+//                if !userPaused {
+//                    self.delegate?.send(.nextTurn)
+//                }
+//            case .mate:
+////                winningSide = board.playingSide.opposingSide
+//                print("\nMate: \n\(pgn.formattedString)")
+//            default:
+//                break
+//            }
+//        }
     }
 }

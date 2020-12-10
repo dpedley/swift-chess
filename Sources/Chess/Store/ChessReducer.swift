@@ -21,19 +21,19 @@ public extension ChessStore {
         var mutableGame = game
         switch action {
         case .nextTurn:
-//            print("nextTurn: \(game.board.playingSide)")
+            print("nextTurn: \(game.board.playingSide)")
             mutableGame.nextTurn()
         case .startGame:
-//            print("startGame: Starting...")
+            print("startGame: Starting...")
             mutableGame.start()
         case .pauseGame:
-//            print("pauseGame: Pausing...")
+            print("pauseGame: Pausing...")
             mutableGame.userPaused = true
         case .setBoard(let fen):
-//            print("setBoard: Board setup as: \(fen)")
+            print("setBoard: Board setup as: \(fen)")
             mutableGame.board.resetBoard(FEN: fen)
         case .makeMove(let move):
-//            print("makeMove: \(move.side) \(move.description)")
+            print("makeMove: \(move.side) \(move.description)")
             mutableGame.execute(move: move)
             if mutableGame.board.lastMove == move {
                 mutableGame.changeSides(move.side.opposingSide)
