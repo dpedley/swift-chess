@@ -42,9 +42,9 @@ extension Chess {
         }
     }
     class SingleMoveVariant: BoardVariant {
-        lazy var pieceWeights: GameAnalysis = {
+        func pieceWeights() -> GameAnalysis {
             return board.pieceWeights()
-        }()
+        }
         var move: Move? {
             guard let firstChange = changes.first,
                 case .moveMade(let firstMove) = firstChange else {
