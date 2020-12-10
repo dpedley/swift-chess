@@ -78,7 +78,7 @@ public extension Chess {
         /// - Parameter side: The `Chess.Side` that this bot should play.
         /// - Parameter stopAfterMove: To keep things from running amok, you can set a move,
         /// and the bot will stop after that move has been performed.
-        init(side: Chess.Side, stopAfterMove: Int = 100) {
+        public init(side: Chess.Side, stopAfterMove: Int = 100) {
             self.stopAfterMove = stopAfterMove
             super.init(side: side, matchLength: nil)
         }
