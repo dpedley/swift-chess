@@ -12,7 +12,7 @@ import Foundation
 
 public extension Chess.Robot {
     class GreedyBot: RandomBot {
-        override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
+        public override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
             guard let choices = board.createValidVariants(for: side) else { return nil }
             var theChosen: [Chess.Move] = []
             var bestGap: Double?

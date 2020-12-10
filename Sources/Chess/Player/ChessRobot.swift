@@ -17,14 +17,14 @@ public extension Chess {
     /// A base robot, the evaluate is meant for subclasses
     class Robot: Chess.Player {
         /// How long to wait before starting to process the evaluation 0 = immediate
-        var responseDelay: TimeInterval = 0.0
+        public var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.
-        var stopAfterMove: Int
+        public var stopAfterMove: Int
 
         /// A few overrides from Chess.Player
-        override func isBot() -> Bool { return true }
-        override func prepareForGame() { }
-        override func timerRanOut() {}
+        public override func isBot() -> Bool { return true }
+        public override func prepareForGame() { }
+        public override func timerRanOut() {}
         /// The main override from Chess.Player
         ///
         /// This is called by the game engine when this Robot Player should make a move.
@@ -32,7 +32,7 @@ public extension Chess {
         /// The move from the evaluation is sent to the ChessStore
         ///
         /// - Parameter game: The game that is being played. This is immutable. The ChessStore is used for updates.
-        override func turnUpdate(game: Chess.Game) {
+        public override func turnUpdate(game: Chess.Game) {
             guard game.board.playingSide == side else { return }
             guard let delegate = game.delegate else {
                 fatalError("Cannot run a game turn without a game delegate.")
@@ -68,7 +68,7 @@ public extension Chess {
         ///
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
-        func evalutate(board: Chess.Board) -> Chess.Move? {
+        public func evalutate(board: Chess.Board) -> Chess.Move? {
             fatalError("This is meant to be overridden.")
         }
         /// The required initializer for the Robot subclasses.
