@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension Chess {
-    public class HumanPlayer: Player {
+public extension Chess {
+    class HumanPlayer: Player {
         static let minimalHumanTimeinterval: TimeInterval = 0.1
         public var chessBestMoveCallback: ChessTurnCallback?
         public var initialPositionTapped: Chess.Position?

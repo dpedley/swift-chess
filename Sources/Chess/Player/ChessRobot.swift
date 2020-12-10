@@ -13,7 +13,7 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     /// A base robot, the evaluate is meant for subclasses
     class Robot: Chess.Player {
         /// How long to wait before starting to process the evaluation 0 = immediate

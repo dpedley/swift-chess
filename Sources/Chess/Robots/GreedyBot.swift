@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension Chess.Robot {
+public extension Chess.Robot {
     class GreedyBot: RandomBot {
         override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
             guard let choices = board.createValidVariants(for: side) else { return nil }

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension Chess.Robot {
+public extension Chess.Robot {
     class RandomBot: Chess.Robot {
         func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
             return board.createValidVariants(for: side)?.compactMap { $0.move }
