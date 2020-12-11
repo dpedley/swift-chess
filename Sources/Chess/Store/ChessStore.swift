@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChessStore.swift
 //  
 //
 //  Created by Douglas Pedley on 11/26/20.
@@ -15,13 +15,12 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         passThrough.eraseToAnyPublisher()
     }
     @Published public var game: Chess.Game
-    var theme: Chess.UI.ChessTheme {
-        environment.theme
-    }
     private let environment: ChessEnvironment
     private let reducer: ChessGameReducer
     private var cancellables: Set<AnyCancellable> = []
-
+    var theme: Chess.UI.ChessTheme {
+        environment.theme
+    }
     public init(
         game: Chess.Game = Chess.Game(),
         reducer: @escaping ChessGameReducer = ChessStore.chessReducer,
@@ -36,7 +35,6 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         }
         self.game.delegate = self
     }
-    let gameProcessingTime = 10
     func processChanges(_ updatedGame: Chess.Game) {
         let opposingSide = self.game.board.playingSide.opposingSide
         self.game = updatedGame
@@ -47,16 +45,16 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         guard !game.userPaused else {
             return
         }
-        send(.nextTurn)
+        self.send(.nextTurn)
     }
     public func send(_ action: ChessAction) {
         // Process the message on the background, then sink back to the main thread.
         DispatchQueue.global().async {
             self.gamePublisher
-                .debounce(for: .milliseconds(self.gameProcessingTime), scheduler: RunLoop.main)
+                .debounce(for: .milliseconds(1), scheduler: RunLoop.main)
                 .receive(on: RunLoop.main)
-                .sink { newGame in
-                    self.processChanges(newGame)
+                .sink { [weak self] newGame in
+                    self?.processChanges(newGame)
                 }
                 .store(in: &self.cancellables)
             self.reducer(self.game, action, self.environment, self.passThrough)

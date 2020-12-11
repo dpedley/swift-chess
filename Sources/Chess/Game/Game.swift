@@ -108,14 +108,14 @@ public extension Chess {
             case .success(let capturedPiece):
                 executeSuccess(move: move, capturedPiece: capturedPiece)
             case .failed(reason: let reason):
-                print("Move failed: \(move) \(reason)")
+                Chess.log.debug("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     updateBoard(human: human, failed: move, with: reason)
                 } else {
                     // a bot failed to move, for some this means resign
                     // STILL UNDONE message user
                     winningSide = board.playingSide.opposingSide
-                    print("\nUnknown: \n\(pgn.formattedString)")
+                    Chess.log.debug("\nUnknown: \n\(pgn.formattedString)")
                 }
             }
         }
@@ -205,7 +205,7 @@ public extension Chess {
                 flashKing()
                 Chess.Sounds.Check.play()
             case .unknown:
-                print("Human's move had unknown limitation.")
+                Chess.log.info("Human's move had unknown limitation.")
             }
         }
     }
