@@ -36,7 +36,7 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         }
         self.game.delegate = self
     }
-    let gameProcessingTime = 50
+    let gameProcessingTime = 10
     func processChanges(_ updatedGame: Chess.Game) {
         let opposingSide = self.game.board.playingSide.opposingSide
         self.game = updatedGame

@@ -208,19 +208,5 @@ public extension Chess {
                 print("Human's move had unknown limitation.")
             }
         }
-//        private func continueBasedOnStatus() {
-//            let status = self.status()
-//            switch status {
-//            case .active:
-//                if !userPaused {
-//                    self.delegate?.send(.nextTurn)
-//                }
-//            case .mate:
-////                winningSide = board.playingSide.opposingSide
-//                print("\nMate: \n\(pgn.formattedString)")
-//            default:
-//                break
-//            }
-//        }
     }
 }

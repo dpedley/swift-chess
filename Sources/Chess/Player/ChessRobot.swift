@@ -15,7 +15,7 @@ import Foundation
 
 public extension Chess {
     /// A base robot, the evaluate is meant for subclasses
-    class Robot: Chess.Player {
+    class Robot: Chess.Player, RoboticMoveDecider {
         /// How long to wait before starting to process the evaluation 0 = immediate
         public var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.
@@ -62,14 +62,25 @@ public extension Chess {
                 delegate.send(.makeMove(move: move))
             }
         }
+        public func validChoices(board: Chess.Board) -> [SingleMoveVariant]? {
+            board.createValidVariants(for: side)
+        }
+        func validAttacks(choices: [SingleMoveVariant]?) -> [Chess.SingleMoveVariant]? {
+            let attacks = choices?.filter { variant in
+                guard let move = variant.move else { return false }
+                return !variant.board.squares[move.end].isEmpty
+            }
+            return attacks
+        }
+
         /// Evaluate board for the optimal move
-        /// This is meant to be overriden by subclasses as the main game play
-        /// interaction for chess robots.
         ///
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
         public func evalutate(board: Chess.Board) -> Chess.Move? {
-            fatalError("This is meant to be overridden.")
+            var tmpBoard = Chess.Board(FEN: board.FEN)
+            tmpBoard.playingSide = side
+            return validChoices(board: tmpBoard)?.randomElement()?.move
         }
         /// The required initializer for the Robot subclasses.
         /// let fred = RandomBot(.white)

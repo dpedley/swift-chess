@@ -113,8 +113,6 @@ public extension Chess.Game {
                                                 "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5",
                                                 "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5",
                                                 "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"])
-        fischer.responseDelay = 0.05
-        spassky.responseDelay = 0.05
         return Chess.Game(fischer, against: spassky)
     }
 }
