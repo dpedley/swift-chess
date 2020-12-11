@@ -12,7 +12,7 @@ import Logging
 
 // Our namespace
 public enum Chess {
-    static var log: Logger = {
+    public static var log: Logger = {
         var log = Logger(label: "com.dpedley.swift-chess")
         log.logLevel = Logger.Level.critical
         return log
