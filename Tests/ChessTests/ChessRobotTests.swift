@@ -8,24 +8,9 @@ import Combine
 final class ChessRobotTests: XCTestCase {
     var store: ChessStore?
     var cancellables = Set<AnyCancellable>()
-    func testRandomBots() {
-        let moveCount = 13
-        let white = Chess.Robot.RandomBot(side: .white, stopAfterMove: moveCount)
-        let black = Chess.Robot.RandomBot(side: .black, stopAfterMove: moveCount)
-        let game = Chess.Game(white, against: black)
-        let store = ChessStore(game: game)
-        let gameCompleted = expectation(description: "testRandomBots")
-        store.$game.sink(receiveValue: { game in
-            guard game.board.fullMoves == moveCount else { return }
-            gameCompleted.fulfill()
-        }).store(in: &cancellables)
-        store.send(.startGame)
-        self.store = store
-        waitForExpectations(timeout: 30, handler: nil)
-    }
-
     func testPlaybackBot() {
-        let game = Chess.Game.sampleGame()
+        var game = Chess.Game.sampleGame()
+        game.setRobotPlaybackSpeed(0.03)
         let store = ChessStore(game: game)
         let gameCompleted = expectation(description: "testPlaybackBot")
         var fulfilled = false
@@ -55,6 +40,7 @@ final class ChessRobotTests: XCTestCase {
         let white = Chess.Robot.GreedyBot(side: .white, stopAfterMove: 4)
         let black = Chess.Robot.GreedyBot(side: .black, stopAfterMove: 3)
         var game = Chess.Game(white, against: black)
+        game.setRobotPlaybackSpeed(0.03)
         game.board.resetBoard(FEN: "1kr5/ppp5/r7/3q4/6p1/5P2/PPP1Q3/1KR4R w - - 0 1")
         let store = ChessStore(game: game)
         let wasGreedy = expectation(description: "testGreedyBot")
@@ -85,6 +71,7 @@ final class ChessRobotTests: XCTestCase {
         let white = Chess.Robot.CautiousBot(side: .white, stopAfterMove: 3)
         let black = Chess.Robot.CautiousBot(side: .black, stopAfterMove: 2)
         var game = Chess.Game(white, against: black)
+        game.setRobotPlaybackSpeed(0.03)
         game.board.resetBoard(FEN: "1k2r3/ppp1n3/8/1Pq2p1p/8/4RQ2/PPP3P1/1K6 b - - 0 1")
         let store = ChessStore(game: game)
         let wasCautious = expectation(description: "testCautiousBot")
@@ -105,7 +92,6 @@ final class ChessRobotTests: XCTestCase {
         ("testCautiousBot", testCautiousBot),
         ("testCautiousBots", testCautiousBots),
         ("testGreedyBot", testGreedyBot),
-        ("testGreedyBots", testGreedyBots),
-        ("testRandomBots", testRandomBots)
+        ("testGreedyBots", testGreedyBots)
     ]
 }

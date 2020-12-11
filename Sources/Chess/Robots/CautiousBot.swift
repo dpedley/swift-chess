@@ -10,9 +10,10 @@
 import Foundation
 
 public extension Chess.Robot {
-    class CautiousBot: RandomBot {
-        public override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
+    class CautiousBot: Chess.Robot {
+        public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
             guard let choices = board.createValidVariants(for: side) else { return nil }
+
             var potentials: [Chess.SingleMoveVariant] = []
             for choice in choices {
                 guard let move = choice.move else { continue }
@@ -25,7 +26,7 @@ public extension Chess.Robot {
             }
             // If there is at most 1 potential move, we don't need to filter the list.
             guard potentials.count > 1 else {
-                guard let move = potentials.first?.move else { return nil }
+                guard let move = potentials.first else { return nil }
                 return [move]
             }
             let sorted = potentials.sorted {
@@ -33,8 +34,7 @@ public extension Chess.Robot {
             }
             guard let firstValue = sorted.first?.pieceWeights().value(for: side.opposingSide) else { return nil }
             let filtered = sorted.filter { $0.pieceWeights().value(for: side.opposingSide) == firstValue }
-            let theChosen = filtered.compactMap { $0.move }
-            return theChosen.count > 0 ? theChosen : nil
+            return filtered.count > 0 ? filtered : nil
         }
     }
 }

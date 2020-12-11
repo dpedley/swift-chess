@@ -8,16 +8,16 @@
 import Foundation
 
 // swiftlint:disable nesting
-extension Chess {
+public extension Chess {
     struct Turn {
         var white: Move?
         var black: Move?
     }
-    public class Move: NSObject {
+    class Move: NSObject {
         static func == (lhs: Move, rhs: Move) -> Bool {
             return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
         }
-        enum Limitation: String, Error {
+        public enum Limitation: String, Error {
             case unknown = "Unknown limitation."
             case noPieceToMove = "The was no piece at the starting square."
             case notYourTurn = "The wrong side tried to move."
@@ -26,7 +26,7 @@ extension Chess {
             case sameSideAlreadyOccupiesDestination = "Two pieces cannot occupy the same square."
             case kingWouldBeUnderAttackAfterMove = "You must save your king, piece is pinned."
         }
-        enum Result {
+        public enum Result {
             case success(capturedPiece: Piece?)
             case failed(reason: Limitation)
         }

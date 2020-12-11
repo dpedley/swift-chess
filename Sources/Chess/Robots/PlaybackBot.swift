@@ -13,14 +13,16 @@ public extension Chess.Robot {
     class PlaybackBot: Chess.Robot {
         public var moves: [Chess.Move] = []
         public var currentMove = 0
-        public required init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moves: [Chess.Move]) {
+        public required init(firstName: String? = nil, lastName: String? = nil,
+                             side: Chess.Side, moves: [Chess.Move]) {
             super.init(side: side)
             self.responseDelay = responseDelay
             self.moves.append(contentsOf: moves)
             self.firstName = firstName ?? Chess.Robot.randomFirstName()
             self.lastName = lastName ?? side.description.capitalized
         }
-        public convenience init(firstName: String? = nil, lastName: String? = nil, side: Chess.Side, moveStrings: [String]) {
+        public convenience init(firstName: String? = nil, lastName: String? = nil,
+                                side: Chess.Side, moveStrings: [String]) {
             self.init(firstName: firstName,
                       lastName: lastName,
                       side: side,

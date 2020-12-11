@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     enum BoardChange {
         case moveMade(move: Move)
         case moveFailed(move: Move, reason: Move.Limitation)
