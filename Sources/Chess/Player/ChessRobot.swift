@@ -35,7 +35,8 @@ public extension Chess {
         public override func turnUpdate(game: Chess.Game) {
             guard game.board.playingSide == side else { return }
             guard let delegate = game.delegate else {
-                fatalError("Cannot run a game turn without a game delegate.")
+                Chess.log.critical("Cannot run a game turn without a game delegate.")
+                return
             }
             if stopAfterMove>0 && game.board.fullMoves >= stopAfterMove {
                 return
@@ -53,7 +54,8 @@ public extension Chess {
                 guard let move = self.evalutate(board: board) else {
                     let square = game.board.squareForActiveKing
                     guard square.piece?.side == self.side else {
-                        fatalError("Misconfigured board, bot cannot find it's own king.")
+                        Chess.log.critical("Misconfigured board, bot cannot find it's own king.")
+                        return
                     }
                     let move = self.side.resigns(king: square.position)
                     delegate.send(.makeMove(move: move))

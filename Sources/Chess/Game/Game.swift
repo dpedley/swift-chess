@@ -99,7 +99,8 @@ public extension Chess {
                     winningSide = move.side.opposingSide
                     return
                 }
-                fatalError("Need to diagnose this scenario, shouldn't come here.")
+                Chess.log.critical("Need to diagnose this scenario, shouldn't come here.")
+                return
             }
             // Create a mutable copy, moving may add side effects.
             var moveAttempt = move
