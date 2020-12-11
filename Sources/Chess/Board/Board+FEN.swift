@@ -60,7 +60,7 @@ extension Chess.Board {
                 // Upper case means White pieces
                 let fenIndex = rankIndex * 8 + fileIndex
                 guard let piece = Chess.Piece.from(fen: String(fenChar)) else {
-                    Chess.log.critical("FEN Character \(fenChar) invalid at: [\(fenIndex)] \(Chess.Position(fenIndex).FEN)")
+                    Chess.log.critical("FEN Character \(fenChar) invalid at: \(Chess.Position(fenIndex).FEN)")
                     return
                 }
                 let updatedPiece: Chess.Piece
