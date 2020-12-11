@@ -45,7 +45,10 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         guard !game.userPaused else {
             return
         }
-        self.send(.nextTurn)
+        DispatchQueue.global().async {
+            Thread.sleep(until: Date() + 0.01)
+            self.send(.nextTurn)
+        }
     }
     public func send(_ action: ChessAction) {
         // Process the message on the background, then sink back to the main thread.

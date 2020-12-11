@@ -33,12 +33,16 @@ public extension Chess {
         ///
         /// - Parameter game: The game that is being played. This is immutable. The ChessStore is used for updates.
         public override func turnUpdate(game: Chess.Game) {
-            guard game.board.playingSide == side else { return }
+            guard game.board.playingSide == side else {
+                Chess.log.debug("Tried to turnUpdate when not my turn: \(side)")
+                return
+            }
             guard let delegate = game.delegate else {
                 Chess.log.critical("Cannot run a game turn without a game delegate.")
                 return
             }
             if stopAfterMove>0 && game.board.fullMoves >= stopAfterMove {
+                Chess.log.debug("turnUpdate stopAfterMove: \(stopAfterMove)")
                 return
             }
             let evaluteFEN = game.board.FEN
