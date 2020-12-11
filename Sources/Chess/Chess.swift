@@ -8,9 +8,16 @@
 import Foundation
 import SwiftUI
 import Combine
+import Logging
 
 // Our namespace
-public enum Chess { }
+public enum Chess {
+    static var log: Logger = {
+        var log = Logger(label: "com.dpedley.swift-chess")
+        log.logLevel = Logger.Level.critical
+        return log
+    }()
+}
 
 struct SwiftChessPreview: PreviewProvider {
     static var sampleStore: ChessStore = {
