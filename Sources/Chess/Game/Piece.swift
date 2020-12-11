@@ -30,7 +30,8 @@ public extension Chess {
         }
         public static func from(fen: String) -> Piece? {
             guard fen.count == 1 else {
-                fatalError("Couldn't create a piece from [\(fen)]")
+                Chess.log.critical("Couldn't create a piece from [\(fen)]")
+                return nil
             }
             let lower = fen.lowercased()
             let side: Side = (lower == fen) ? .black : .white

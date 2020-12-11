@@ -60,7 +60,8 @@ public extension Chess {
             } else if isTimeout {
                 desc = "Ran out of time"
             } else if !continuesGameplay {
-                fatalError("Cannot build a FEN unless this move continues gamesplay.")
+                Chess.log.critical("Cannot build a FEN unless this move continues gamesplay.")
+                return "N/A"
             } else {
                 desc = "\(start.FEN)\(end.FEN)"
             }
