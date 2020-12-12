@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension Chess {
-    public enum GameStatus {
+public extension Chess {
+    enum GameStatus {
         case unknown
         case notYetStarted
         case active
@@ -23,7 +23,7 @@ extension Chess {
     }
 }
 
-extension Chess.Game {
+public extension Chess.Game {
     func status() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
             if board.FEN == Chess.Board.startingFEN {

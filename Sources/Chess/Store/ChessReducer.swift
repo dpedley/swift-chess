@@ -9,35 +9,40 @@ import Foundation
 import SwiftUI
 import Combine
 
-typealias ChessGameReducer<Game, Action, Environment> =
-    (inout Game, Action, Environment) -> AnyPublisher<Action, Never>?
+public typealias ChessGameReducer = (Chess.Game, ChessAction, ChessEnvironment,
+                                     PassthroughSubject<Chess.Game, Never>) -> Void
 
-extension ChessStore {
+public extension ChessStore {
     static func chessReducer(
-        game: inout Chess.Game,
+        game: Chess.Game,
         action: ChessAction,
-        environment: ChessEnvironment
-    ) -> AnyPublisher<ChessAction, Never>? {
+        environment: ChessEnvironment,
+        passThrough: PassthroughSubject<Chess.Game, Never>
+    ) {
+        var mutableGame = game
         switch action {
         case .nextTurn:
-//            print("nextTurn: \(game.board.playingSide)")
-            game.nextTurn()
+            Chess.log.info("nextTurn: \(game.board.playingSide)")
+            mutableGame.nextTurn()
         case .startGame:
-//            print("startGame: Starting...")
-            game.start()
+            Chess.log.info("startGame: Starting...")
+            mutableGame.start()
         case .pauseGame:
-//            print("pauseGame: Pausing...")
-            game.userPaused = true
+            Chess.log.info("pauseGame: Pausing...")
+            mutableGame.userPaused = true
         case .setBoard(let fen):
-//            print("setBoard: Board setup as: \(fen)")
-            game.board.resetBoard(FEN: fen)
+            Chess.log.info("setBoard: Board setup as: \(fen)")
+            mutableGame.board.resetBoard(FEN: fen)
+        case .resetBoard:
+            Chess.log.info("resetBoard: resetting...")
+            mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
         case .makeMove(let move):
-//            print("makeMove: \(move.side) \(move.description)")
-            game.execute(move: move)
-            if game.board.lastMove == move {
-                game.changeSides(move.side.opposingSide)
+            Chess.log.info("makeMove: \(move.side) \(move.description)")
+            mutableGame.execute(move: move)
+            if mutableGame.board.lastMove == move {
+                mutableGame.changeSides(move.side.opposingSide)
             }
         }
-        return nil
+        passThrough.send(mutableGame)
     }
 }

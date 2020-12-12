@@ -44,7 +44,8 @@ extension Chess.Board {
         for fenChar in rankString {
             guard let unicodeScalar = fenChar.unicodeScalars.first else {
                 // unicodeScalar error?
-                fatalError("FEN Character \(fenChar) invalid")
+                Chess.log.critical("FEN Character \(fenChar) invalid")
+                return
             }
             // If it's a digit, it represents the number of empty squares
             if CharacterSet.decimalDigits.contains(unicodeScalar) {
@@ -59,7 +60,8 @@ extension Chess.Board {
                 // Upper case means White pieces
                 let fenIndex = rankIndex * 8 + fileIndex
                 guard let piece = Chess.Piece.from(fen: String(fenChar)) else {
-                    fatalError("FEN Character \(fenChar) invalid at: [\(fenIndex)] \(Chess.Position(fenIndex).FEN)")
+                    Chess.log.critical("FEN Character \(fenChar) invalid at: \(Chess.Position(fenIndex).FEN)")
+                    return
                 }
                 let updatedPiece: Chess.Piece
                 if !isValid(startingSquare: squares[fenIndex], for: piece) {
@@ -76,19 +78,23 @@ extension Chess.Board {
         turns.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
         guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
-            fatalError("Invalid FEN: Cannot find active side.")
+            Chess.log.critical("Invalid FEN: Cannot find active side.")
+            return
         }
         guard let moveCount = Int(FENParts[5]) else {
-            fatalError("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
+            Chess.log.critical("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
+            return
         }
         // Still UNDONE: castling checks in the hasMoved below
         // en passant square last move side effect additions
         guard let piecesString = FENParts.first else {
-            fatalError("Invalid FEN")
+            Chess.log.critical("Invalid FEN")
+            return
         }
         let ranks = piecesString.components(separatedBy: "/")
         guard ranks.count==8 else {
-            fatalError("Invalid FEN")
+            Chess.log.critical("Invalid FEN")
+            return
         }
         fullMoves = moveCount
         var rankIndex = 0

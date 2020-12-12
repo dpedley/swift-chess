@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class PieceArtwork: ObservableObject {
+public struct PieceArtwork {
     let start: CGPoint
     let strokes: [Stroke]
     let jewels: [Jewel]

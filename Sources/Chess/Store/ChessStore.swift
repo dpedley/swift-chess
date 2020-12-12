@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChessStore.swift
 //  
 //
 //  Created by Douglas Pedley on 11/26/20.
@@ -9,18 +9,22 @@ import Foundation
 import SwiftUI
 import Combine
 
-final class ChessStore: ObservableObject, ChessGameDelegate {
-    @Published var game: Chess.Game
+public final class ChessStore: ObservableObject, ChessGameDelegate {
+    let semaphore = DispatchSemaphore(value: 1)
+    let passThrough = PassthroughSubject<Chess.Game, Never>()
+    var gamePublisher: AnyPublisher<Chess.Game, Never> {
+        passThrough.eraseToAnyPublisher()
+    }
+    @Published public var game: Chess.Game
+    private let environment: ChessEnvironment
+    private let reducer: ChessGameReducer
+    private var cancellables: Set<AnyCancellable> = []
     var theme: Chess.UI.ChessTheme {
         environment.theme
     }
-    private let environment: ChessEnvironment
-    private let reducer: ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment>
-    private var cancellables: Set<AnyCancellable> = []
-
-    init(
-        game: Chess.Game,
-        reducer: @escaping ChessGameReducer<Chess.Game, ChessAction, ChessEnvironment> = ChessStore.chessReducer,
+    public init(
+        game: Chess.Game = Chess.Game(),
+        reducer: @escaping ChessGameReducer = ChessStore.chessReducer,
         environment: ChessEnvironment = ChessEnvironment()
     ) {
         self.game = game
@@ -32,14 +36,30 @@ final class ChessStore: ObservableObject, ChessGameDelegate {
         }
         self.game.delegate = self
     }
-
-    func send(_ action: ChessAction) {
-        guard let effect = self.reducer(&self.game, action, self.environment) else {
+    func processChanges(_ updatedGame: Chess.Game) {
+        let opposingSide = self.game.board.playingSide.opposingSide
+        self.game = updatedGame
+        guard opposingSide == self.game.board.playingSide else {
+            // The turn didn't update, no need to continue.
             return
         }
-        effect
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.send)
-            .store(in: &self.cancellables)
+        guard !game.userPaused else {
+            return
+        }
+        self.send(.nextTurn)
+    }
+    public func send(_ action: ChessAction) {
+        // Process the message on the background, then sink back to the main thread.
+        DispatchQueue.global().async {
+            self.semaphore.wait()
+            self.gamePublisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] newGame in
+                    self?.processChanges(newGame)
+                    self?.semaphore.signal()
+                }
+                .store(in: &self.cancellables)
+            self.reducer(self.game, action, self.environment, self.passThrough)
+        }
     }
 }

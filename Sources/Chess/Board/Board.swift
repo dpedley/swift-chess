@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     struct Board {
         let populateExpensiveVisuals: Bool
         var squares: [Square] = []

@@ -8,15 +8,11 @@
 import SwiftUI
 import Combine
 
-struct BoardView: View {
-    @EnvironmentObject var store: ChessStore
-    let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
-    var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
-    func color(for index: Int) -> Color {
-        let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
-        return evenSquare ? themeColor.dark : themeColor.light
-    }
-    var body: some View {
+public struct BoardView: View {
+    @EnvironmentObject public var store: ChessStore
+    public let columns: [GridItem] = .init(repeating: .chessFile, count: 8)
+    private var themeColor: Chess.UI.BoardColor { store.theme.boardTheme.color }
+    public var body: some View {
         GeometryReader { geometry in
             ZStack {
                 LazyVGrid(columns: columns, spacing: 0) {
@@ -35,8 +31,14 @@ struct BoardView: View {
             .frame(width: geometry.size.minimumLength,
                    height: geometry.size.minimumLength,
                    alignment: .center)
+            .drawingGroup()
         }
     }
+    public func color(for index: Int) -> Color {
+        let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
+        return evenSquare ? themeColor.dark : themeColor.light
+    }
+    public init() {}
 }
 
 struct BoardViewPreviews: PreviewProvider {

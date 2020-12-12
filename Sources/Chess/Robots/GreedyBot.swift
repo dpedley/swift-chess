@@ -10,35 +10,24 @@
 
 import Foundation
 
-extension Chess.Robot {
-    class GreedyBot: RandomBot {
-        override func worthyChoices(board: Chess.Board) -> [Chess.Move]? {
-            guard let choices = board.createValidVariants(for: side) else { return nil }
-            var theChosen: [Chess.Move] = []
-            var bestGap: Double?
-            for choice in choices {
-                guard let move = choice.move else { continue }
-                let pieceWeights = choice.board.pieceWeights()
-                let choiceGap = pieceWeights.value(for: side) - pieceWeights.value(for: side.opposingSide)
-                guard let currentBestGap = bestGap else {
-                    // first one, it is worthy
-                    bestGap = choiceGap
-                    theChosen.append(move)
-                    continue
-                }
-                guard choiceGap < currentBestGap else {
-                    // our new chosen one
-                    bestGap = choiceGap
-                    theChosen.removeAll()
-                    theChosen.append(move)
-                    continue
-                }
-                if choiceGap==currentBestGap {
-                    // Another worthy choice
-                    theChosen.append(move)
-                }
+public extension Chess.Robot {
+    class GreedyBot: Chess.Robot {
+        func bestAttacks(attacks: [Chess.SingleMoveVariant]) -> [Chess.SingleMoveVariant] {
+            // When you're greedy, the best attack have the highest piece value change
+            let sortedAttacks = attacks.sorted {
+                return $0.pieceWeights().value(for: side.opposingSide) <
+                    $1.pieceWeights().value(for: side.opposingSide)
             }
-            return theChosen.count > 0 ? theChosen : nil
+            let bestWeight = sortedAttacks.first?.pieceWeights().value(for: side.opposingSide) ?? 0
+            return sortedAttacks.filter { $0.pieceWeights().value(for: side.opposingSide) == bestWeight }
+        }
+        public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
+            guard let choices = super.validChoices(board: board) else { return nil }
+            guard let attacks = validAttacks(choices: choices) else {
+                // If we can't attack, who cares.
+                return choices
+            }
+            return bestAttacks(attacks: attacks)
         }
     }
 }

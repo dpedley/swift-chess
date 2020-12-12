@@ -9,8 +9,8 @@ import Foundation
 
 public typealias ChessTurnCallback = (Chess.Move) -> Void
 
-extension Chess {
-    public class Player {
+public extension Chess {
+    class Player {
         let side: Side
         var timeLeft: TimeInterval?
         var currentMoveStartTime: Date?

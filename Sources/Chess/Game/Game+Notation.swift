@@ -26,20 +26,20 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2
 
 import Foundation
 
-extension Chess.Game {
-    public enum PGNResult: String {
+public extension Chess.Game {
+    enum PGNResult: String {
         case blackWon = "0-1"
         case whiteWon = "1-0"
         case draw = "1/2-1/2"
         case other = "*"
     }
-    public struct AnnotatedMove {
+    struct AnnotatedMove {
         var side: Chess.Side
         var move: String
         var fenAfterMove: String
         var annotation: String?
     }
-    public struct PortableNotation { // PGN
+    struct PortableNotation { // PGN
         var eventName: String // the name of the tournament or match event.
         var site: String      // the location of the event. This is in City, Region COUNTRY format,
                               // where COUNTRY is the three-letter International Olympic Committee code
@@ -113,8 +113,6 @@ extension Chess.Game {
                                                 "e7f6", "e4d6", "d6c4", "d7b6", "a8e8", "f8f7", "e8e1", "g8f7", "f6g5",
                                                 "h6g5", "f7e6", "e6d6", "c5b4", "b6d5", "b7c8", "c8f5", "g7g6", "d6c5",
                                                 "d5f4", "f4h3", "c5b5", "b5c5", "h3f2", "f5d3"])
-        fischer.responseDelay = 0.05
-        spassky.responseDelay = 0.05
         return Chess.Game(fischer, against: spassky)
     }
 }

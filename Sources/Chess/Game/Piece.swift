@@ -7,12 +7,12 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     struct Piece {
-        let side: Side
-        let pieceType: PieceType
-        var hasMoved: Bool { return pieceType.hasMoved }
-        var FEN: String {
+        public let side: Side
+        public let pieceType: PieceType
+        public var hasMoved: Bool { return pieceType.hasMoved }
+        public var FEN: String {
             switch side {
             case .black:
                 return pieceType.fen(.black)
@@ -21,16 +21,17 @@ extension Chess {
             }
         }
         // swiftlint:disable identifier_name
-        let UI: UI.Piece // Let's revisit this name
+        public let UI: UI.Piece // Let's revisit this name
         // swiftlint:enable identifier_name
-        init(side: Side, pieceType: PieceType) {
+        public init(side: Side, pieceType: PieceType) {
             self.side = side
             self.pieceType = pieceType
             self.UI = Chess.UI.Piece(side: side, pieceType: pieceType)
         }
-        static func from(fen: String) -> Piece? {
+        public static func from(fen: String) -> Piece? {
             guard fen.count == 1 else {
-                fatalError("Couldn't create a piece from [\(fen)]")
+                Chess.log.critical("Couldn't create a piece from [\(fen)]")
+                return nil
             }
             let lower = fen.lowercased()
             let side: Side = (lower == fen) ? .black : .white
@@ -53,7 +54,7 @@ extension Chess {
             }
             return Piece(side: side, pieceType: pieceType)
         }
-        var unicode: String {
+        public var unicode: String {
             switch self.pieceType {
             case .pawn:
                 return side == .black ? "\u{265F}" : "\u{2659}"
@@ -71,7 +72,7 @@ extension Chess {
         }
         /// Sourced here:https://en.wikipedia.org/wiki/Chess_piece_relative_value
         /// Went with AlphaZero - 1.0 3.05    3.33    5.63    9.5
-        var weight: Double {
+        public var weight: Double {
             switch self.pieceType {
             case .pawn:
                 return 1.0
@@ -87,7 +88,7 @@ extension Chess {
                 return 0.0
             }
         }
-        lazy var artwork: PieceArtwork = {
+        public var artwork: PieceArtwork {
             switch self.pieceType {
             case .pawn:
                 return .pawn
@@ -102,20 +103,9 @@ extension Chess {
             case .king:
                 return .king
             }
-        }()
-        lazy var style: PieceStyle = {
+        }
+        public var style: PieceStyle {
             return side == .black ? .black : .white
-        }()
-    }
-}
-
-extension Chess.Piece {
-    enum DefaultType {
-        static let Pawn = Chess.PieceType.pawn(hasMoved: false)
-        static let Knight = Chess.PieceType.knight
-        static let Bishop = Chess.PieceType.bishop
-        static let Rook = Chess.PieceType.rook(hasMoved: false, isKingSide: false)
-        static let Queen = Chess.PieceType.queen
-        static let King = Chess.PieceType.king(hasMoved: false)
+        }
     }
 }

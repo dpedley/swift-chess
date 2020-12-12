@@ -8,11 +8,12 @@
 import Foundation
 import Combine
 
-struct ChessEnvironment {
-    enum TargetEnvironment {
+public struct ChessEnvironment {
+    public enum TargetEnvironment {
         case production
         case development
     }
-    var target: TargetEnvironment = .development
-    var theme = Chess.UI.ChessTheme()
+    public var target: TargetEnvironment = .development
+    public var theme = Chess.UI.ChessTheme()
+    public init() {}
 }

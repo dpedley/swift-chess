@@ -13,18 +13,18 @@
 
 import Foundation
 
-extension Chess {
+public extension Chess {
     /// A base robot, the evaluate is meant for subclasses
-    class Robot: Chess.Player {
+    class Robot: Chess.Player, RoboticMoveDecider {
         /// How long to wait before starting to process the evaluation 0 = immediate
-        var responseDelay: TimeInterval = 0.0
+        public var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.
-        var stopAfterMove: Int
+        public var stopAfterMove: Int
 
         /// A few overrides from Chess.Player
-        override func isBot() -> Bool { return true }
-        override func prepareForGame() { }
-        override func timerRanOut() {}
+        public override func isBot() -> Bool { return true }
+        public override func prepareForGame() { }
+        public override func timerRanOut() {}
         /// The main override from Chess.Player
         ///
         /// This is called by the game engine when this Robot Player should make a move.
@@ -32,12 +32,17 @@ extension Chess {
         /// The move from the evaluation is sent to the ChessStore
         ///
         /// - Parameter game: The game that is being played. This is immutable. The ChessStore is used for updates.
-        override func turnUpdate(game: Chess.Game) {
-            guard game.board.playingSide == side else { return }
+        public override func turnUpdate(game: Chess.Game) {
+            guard game.board.playingSide == side else {
+                Chess.log.debug("Tried to turnUpdate when not my turn: \(side)")
+                return
+            }
             guard let delegate = game.delegate else {
-                fatalError("Cannot run a game turn without a game delegate.")
+                Chess.log.critical("Cannot run a game turn without a game delegate.")
+                return
             }
             if stopAfterMove>0 && game.board.fullMoves >= stopAfterMove {
+                Chess.log.debug("turnUpdate stopAfterMove: \(stopAfterMove)")
                 return
             }
             let evaluteFEN = game.board.FEN
@@ -53,7 +58,8 @@ extension Chess {
                 guard let move = self.evalutate(board: board) else {
                     let square = game.board.squareForActiveKing
                     guard square.piece?.side == self.side else {
-                        fatalError("Misconfigured board, bot cannot find it's own king.")
+                        Chess.log.critical("Misconfigured board, bot cannot find it's own king.")
+                        return
                     }
                     let move = self.side.resigns(king: square.position)
                     delegate.send(.makeMove(move: move))
@@ -62,14 +68,25 @@ extension Chess {
                 delegate.send(.makeMove(move: move))
             }
         }
+        public func validChoices(board: Chess.Board) -> [SingleMoveVariant]? {
+            board.createValidVariants(for: side)
+        }
+        func validAttacks(choices: [SingleMoveVariant]?) -> [Chess.SingleMoveVariant]? {
+            let attacks = choices?.filter { variant in
+                guard let move = variant.move else { return false }
+                return !variant.board.squares[move.end].isEmpty
+            }
+            return attacks
+        }
+
         /// Evaluate board for the optimal move
-        /// This is meant to be overriden by subclasses as the main game play
-        /// interaction for chess robots.
         ///
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
-        func evalutate(board: Chess.Board) -> Chess.Move? {
-            fatalError("This is meant to be overridden.")
+        public func evalutate(board: Chess.Board) -> Chess.Move? {
+            var tmpBoard = Chess.Board(FEN: board.FEN)
+            tmpBoard.playingSide = side
+            return validChoices(board: tmpBoard)?.randomElement()?.move
         }
         /// The required initializer for the Robot subclasses.
         /// let fred = RandomBot(.white)
@@ -78,7 +95,7 @@ extension Chess {
         /// - Parameter side: The `Chess.Side` that this bot should play.
         /// - Parameter stopAfterMove: To keep things from running amok, you can set a move,
         /// and the bot will stop after that move has been performed.
-        init(side: Chess.Side, stopAfterMove: Int = 100) {
+        public init(side: Chess.Side, stopAfterMove: Int = 100) {
             self.stopAfterMove = stopAfterMove
             super.init(side: side, matchLength: nil)
         }
