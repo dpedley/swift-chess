@@ -33,6 +33,9 @@ public extension ChessStore {
         case .setBoard(let fen):
             Chess.log.info("setBoard: Board setup as: \(fen)")
             mutableGame.board.resetBoard(FEN: fen)
+        case .resetBoard:
+            Chess.log.info("resetBoard: resetting...")
+            mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
         case .makeMove(let move):
             Chess.log.info("makeMove: \(move.side) \(move.description)")
             mutableGame.execute(move: move)
