@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 
 public final class ChessStore: ObservableObject, ChessGameDelegate {
+    let semaphore = DispatchSemaphore(value: 1)
     let passThrough = PassthroughSubject<Chess.Game, Never>()
     var gamePublisher: AnyPublisher<Chess.Game, Never> {
         passThrough.eraseToAnyPublisher()
@@ -45,19 +46,17 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         guard !game.userPaused else {
             return
         }
-        DispatchQueue.global().async {
-            Thread.sleep(until: Date() + 0.01)
-            self.send(.nextTurn)
-        }
+        self.send(.nextTurn)
     }
     public func send(_ action: ChessAction) {
         // Process the message on the background, then sink back to the main thread.
         DispatchQueue.global().async {
+            self.semaphore.wait()
             self.gamePublisher
-                .debounce(for: .milliseconds(1), scheduler: RunLoop.main)
                 .receive(on: RunLoop.main)
                 .sink { [weak self] newGame in
                     self?.processChanges(newGame)
+                    self?.semaphore.signal()
                 }
                 .store(in: &self.cancellables)
             self.reducer(self.game, action, self.environment, self.passThrough)
