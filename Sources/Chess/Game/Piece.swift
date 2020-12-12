@@ -10,8 +10,23 @@ import Foundation
 public extension Chess {
     struct Piece {
         public let side: Side
-        public let pieceType: PieceType
-        public var hasMoved: Bool { return pieceType.hasMoved }
+        public var pieceType: PieceType
+        public var hasMoved: Bool {
+            get {
+                return pieceType.hasMoved
+            }
+            set {
+                guard newValue else {
+                    Chess.log.critical("Cannot unmove a piece.")
+                    return
+                }
+                guard !pieceType.hasMoved else {
+                    Chess.log.debug("Piece already moved.")
+                    return
+                }
+                pieceType = pieceType.pieceMoved()
+            }
+        }
         public var FEN: String {
             switch side {
             case .black:

@@ -178,6 +178,7 @@ extension Chess.Board {
             throw Chess.Move.Limitation.notYourTurn
         }
         var piece = movingPiece
+        piece.hasMoved = true
         // When pawns move to their last rank, we need a promotion side effect
         // we default to queen promotion if none is given.
         if piece.isLastRank(move.end), move.sideEffect.isUnknown {
