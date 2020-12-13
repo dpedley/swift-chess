@@ -46,12 +46,12 @@ private extension Color {
     static func hexColor(red: Int, green: Int, blue: Int) -> Color {
         return Color(red: Double(red)/256.0, green: Double(blue)/256.0, blue: Double(blue)/256.0)
     }
-    static let chessBoardBrown = hexColor(red: 0xb5, green: 0x88, blue: 0x63) // b58863
-    static let chessBoardBrownLight = hexColor(red: 0xf0, green: 0xd9, blue: 0xb5) // f0d9b5
-    static let chessBoardGreen = hexColor(red: 0x86, green: 0xa6, blue: 0x66) // 86a666
-    static let chessBoardGreenLight = hexColor(red: 0xff, green: 0xff, blue: 0xdd) // ffffdd
-    static let chessBoardBlue = hexColor(red: 0x8c, green: 0xa2, blue: 0xad) // 8ca2ad
-    static let chessBoardBlueLight = hexColor(red: 0xde, green: 0xe3, blue: 0xe6) // dee3e6
-    static let chessBoardPurple = hexColor(red: 0x7d, green: 0x4a, blue: 0x8d) // 7d4a8d
-    static let chessBoardPurpleLight = hexColor(red: 0x9f, green: 0x90, blue: 0xb0) // 9f90b0
+    static let chessBoardBrown = hexColor(red: 0xae, green: 0x8a, blue: 0x68) // AE8A68
+    static let chessBoardBrownLight = hexColor(red: 0xec, green: 0xda, blue: 0xb9) // ECDAB9
+    static let chessBoardGreen = hexColor(red: 0x8c, green: 0xa5, blue: 0x6d) // 8CA56D
+    static let chessBoardGreenLight = hexColor(red: 0xff, green: 0xff, blue: 0xe0) // FFFFE0
+    static let chessBoardBlue = hexColor(red: 0x90, green: 0xa1, blue: 0xac) // 90A1AC
+    static let chessBoardBlueLight = hexColor(red: 0xdf, green: 0xe3, blue: 0xe6) // DFE3E6
+    static let chessBoardPurple = hexColor(red: 0x76, green: 0x4c, blue: 0x89) // 764C89
+    static let chessBoardPurpleLight = hexColor(red: 0x9c, green: 0x91, blue: 0xae) // 9C91AE
 }
