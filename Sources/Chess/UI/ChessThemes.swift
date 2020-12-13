@@ -44,7 +44,7 @@ public extension Chess.UI {
 
 private extension Color {
     static func hexColor(red: Int, green: Int, blue: Int) -> Color {
-        return Color(red: Double(red)/256.0, green: Double(blue)/256.0, blue: Double(blue)/256.0)
+        return Color(red: Double(red)/256.0, green: Double(green)/256.0, blue: Double(blue)/256.0)
     }
     static let chessBoardBrown = hexColor(red: 0xae, green: 0x8a, blue: 0x68) // AE8A68
     static let chessBoardBrownLight = hexColor(red: 0xec, green: 0xda, blue: 0xb9) // ECDAB9
@@ -54,4 +54,43 @@ private extension Color {
     static let chessBoardBlueLight = hexColor(red: 0xdf, green: 0xe3, blue: 0xe6) // DFE3E6
     static let chessBoardPurple = hexColor(red: 0x76, green: 0x4c, blue: 0x89) // 764C89
     static let chessBoardPurpleLight = hexColor(red: 0x9c, green: 0x91, blue: 0xae) // 9C91AE
+}
+
+struct ChessBoardColorsPreview: PreviewProvider {
+    static var brown: ChessStore = {
+        var store = ChessStore()
+        store.environment.theme.color = .brown
+        return store
+    }()
+    static var blue: ChessStore = {
+        var store = ChessStore()
+        store.environment.theme.color = .blue
+        return store
+    }()
+    static var green: ChessStore = {
+        var store = ChessStore()
+        store.environment.theme.color = .green
+        return store
+    }()
+    static var purple: ChessStore = {
+        var store = ChessStore()
+        store.environment.theme.color = .purple
+        return store
+    }()
+    static var previews: some View {
+        VStack {
+            HStack {
+                BoardView()
+                    .environmentObject(brown)
+                BoardView()
+                    .environmentObject(blue)
+            }
+            HStack {
+                BoardView()
+                    .environmentObject(green)
+                BoardView()
+                    .environmentObject(purple)
+            }
+        }
+    }
 }
