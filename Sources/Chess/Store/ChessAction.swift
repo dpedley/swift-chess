@@ -7,11 +7,13 @@
 
 import Foundation
 
-public enum ChessAction {
-    case nextTurn
-    case startGame
-    case pauseGame
-    case resetBoard
-    case setBoard(fen: String)
-    case makeMove(move: Chess.Move)
+extension Chess {
+    public enum GameAction {
+        case nextTurn
+        case startGame
+        case pauseGame
+        case resetBoard
+        case setBoard(fen: String)
+        case makeMove(move: Chess.Move)
+    }
 }

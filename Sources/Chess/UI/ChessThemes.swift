@@ -8,11 +8,7 @@ import SwiftUI
 
 public extension Chess.UI {
     struct ChessTheme {
-        var boardTheme = BoardTheme(color: .blue, pieceSet: Chess.UI.loadPieceSet(themeName: "cburnett"))
-    }
-    struct BoardTheme {
         var color: BoardColor = .blue
-        var pieceSet: PieceSet
     }
     enum BoardColor {
         case brown

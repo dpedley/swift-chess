@@ -19,7 +19,7 @@ final class ChessRobotTests: XCTestCase {
             fulfilled = true
             gameCompleted.fulfill()
         }).store(in: &cancellables)
-        store.send(.startGame)
+        store.gameAction(.startGame)
         self.store = store
         waitForExpectations(timeout: 30, handler: nil)
     }
@@ -50,7 +50,7 @@ final class ChessRobotTests: XCTestCase {
             doubleQueenSac = nil
             wasGreedy.fulfill()
         }).store(in: &cancellables)
-        store.send(.startGame)
+        store.gameAction(.startGame)
         self.store = store
         waitForExpectations(timeout: 30, handler: nil)
     }
@@ -82,7 +82,7 @@ final class ChessRobotTests: XCTestCase {
             pawnTrade = nil
             wasCautious.fulfill()
         }).store(in: &cancellables)
-        store.send(.startGame)
+        store.gameAction(.startGame)
         self.store = store
         waitForExpectations(timeout: 10, handler: nil)
     }

@@ -1,6 +1,5 @@
 //
 //  Board+FEN.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/11/19.
 //  Copyright © 2019 d0. All rights reserved.

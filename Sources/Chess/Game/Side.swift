@@ -30,8 +30,10 @@ public extension Chess {
         }
         var pawnsInitialRank: Int {
             switch self {
-                case .black: return 7
-                case .white: return 2
+            case .black:
+                return 7
+            case .white:
+                return 2
             }
         }
     }

@@ -9,13 +9,15 @@ import Foundation
 import SwiftUI
 import Combine
 
-public typealias ChessGameReducer = (Chess.Game, ChessAction, ChessEnvironment,
+public typealias ChessGameReducer = (Chess.Game, Chess.GameAction, ChessEnvironment,
                                      PassthroughSubject<Chess.Game, Never>) -> Void
+public typealias ChessEnvironmentReducer = (ChessEnvironment, ChessEnvironment.EnvironmentChange,
+                                     PassthroughSubject<ChessEnvironment, Never>) -> Void
 
 public extension ChessStore {
-    static func chessReducer(
+    static func gameReducer(
         game: Chess.Game,
-        action: ChessAction,
+        action: Chess.GameAction,
         environment: ChessEnvironment,
         passThrough: PassthroughSubject<Chess.Game, Never>
     ) {
@@ -44,5 +46,24 @@ public extension ChessStore {
             }
         }
         passThrough.send(mutableGame)
+    }
+}
+
+public extension ChessStore {
+    static func environmentReducer(
+        environment: ChessEnvironment,
+        change: ChessEnvironment.EnvironmentChange,
+        passThrough: PassthroughSubject<ChessEnvironment, Never>
+    ) {
+        var mutableEnvironment = environment
+        switch change {
+        case .boardColor(let newColor):
+            Chess.log.info("boardColor: \(newColor)...")
+            mutableEnvironment.theme.color = newColor
+        case .target(let newTarget):
+            Chess.log.info("target environment: \(newTarget)...")
+            mutableEnvironment.target = newTarget
+        }
+        passThrough.send(mutableEnvironment)
     }
 }

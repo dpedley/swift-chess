@@ -62,10 +62,10 @@ public extension Chess {
                         return
                     }
                     let move = self.side.resigns(king: square.position)
-                    delegate.send(.makeMove(move: move))
+                    delegate.gameAction(.makeMove(move: move))
                     return
                 }
-                delegate.send(.makeMove(move: move))
+                delegate.gameAction(.makeMove(move: move))
             }
         }
         public func validChoices(board: Chess.Board) -> [SingleMoveVariant]? {

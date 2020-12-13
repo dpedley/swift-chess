@@ -11,9 +11,7 @@ import Combine
 
 extension PreviewProvider {
     static var previewChessStore: ChessStore {
-        let store = ChessStore(game: Chess.Game(),
-                               reducer: ChessStore.chessReducer,
-                               environment: ChessEnvironment())
+        let store = ChessStore(game: Chess.Game())
         store.game.board.resetBoard()
         return store
     }
@@ -40,13 +38,13 @@ struct ChessStorePreview: PreviewProvider {
                 Button("Refresh") {
                     let fen = store.game.board.FEN
                     debugLabel = fen
-                    store.send(.setBoard(fen: fen))
+                    store.gameAction(.setBoard(fen: fen))
                 }
                 Button(store.game.board.FEN == fen ? "Black to Mate" : "Reset") {
                     if store.game.board.FEN == fen {
-                        store.send(.makeMove(move: Chess.Move.black.f8.f1))
+                        store.gameAction(.makeMove(move: Chess.Move.black.f8.f1))
                     } else {
-                        store.send(.setBoard(fen: fen))
+                        store.gameAction(.setBoard(fen: fen))
                     }
                 }
             }

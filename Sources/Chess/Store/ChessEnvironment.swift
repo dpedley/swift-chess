@@ -13,6 +13,10 @@ public struct ChessEnvironment {
         case production
         case development
     }
+    public enum EnvironmentChange {
+        case target(newTarget: TargetEnvironment)
+        case boardColor(newColor: Chess.UI.BoardColor)
+    }
     public var target: TargetEnvironment = .development
     public var theme = Chess.UI.ChessTheme()
     public init() {}

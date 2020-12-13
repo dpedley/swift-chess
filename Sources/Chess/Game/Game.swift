@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public protocol ChessGameDelegate: AnyObject {
-    func send(_ action: ChessAction)
+    func gameAction(_ action: Chess.GameAction)
 }
 
 public extension Chess {

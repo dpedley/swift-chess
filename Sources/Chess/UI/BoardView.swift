@@ -18,7 +18,7 @@ public struct BoardView: View {
                     ForEach(0..<64) { idx in
                         ZStack {
                             Rectangle() // The square background
-                                .fill(color(store.environment.theme.boardTheme.color, for: idx))
+                                .fill(color(store.environment.theme.color, for: idx))
                                 .aspectRatio(1, contentMode: .fill)
                             PieceView(position: idx)
                                 .environmentObject(store)
@@ -35,7 +35,6 @@ public struct BoardView: View {
     }
     public func color(_ themeColor: Chess.UI.BoardColor, for index: Int) -> Color {
         let evenSquare: Bool = (Chess.Position(index).rank + Chess.Position(index).fileNumber) % 2 == 0
-        
         return evenSquare ? themeColor.dark : themeColor.light
     }
     public init() {}
@@ -46,18 +45,18 @@ struct BoardViewPreviews: PreviewProvider {
         HStack {
             BoardView().environmentObject(previewChessStore)
             // See ChessStore+Preview.swift for ^^ this
-            Menu("Color") {
+            VStack {
                 Button("Green") {
-                    previewChessStore.environment.theme.boardTheme.color = .green
+                    previewChessStore.environmentChange(.boardColor(newColor: .green))
                 }
                 Button("Brown") {
-                    previewChessStore.environment.theme.boardTheme.color = .brown
+                    previewChessStore.environmentChange(.boardColor(newColor: .brown))
                 }
                 Button("Blue") {
-                    previewChessStore.environment.theme.boardTheme.color = .blue
+                    previewChessStore.environmentChange(.boardColor(newColor: .blue))
                 }
                 Button("Purple") {
-                    previewChessStore.environment.theme.boardTheme.color = .purple
+                    previewChessStore.environmentChange(.boardColor(newColor: .purple))
                 }
             }
         }

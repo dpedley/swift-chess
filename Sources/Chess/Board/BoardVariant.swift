@@ -1,6 +1,5 @@
 //
 //  BoardVariant.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/9/19.
 //  Copyright © 2019 d0. All rights reserved.

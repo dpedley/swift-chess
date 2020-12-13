@@ -26,12 +26,12 @@ public extension Chess {
             if let move = moveAttempt {
                 // Premove baby!
                 moveAttempt = nil
-                game.delegate?.send(.makeMove(move: move))
+                game.delegate?.gameAction(.makeMove(move: move))
             } else {
                 weak var weakDelegate = game.delegate
                 chessBestMoveCallback = { move in
                     guard let delegate = weakDelegate else { return }
-                    delegate.send(.makeMove(move: move))
+                    delegate.gameAction(.makeMove(move: move))
                 }
             }
         }
