@@ -16,12 +16,9 @@ public final class ChessStore: ObservableObject, ChessGameDelegate {
         passThrough.eraseToAnyPublisher()
     }
     @Published public var game: Chess.Game
-    private let environment: ChessEnvironment
+    @Published public var environment: ChessEnvironment
     private let reducer: ChessGameReducer
     private var cancellables: Set<AnyCancellable> = []
-    var theme: Chess.UI.ChessTheme {
-        environment.theme
-    }
     public init(
         game: Chess.Game = Chess.Game(),
         reducer: @escaping ChessGameReducer = ChessStore.chessReducer,

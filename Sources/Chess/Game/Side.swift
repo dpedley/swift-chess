@@ -28,5 +28,11 @@ public extension Chess {
         public var opposingSide: Side {
             return (self == .black) ? .white : .black
         }
+        var pawnsInitialRank: Int {
+            switch self {
+                case .black: return 7
+                case .white: return 2
+            }
+        }
     }
 }
