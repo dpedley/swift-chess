@@ -44,7 +44,7 @@ public struct BoardView: View {
         }
     }
     static let chessMoveHighlight = Color(.sRGB, red: 0.0, green: 0.1, blue: 0.9, opacity: 0.3)
-    static let chessChoiceHighlight = Color(.sRGB, red: 0.0, green: 0.0, blue: 0.0, opacity: 0.3)
+    static let chessChoiceHighlight = Color(.sRGB, red: 1.0, green: 0.0, blue: 0.0, opacity: 0.3)
     public func highlight(_ showHighlight: Bool, lastMove: Chess.Move?, for index: Int) -> Color {
         guard showHighlight, let lastMove = lastMove else {
             return .clear
