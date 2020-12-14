@@ -49,6 +49,7 @@ public struct ChessPlayerMenuView: View {
             }
         }
     }
+    public init() {}
 }
 
 public struct ChessSettingsView: View {
