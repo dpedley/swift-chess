@@ -23,6 +23,9 @@ public extension Chess.Robot {
         }
         public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
             guard let choices = super.validChoices(board: board) else { return nil }
+            if let matingChoices = matingMoves(choices: choices) {
+                return matingChoices
+            }
             guard let attacks = validAttacks(choices: choices) else {
                 // If we can't attack, who cares.
                 return choices
