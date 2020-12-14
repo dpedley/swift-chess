@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-public struct ChessBoardColorMenuView: View {
+public struct ChessBoardColorMenu: View {
     @EnvironmentObject public var store: ChessStore
     public var body: some View {
         Menu {
@@ -40,6 +40,6 @@ public struct ChessBoardColorMenuView: View {
 
 struct ChessBoardColorMenuPreviews: PreviewProvider {
     static var previews: some View {
-        ChessBoardColorMenuView().environmentObject(previewChessStore)
+        ChessBoardColorMenu().environmentObject(previewChessStore)
     }
 }

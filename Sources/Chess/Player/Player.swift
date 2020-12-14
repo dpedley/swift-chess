@@ -38,6 +38,14 @@ public extension Chess {
         func turnUpdate(game: Chess.Game) {
             fatalError("This method is meant to be overriden by subclasses")
         }
+        func iconName() -> String {
+            switch side {
+            case .black:
+                return "crown.fill"
+            case .white:
+                return "crown"
+            }
+        }
         func menuName() -> String {
             if self is Chess.Robot.CautiousBot {
                 return "CautiousBot"

@@ -11,9 +11,9 @@ public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
     public var body: some View {
         VStack {
-            ChessPlayerMenuView()
+            ChessPlayerMenu()
                 .environmentObject(store)
-            ChessBoardColorMenuView()
+            ChessBoardColorMenu()
                 .environmentObject(store)
         }
     }
