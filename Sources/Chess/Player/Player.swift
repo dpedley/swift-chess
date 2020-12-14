@@ -39,16 +39,16 @@ public extension Chess {
             fatalError("This method is meant to be overriden by subclasses")
         }
         func menuName() -> String {
-            if let _ = self as? Chess.Robot.CautiousBot {
+            if self is Chess.Robot.CautiousBot {
                 return "CautiousBot"
             }
-            if let _ = self as? Chess.Robot.GreedyBot {
+            if self is Chess.Robot.GreedyBot {
                 return "GreedyBot"
             }
-            if let _ = self as? Chess.Robot {
+            if self is Chess.Robot {
                 return "RandomBot"
             }
-            return "Player"
+            return firstName ?? lastName ?? "Player"
         }
     }
 }
