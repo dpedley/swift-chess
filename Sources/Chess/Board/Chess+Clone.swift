@@ -1,6 +1,5 @@
 //
 //  Chess+Clone.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/10/19.
 //  Copyright © 2019 d0. All rights reserved.

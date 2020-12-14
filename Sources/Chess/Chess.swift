@@ -32,10 +32,10 @@ struct SwiftChessPreview: PreviewProvider {
                 .environmentObject(sampleStore)
             VStack {
                 Button("Play") {
-                    sampleStore.send(.startGame)
+                    sampleStore.gameAction(.startGame)
                 }
                 Button("Pause") {
-                    sampleStore.send(.pauseGame)
+                    sampleStore.gameAction(.pauseGame)
                 }
             }
         }

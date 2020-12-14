@@ -61,19 +61,17 @@ extension PieceArtwork {
     }()
 }
 
-// swiftlint:disable line_length
-// swiftlint:disable colon
 struct RookPreview: PreviewProvider {
     static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
             PieceView(position: .a8)
                 .environmentObject(store)
-                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: 0)
             PieceView(position: .a1)
                 .environmentObject(store)
-                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: 0)
         }
         .frame(width: 200, height: 200, alignment: .center)

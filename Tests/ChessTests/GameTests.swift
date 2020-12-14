@@ -42,7 +42,7 @@ final class GameTests: XCTestCase {
                 move2Expectation.fulfill()
             }
         }).store(in: &cancellables)
-        self.store?.send(.startGame)
+        self.store?.gameAction(.startGame)
         waitForExpectations(timeout: 10, handler: nil)
     }
 

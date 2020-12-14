@@ -23,10 +23,10 @@ struct RobotGamePreview: PreviewProvider {
                 .environmentObject(store)
             VStack {
                 Button("Play") {
-                    store.send(.startGame)
+                    store.gameAction(.startGame)
                 }
                 Button("Pause") {
-                    store.send(.pauseGame)
+                    store.gameAction(.pauseGame)
                 }
             }
         }

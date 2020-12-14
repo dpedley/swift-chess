@@ -1,6 +1,5 @@
 //
 //  PieceSet.swift
-//  phasestar
 //
 //  Created by Douglas Pedley on 1/12/19.
 //  Copyright © 2019 d0. All rights reserved.
@@ -9,7 +8,6 @@
 import SwiftUI
 
 extension Chess.UI {
-    typealias PieceSet = [Chess.UI.Piece: PieceView]
     public enum Selection {
         case none
         case premove
@@ -78,22 +76,5 @@ extension Chess.UI {
                 self = (side == .black) ? .blackKing : .whiteKing
             }
         }
-    }
-    static func loadPieceSet(themeName: String) -> PieceSet {
-        // STILL UNDONE support themes
-        return [:]
-//        return [
-//            Chess.UI.Piece.blackPawn: PieceView(.pawn, style: .black),
-//            Chess.UI.Piece.blackKnight: PieceView(.knight, style: .black),
-//            Chess.UI.Piece.blackBishop: PieceView(.bishop, style: .black),
-//            Chess.UI.Piece.blackRook: PieceView(.rook, style: .black),
-//            Chess.UI.Piece.blackQueen: PieceView(.queen, style: .black),
-//            Chess.UI.Piece.blackKing: PieceView(.king, style: .black),
-//            Chess.UI.Piece.whitePawn: PieceView(.pawn, style: .white),
-//            Chess.UI.Piece.whiteKnight: PieceView(.knight, style: .white),
-//            Chess.UI.Piece.whiteBishop: PieceView(.bishop, style: .white),
-//            Chess.UI.Piece.whiteRook: PieceView(.rook, style: .white),
-//            Chess.UI.Piece.whiteQueen: PieceView(.queen, style: .white),
-//            Chess.UI.Piece.whiteKing: PieceView(.king, style: .white) ]
     }
 }

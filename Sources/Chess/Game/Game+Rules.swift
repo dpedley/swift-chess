@@ -58,6 +58,10 @@ extension Chess {
                     if hasMoved {
                         return false
                     }
+                    // a two step pawn move is only valid from the pawn's initial rank
+                    guard move.start.rank == move.side.pawnsInitialRank else {
+                        return false
+                    }
                     // The move is valid. Before we return, make sure to attach the enPassantPosition
                     let jumpPosition = (move.start + move.end) / 2
                     throw Chess.Move.SideEffect.enPassantInvade(territory: jumpPosition, invader: move.end)

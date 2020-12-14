@@ -12,14 +12,16 @@ import Foundation
 public extension Chess.Robot {
     class CautiousBot: Chess.Robot {
         public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
-            guard let choices = board.createValidVariants(for: side) else { return nil }
+            guard let choices = super.validChoices(board: board) else { return nil }
+            if let matingChoices = matingMoves(choices: choices) {
+                return matingChoices
+            }
 
             var potentials: [Chess.SingleMoveVariant] = []
             for choice in choices {
                 guard let move = choice.move else { continue }
-                if !board.squares[move.end].isEmpty,
-                   choice.board.square(move.end, isDefendedBy: side.opposingSide) {
-                    // The piece we want to take is defended... be cautious.
+                if choice.board.square(move.end, isDefendedBy: side.opposingSide) {
+                    // The spot we're going to is defended, it's not a good potential.
                     continue
                 }
                 potentials.append(choice)
