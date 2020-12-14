@@ -44,6 +44,21 @@ public extension ChessStore {
             if mutableGame.board.lastMove == move {
                 mutableGame.changeSides(move.side.opposingSide)
             }
+        case .userTappedSquare(let position):
+            Chess.log.info("userTappedSquare: \(position)")
+            mutableGame.board.squares[position].selected.toggle()
+            
+            if mutableGame.board.squares[position].selected {
+                if let targetedPositions = mutableGame.board.squares[position].buildMoveDestinations(board: mutableGame.board) {
+                    targetedPositions.forEach {
+                        mutableGame.board.squares[$0].targetedBySelected = true
+                    }
+                }
+            } else {
+                for i in 0..<64 {
+                    mutableGame.board.squares[i].targetedBySelected = false
+                }
+            }
         }
         passThrough.send(mutableGame)
     }
@@ -57,6 +72,10 @@ public extension ChessStore {
     ) {
         var mutableEnvironment = environment
         switch change {
+        case .moveHighlight(let lastMove, let choices):
+            Chess.log.info("moveHighlight preferences change: \(lastMove) \(choices)")
+            mutableEnvironment.preferences.highlightLastMove = lastMove
+            mutableEnvironment.preferences.highlightChoices = choices
         case .boardColor(let newColor):
             Chess.log.info("boardColor: \(newColor)...")
             mutableEnvironment.theme.color = newColor

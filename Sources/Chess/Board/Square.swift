@@ -14,6 +14,7 @@ extension Chess {
         var isKingSide: Bool { return (position.fileNumber > 3) }
         var isEmpty: Bool { return piece==nil }
         var selected: Bool = false
+        var targetedBySelected: Bool = false
         func attackedSquares(board: Chess.Board) -> [Square]? {
             guard let piece = piece else { return nil }
             var positions: [Square] = []
