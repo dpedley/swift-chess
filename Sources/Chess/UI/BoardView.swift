@@ -21,7 +21,9 @@ public struct BoardView: View {
                                 .fill(color(store.environment.theme.color, for: idx))
                                 .aspectRatio(1, contentMode: .fill)
                             Rectangle()
-                                .fill(highlight(store.environment.preferences.highlightLastMove, lastMove: store.game.board.lastMove, for: idx))
+                                .fill(highlight(store.environment.preferences.highlightLastMove,
+                                                lastMove: store.game.board.lastMove,
+                                                for: idx))
                                 .aspectRatio(1, contentMode: .fill)
                             Circle()
                                 .inset(by: geometry.size.width / 3)
