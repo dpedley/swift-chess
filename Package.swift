@@ -24,6 +24,9 @@ let package = Package(
             name: "Chess",
             dependencies: [
                 .product(name: "Logging", package: "swift-log")
+            ],
+            exclude: [
+                "PlayChess" // This is the sample app
             ]),
         .testTarget(
             name: "ChessTests",
