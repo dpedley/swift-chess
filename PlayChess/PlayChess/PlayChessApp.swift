@@ -12,7 +12,7 @@ import Logging
 @main
 struct PlayChessApp: App {
     let store: ChessStore =  {
-        //Chess.log.logLevel = Logger.Level.debug
+        //Chess.log.logLevel = Logger.Level.info
         let store = ChessStore()
         return store
     }()
