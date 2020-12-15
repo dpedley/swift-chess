@@ -22,13 +22,7 @@ public struct ChessSettingsView: View {
 
 struct ChessSettingsViewPreviews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            Menu("Settings") {
-                ChessSettingsView().environmentObject(previewChessStore)
-            }
-            Spacer()
             ChessSettingsView()
                 .environmentObject(previewChessStore)
-        }
     }
 }
