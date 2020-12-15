@@ -20,7 +20,7 @@ public struct ChessPlayerMenu: View {
                 Image(systemName: store.game.white.iconName())
                 Text("\(store.game.white.menuName())")
             }
-            .sheet(isPresented: $whiteChooser) {
+            .popover(isPresented: $whiteChooser) {
                 ChessPlayerChooser(self.$whiteChooser, side: .white)
                     .environmentObject(store)
             }
@@ -41,7 +41,7 @@ public struct ChessPlayerMenu: View {
                 Image(systemName: store.game.black.iconName())
                 Text("\(store.game.black.menuName())")
             }
-            .sheet(isPresented: $blackChooser) {
+            .popover(isPresented: $blackChooser) {
                 ChessPlayerChooser(self.$blackChooser, side: .black)
                     .environmentObject(store)
             }

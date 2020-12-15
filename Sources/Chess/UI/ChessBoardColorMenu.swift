@@ -17,7 +17,7 @@ public struct ChessBoardColorMenu: View {
             BoardIconView(store.environment.theme.color)
                 .frame(width: 16, height: 16, alignment: .center)
         }
-        .sheet(isPresented: $colorChooser) {
+        .popover(isPresented: $colorChooser) {
             Button {
                 store.environmentChange(.boardColor(newColor: .brown))
                 colorChooser = false
