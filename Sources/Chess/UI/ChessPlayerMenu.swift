@@ -27,7 +27,9 @@ public struct ChessPlayerMenu: View {
             Button {
                 guard store.game.userPaused else { return }
                 let black = store.game.black
+                black.side = .white
                 let white = store.game.white
+                white.side = .black
                 store.game.black = white
                 store.game.white = black
             } label: {
