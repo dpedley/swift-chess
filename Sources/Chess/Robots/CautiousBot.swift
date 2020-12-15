@@ -11,6 +11,14 @@ import Foundation
 
 public extension Chess.Robot {
     class CautiousBot: Chess.Robot {
+        public override func iconName() -> String {
+            switch side {
+            case .black:
+                return "tortoise"
+            case .white:
+                return "tortoise.fill"
+            }
+        }
         public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
             guard let choices = super.validChoices(board: board) else { return nil }
             if let matingChoices = matingMoves(choices: choices) {

@@ -21,8 +21,8 @@ public extension Chess {
                 }
             }
         }
-        override func isBot() -> Bool { return false }
-        override func turnUpdate(game: Chess.Game) {
+        public override func isBot() -> Bool { return false }
+        public override func turnUpdate(game: Chess.Game) {
             if let move = moveAttempt {
                 // Premove baby!
                 moveAttempt = nil
@@ -35,10 +35,10 @@ public extension Chess {
                 }
             }
         }
-        override func prepareForGame() {
+        public override func prepareForGame() {
             // Washes hands
         }
-        override func timerRanOut() {
+        public override func timerRanOut() {
             // This is where we will message the human that the game is over.
         }
     }

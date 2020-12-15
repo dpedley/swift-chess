@@ -8,41 +8,6 @@
 import Foundation
 import SwiftUI
 
-public struct ChessPlayerChooser: View {
-    @Binding var presentingChooser: Bool
-    let side: Chess.Side
-    @EnvironmentObject public var store: ChessStore
-    public var body: some View {
-        HStack {
-            Button("Human") {
-                setPlayer(Chess.HumanPlayer(side: side))
-            }
-            Button("RandomBot") {
-                setPlayer(Chess.Robot(side: side))
-            }
-            Button("GreedyBot") {
-                setPlayer(Chess.Robot.GreedyBot(side: side))
-            }
-            Button("CautiousBot") {
-                setPlayer(Chess.Robot.CautiousBot(side: side))
-            }
-        }
-    }
-    func setPlayer(_ player: Chess.Player) {
-        switch side {
-        case .black:
-            store.game.black = player
-        case .white:
-            store.game.white = player
-        }
-        presentingChooser = false
-    }
-    public init(_ presentingChooser: Binding<Bool>, side: Chess.Side) {
-        self.side = side
-        self._presentingChooser = presentingChooser
-    }
-}
-
 public struct ChessPlayerMenu: View {
     @EnvironmentObject public var store: ChessStore
     @State var blackChooser: Bool = false

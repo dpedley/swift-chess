@@ -10,7 +10,7 @@ import SwiftUI
 public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
     public var body: some View {
-        HStack {
+        VStack {
             ChessPlayerMenu()
                 .environmentObject(store)
             ChessBoardColorMenu()

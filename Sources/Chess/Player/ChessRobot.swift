@@ -25,6 +25,14 @@ public extension Chess {
         public override func isBot() -> Bool { return true }
         public override func prepareForGame() { }
         public override func timerRanOut() {}
+        public override func iconName() -> String {
+            switch side {
+            case .black:
+                return "ladybug"
+            case .white:
+                return "ladybug.fill"
+            }
+        }
         /// The main override from Chess.Player
         ///
         /// This is called by the game engine when this Robot Player should make a move.
