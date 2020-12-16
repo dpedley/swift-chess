@@ -12,14 +12,17 @@ public struct ResetBoardButton: View {
     @EnvironmentObject public var store: ChessStore
     @State private var showAlert: Bool = false
     public var body: some View {
-        Button {
+        guard store.game.board.turns.isEmpty else {
+            return AnyView(EmptyView())
+        }
+        let button = Button {
             self.showAlert = true
         } label: {
             Image(systemName: "gobackward")
-                .scaleEffect(1.5)
                 .foregroundColor(.black)
         }
         .alert(isPresented: $showAlert, content: resetWarning)
+        return AnyView(button)
     }
     public init() {}
     func resetWarning() -> Alert {
