@@ -38,7 +38,7 @@ public extension Chess {
         public var white: Player
         public var round: Int = 1
         public var pgn: Chess.Game.PortableNotation
-        public var activePlayer: Player? {
+        public var activePlayer: Player {
             switch board.playingSide {
             case .white:
                 return white
@@ -84,8 +84,7 @@ public extension Chess {
             userPaused = true
         }
         public mutating func nextTurn() {
-            guard let player = activePlayer else { return }
-            player.turnUpdate(game: self)
+            activePlayer.turnUpdate(game: self)
         }
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side

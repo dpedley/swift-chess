@@ -19,8 +19,8 @@ public struct PlayPauseButton: View {
         } label: { () -> AnyView in
             let image: Image
             if store.game.userPaused {
-                // We don't show the play button is the user is white, they just start by playing
-                guard store.game.white.isBot() else {
+                // We don't show the play button if it's the user's turn
+                guard store.game.activePlayer.isBot() else {
                     return AnyView(EmptyView())
                 }
                 image = Image(systemName: "play.circle")

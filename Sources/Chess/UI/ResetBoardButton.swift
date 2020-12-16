@@ -12,7 +12,7 @@ public struct ResetBoardButton: View {
     @EnvironmentObject public var store: ChessStore
     @State private var showAlert: Bool = false
     public var body: some View {
-        guard store.game.board.turns.isEmpty else {
+        guard !store.game.board.turns.isEmpty else {
             return AnyView(EmptyView())
         }
         let button = Button {
