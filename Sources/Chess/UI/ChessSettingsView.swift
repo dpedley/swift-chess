@@ -9,20 +9,20 @@ import SwiftUI
 
 public struct ChessPlayers {
     static let human: [Chess.Side: Chess.Player] = [
-        .black : Chess.HumanPlayer(side: .black),
-        .white : Chess.HumanPlayer(side: .white)
+        .black: Chess.HumanPlayer(side: .black),
+        .white: Chess.HumanPlayer(side: .white)
     ]
     static let randomBot: [Chess.Side: Chess.Player] = [
-        .black : Chess.Robot(side: .black),
-        .white : Chess.Robot(side: .white)
+        .black: Chess.Robot(side: .black),
+        .white: Chess.Robot(side: .white)
     ]
     static let greedyBot: [Chess.Side: Chess.Player] = [
-        .black : Chess.Robot.GreedyBot(side: .black),
-        .white : Chess.Robot.GreedyBot(side: .white)
+        .black: Chess.Robot.GreedyBot(side: .black),
+        .white: Chess.Robot.GreedyBot(side: .white)
     ]
     static let cautiousBot: [Chess.Side: Chess.Player] = [
-        .black : Chess.Robot.CautiousBot(side: .black),
-        .white : Chess.Robot.CautiousBot(side: .white)
+        .black: Chess.Robot.CautiousBot(side: .black),
+        .white: Chess.Robot.CautiousBot(side: .white)
     ]
 }
 
@@ -98,12 +98,12 @@ public struct ChessSettingsView: View {
     }
     func playerSelectedWatcher() {
         if !store.game.white.isBot() {
-            var robot: Chess.Robot = store.game.black as? Chess.Robot ?? Chess.Robot(side: .white)
+            let robot: Chess.Robot = store.game.black as? Chess.Robot ?? Chess.Robot(side: .white)
             robot.side = .white
             store.game.white = robot
         }
         if !store.game.black.isBot() {
-            var robot: Chess.Robot = store.game.white as? Chess.Robot ?? Chess.Robot(side: .black)
+            let robot: Chess.Robot = store.game.white as? Chess.Robot ?? Chess.Robot(side: .black)
             robot.side = .black
             store.game.black = robot
         }
