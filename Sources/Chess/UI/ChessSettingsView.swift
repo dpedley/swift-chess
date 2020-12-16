@@ -39,8 +39,10 @@ public struct ChessSettingsView: View {
                 ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .black))
                 ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .black))
             }
-            Section(header: Text("Robot Move Delay \(robotDelay) seconds")) {
-                Slider(value: $robotDelay, in: 0.1...10, onEditingChanged: { _ in
+            Section(header: Text("Robot Move Delay \(String(format: "%#0.1#2f", robotDelay)) seconds")) {
+                Slider(value: $robotDelay, in: 0.1...10,
+                       step: 0.05,
+                       onEditingChanged: { _ in
                     store.game.setRobotPlaybackSpeed(robotDelay)
                 })
             }
