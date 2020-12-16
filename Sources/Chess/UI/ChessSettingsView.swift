@@ -17,7 +17,7 @@ public struct ChessSettingsButton: View {
                 .foregroundColor(.black)
         })
     }
-    init(_ action: @escaping () -> Void) {
+    public init(_ action: @escaping () -> Void) {
         self.action = action
     }
 }
