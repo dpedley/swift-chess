@@ -41,9 +41,9 @@ public extension Chess {
         public func iconName() -> String {
             switch side {
             case .black:
-                return "crown"
-            case .white:
                 return "crown.fill"
+            case .white:
+                return "crown"
             }
         }
         public func menuName() -> String {

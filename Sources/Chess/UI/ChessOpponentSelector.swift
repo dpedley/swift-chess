@@ -15,80 +15,64 @@ public struct ChessOpponentSelector: View {
         case greedy
         case cautious
     }
-    let black: Chess.Player
-    let white: Chess.Player
-    let sides: [Chess.Side]
-    func blackButton() -> some View {
-        if sides.contains(.black) {
-            let color: Color
-            if black.menuName() == store.game.black.menuName() {
-                color = .blue
-            } else {
-                color = .gray
-            }
-            let button = Button(action: {
-                store.game.black = black
-            }, label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(color)
-                    Text("Black")
-                        .foregroundColor(.white)
-                }
-            }).frame(width: 70, alignment: .center)
-            return AnyView(button)
+    let player: Chess.Player
+    func selectPlayer() {
+        switch player.side {
+        case .black:
+            switchToBlack()
+        case .white:
+            switchToWhite()
+            store.game.white = player
         }
-        return AnyView(EmptyView())
     }
-    func whiteButton() -> some View {
-        if sides.contains(.white) {
-            let color: Color
-            if white.menuName() == store.game.white.menuName() {
-                color = .blue
-            } else {
-                color = .gray
-            }
-            let button = Button(action: {
-                store.game.white = white
-            }, label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(color)
-                    Text("White")
-                        .foregroundColor(.white)
-                }
-            }).frame(width: 70, alignment: .center)
-            return AnyView(button)
+    func switchToBlack() {
+        var prevBot: Chess.Robot
+        if let bot = store.game.black as? Chess.Robot {
+            prevBot = bot
+        } else {
+            prevBot = Chess.Robot(side: .black)
+        }
+        store.game.black = player
+        if !store.game.white.isBot() {
+            prevBot.side = .white
+            store.game.white = prevBot
+        }
+    }
+    func switchToWhite() {
+        var prevBot: Chess.Robot
+        if let bot = store.game.white as? Chess.Robot {
+            prevBot = bot
+        } else {
+            prevBot = Chess.Robot(side: .white)
+        }
+        store.game.white = player
+        if !store.game.black.isBot() {
+            prevBot.side = .black
+            store.game.black = prevBot
+        }
+    }
+    func checkmarkView() -> some View {
+        let storePlayer = player.side == .black ? store.game.black : store.game.white
+        if storePlayer.menuName() == player.menuName() {
+            let image = Image(systemName: "checkmark.circle.fill")
+                .scaleEffect(1.5)
+                .foregroundColor(.green)
+            return AnyView(image)
         }
         return AnyView(EmptyView())
     }
     public var body: some View {
         HStack {
-            PlayerTitleView(player: black)
+            Button(action: {
+                selectPlayer()
+            }, label: {
+                PlayerTitleView(player: player)
+            })
             Spacer()
-            whiteButton()
-            blackButton()
+            checkmarkView()
         }
     }
-    init(_ playingAs: PlayAsButton.Choice, bot: Bot) {
-        switch bot {
-        case .random:
-            black = Chess.Robot(side: .black)
-            white = Chess.Robot(side: .white)
-        case .greedy:
-            black = Chess.Robot.GreedyBot(side: .black)
-            white = Chess.Robot.GreedyBot(side: .white)
-        case .cautious:
-            black = Chess.Robot.CautiousBot(side: .black)
-            white = Chess.Robot.CautiousBot(side: .white)
-        }
-        switch playingAs {
-        case .black:
-            sides = [.white]
-        case .white:
-            sides = [.black]
-        case .watch:
-            sides = [.white, .black]
-        }
+    public init(player: Chess.Player) {
+        self.player = player
     }
 }

@@ -12,28 +12,27 @@ public struct ChessSettingsView: View {
     @State var playingAs: PlayAsButton.Choice = .white
     public var body: some View {
         Form {
-            Section(header: Text("Game Setup")) {
-                HStack {
-                    Text("Play")
-                    Button(action: {
-                        self.playingAs = .white
-                        self.playerSelectedWhite()
-                    }, label: {
-                        PlayAsButton(.white, $playingAs)
-                    })
-                    Button(action: {
-                        self.playingAs = .black
-                        self.playerSelectedBlack()
-                    }, label: {
-                        PlayAsButton(.black, $playingAs)
-                    })
-                    Button(action: {
-                        self.playingAs = .watch
-                        self.playerSelectedWatcher()
-                    }, label: {
-                        PlayAsButton(.watch, $playingAs)
-                    })
-                }
+            Section(header: Text("White")) {
+                ChessOpponentSelector(player: Chess.HumanPlayer(side: .white))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot(side: .white))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .white))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .white))
+                    .environmentObject(store)
+            }
+            Section(header: Text("Black")) {
+                ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot(side: .black))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .black))
+                    .environmentObject(store)
+                ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .black))
+                    .environmentObject(store)
+            }
+            Section(header: Text("Highlights")) {
                 Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                     Text("Show highlights for the last move")
                 })
@@ -41,15 +40,7 @@ public struct ChessSettingsView: View {
                     Text("Show valid choices when moving")
                 })
             }
-            Section(header: Text("Robot Chess Opponents")) {
-                ChessOpponentSelector(playingAs, bot: .random)
-                    .environmentObject(store)
-                ChessOpponentSelector(playingAs, bot: .greedy)
-                    .environmentObject(store)
-                ChessOpponentSelector(playingAs, bot: .cautious)
-                    .environmentObject(store)
-            }
-        }
+        }.foregroundColor(.black)
     }
     func playerSelectedWhite() {
         var robot = Chess.Robot(side: .black)

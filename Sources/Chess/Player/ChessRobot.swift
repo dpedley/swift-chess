@@ -28,9 +28,9 @@ public extension Chess {
         public override func iconName() -> String {
             switch side {
             case .black:
-                return "ladybug"
-            case .white:
                 return "ladybug.fill"
+            case .white:
+                return "ladybug"
             }
         }
         /// The main override from Chess.Player

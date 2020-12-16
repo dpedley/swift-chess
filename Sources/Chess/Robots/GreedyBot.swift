@@ -24,9 +24,9 @@ public extension Chess.Robot {
         public override func iconName() -> String {
             switch side {
             case .black:
-                return "hare"
-            case .white:
                 return "hare.fill"
+            case .white:
+                return "hare"
             }
         }
         public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
