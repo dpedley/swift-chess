@@ -35,4 +35,5 @@ public struct PlayPauseButton: View {
                             .foregroundColor(.black))
         }
     }
+    public init() {}
 }
