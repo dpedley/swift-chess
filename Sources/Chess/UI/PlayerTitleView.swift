@@ -15,4 +15,7 @@ public struct PlayerTitleView: View {
             Text("\(player.menuName())")
         }
     }
+    public init(player: Chess.Player) {
+        self.player = player
+    }
 }
