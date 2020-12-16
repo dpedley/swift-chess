@@ -1,10 +1,9 @@
 //
-//  File.swift
+//  PlayerTitleView.swift
 //  
 //
 //  Created by Douglas Pedley on 12/16/20.
 //
-
 import Foundation
 import SwiftUI
 
@@ -17,4 +16,3 @@ public struct PlayerTitleView: View {
         }
     }
 }
-
