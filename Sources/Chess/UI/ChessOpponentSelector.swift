@@ -26,7 +26,9 @@ public struct ChessOpponentSelector: View {
             } else {
                 color = .gray
             }
-            let button = Button(action: {}, label: {
+            let button = Button(action: {
+                store.game.black = black
+            }, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(color)
@@ -46,14 +48,17 @@ public struct ChessOpponentSelector: View {
             } else {
                 color = .gray
             }
-            return AnyView(Button(action: {}, label: {
+            let button = Button(action: {
+                store.game.white = white
+            }, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(color)
                     Text("White")
                         .foregroundColor(.white)
                 }
-            }))
+            }).frame(width: 70, alignment: .center)
+            return AnyView(button)
         }
         return AnyView(EmptyView())
     }

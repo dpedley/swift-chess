@@ -9,18 +9,7 @@ import SwiftUI
 
 public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
-    @State var playingAs: PlayAsButton.Choice = .white {
-        didSet {
-            switch playingAs {
-            case .white:
-                self.playerSelectedWhite()
-            case .black:
-                self.playerSelectedBlack()
-            case .watch:
-                self.playerSelectedWatcher()
-            }
-        }
-    }
+    @State var playingAs: PlayAsButton.Choice = .white
     public var body: some View {
         Form {
             Section(header: Text("Game Setup")) {
@@ -28,16 +17,19 @@ public struct ChessSettingsView: View {
                     Text("Play")
                     Button(action: {
                         self.playingAs = .white
+                        self.playerSelectedWhite()
                     }, label: {
                         PlayAsButton(.white, $playingAs)
                     })
                     Button(action: {
                         self.playingAs = .black
+                        self.playerSelectedBlack()
                     }, label: {
                         PlayAsButton(.black, $playingAs)
                     })
                     Button(action: {
                         self.playingAs = .watch
+                        self.playerSelectedWatcher()
                     }, label: {
                         PlayAsButton(.watch, $playingAs)
                     })
