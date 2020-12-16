@@ -11,10 +11,11 @@ public struct PlayPauseButton: View {
     @EnvironmentObject public var store: ChessStore
     public var body: some View {
         Button {
-            if !store.game.userPaused {
+            if store.game.userPaused {
+                store.gameAction(.startGame)
+            } else {
                 store.gameAction(.pauseGame)
             }
-            store.gameAction(.resetBoard)
         } label: { () -> AnyView in
             let image: Image
             if store.game.userPaused {
