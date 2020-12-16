@@ -7,6 +7,21 @@
 import Foundation
 import SwiftUI
 
+public struct ChessSettingsButton: View {
+    @EnvironmentObject public var store: ChessStore
+    let action: () -> Void
+    public var body: some View {
+        Button (action: action, label: {
+            Image(systemName: "gearshape.fill")
+                .scaleEffect(1.5)
+                .foregroundColor(.black)
+        })
+    }
+    init(_ action: @escaping () -> Void) {
+        self.action = action
+    }
+}
+
 public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
     @State var playingAs: PlayAsButton.Choice = .white
