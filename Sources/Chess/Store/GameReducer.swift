@@ -11,9 +11,6 @@ import Combine
 
 public typealias ChessGameReducer = (Chess.Game, Chess.GameAction, ChessEnvironment,
                                      PassthroughSubject<Chess.Game, Never>) -> Void
-public typealias ChessEnvironmentReducer = (ChessEnvironment, ChessEnvironment.EnvironmentChange,
-                                     PassthroughSubject<ChessEnvironment, Never>) -> Void
-
 public extension ChessStore {
     static func gameReducer(
         game: Chess.Game,
@@ -40,30 +37,32 @@ public extension ChessStore {
             mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
         case .makeMove(let move):
             Chess.log.info("makeMove: \(move.side) \(move.description)")
-            mutableGame.execute(move: move)
-            if mutableGame.board.lastMove == move {
-                mutableGame.changeSides(move.side.opposingSide)
-            }
+            makeMove(move, game: &mutableGame)
+        case .userTappedSquare(let position):
+            Chess.log.info("userTappedSquare: \(position)")
+            userTappedSquare(position, game: &mutableGame)
         }
         passThrough.send(mutableGame)
     }
-}
-
-public extension ChessStore {
-    static func environmentReducer(
-        environment: ChessEnvironment,
-        change: ChessEnvironment.EnvironmentChange,
-        passThrough: PassthroughSubject<ChessEnvironment, Never>
-    ) {
-        var mutableEnvironment = environment
-        switch change {
-        case .boardColor(let newColor):
-            Chess.log.info("boardColor: \(newColor)...")
-            mutableEnvironment.theme.color = newColor
-        case .target(let newTarget):
-            Chess.log.info("target environment: \(newTarget)...")
-            mutableEnvironment.target = newTarget
+    private static func makeMove(_ move: Chess.Move, game: inout Chess.Game) {
+        game.execute(move: move)
+        if game.board.lastMove == move {
+            game.changeSides(move.side.opposingSide)
         }
-        passThrough.send(mutableEnvironment)
+    }
+    private static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
+        game.board.squares[position].selected.toggle()
+        if game.board.squares[position].selected {
+            if let targetedPositions =
+                game.board.squares[position].buildMoveDestinations(board: game.board) {
+                targetedPositions.forEach {
+                    game.board.squares[$0].targetedBySelected = true
+                }
+            }
+        } else {
+            for idx in 0..<64 {
+                game.board.squares[idx].targetedBySelected = false
+            }
+        }
     }
 }

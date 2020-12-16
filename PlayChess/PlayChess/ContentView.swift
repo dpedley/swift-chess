@@ -16,7 +16,6 @@ struct ContentView: View {
         VStack {
             Spacer()
             BoardView()
-                .environmentObject(store)
             Spacer()
             HStack {
                 Spacer()

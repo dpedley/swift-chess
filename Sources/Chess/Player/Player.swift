@@ -11,11 +11,11 @@ public typealias ChessTurnCallback = (Chess.Move) -> Void
 
 public extension Chess {
     class Player {
-        let side: Side
-        var timeLeft: TimeInterval?
-        var currentMoveStartTime: Date?
-        var firstName: String?
-        var lastName: String?
+        public var side: Side
+        public var timeLeft: TimeInterval?
+        public var currentMoveStartTime: Date?
+        public var firstName: String?
+        public var lastName: String?
         var pgnName: String {
             guard let firstName = firstName, let lastName = lastName else {
                 return "??"
@@ -26,17 +26,37 @@ public extension Chess {
             self.side = side
             self.timeLeft = matchLength
         }
-        func prepareForGame() {
+        public func prepareForGame() {
             fatalError("This method is meant to be overriden by subclasses")
         }
-        func isBot() -> Bool {
+        public func isBot() -> Bool {
             fatalError("This method is meant to be overriden by subclasses")
         }
-        func timerRanOut() {
+        public func timerRanOut() {
             fatalError("This method is meant to be overriden by subclasses")
         }
-        func turnUpdate(game: Chess.Game) {
+        public func turnUpdate(game: Chess.Game) {
             fatalError("This method is meant to be overriden by subclasses")
+        }
+        public func iconName() -> String {
+            switch side {
+            case .black:
+                return "crown.fill"
+            case .white:
+                return "crown"
+            }
+        }
+        public func menuName() -> String {
+            if self is Chess.Robot.CautiousBot {
+                return "CautiousBot"
+            }
+            if self is Chess.Robot.GreedyBot {
+                return "GreedyBot"
+            }
+            if self is Chess.Robot {
+                return "RandomBot"
+            }
+            return firstName ?? lastName ?? "Player"
         }
     }
 }

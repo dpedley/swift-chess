@@ -21,6 +21,14 @@ public extension Chess.Robot {
             let bestWeight = sortedAttacks.first?.pieceWeights().value(for: side.opposingSide) ?? 0
             return sortedAttacks.filter { $0.pieceWeights().value(for: side.opposingSide) == bestWeight }
         }
+        public override func iconName() -> String {
+            switch side {
+            case .black:
+                return "hare.fill"
+            case .white:
+                return "hare"
+            }
+        }
         public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
             guard let choices = super.validChoices(board: board) else { return nil }
             if let matingChoices = matingMoves(choices: choices) {
