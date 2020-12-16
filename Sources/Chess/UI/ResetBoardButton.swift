@@ -16,6 +16,9 @@ public struct ResetBoardButton: View {
             return AnyView(EmptyView())
         }
         let button = Button {
+            if !store.game.userPaused {
+                store.gameAction(.pauseGame)
+            }
             self.showAlert = true
         } label: {
             Image(systemName: "gobackward")
@@ -27,9 +30,6 @@ public struct ResetBoardButton: View {
     public init() {}
     func resetWarning() -> Alert {
         let reset = ActionSheet.Button.default(Text("Yes")) {
-            if !store.game.userPaused {
-                store.gameAction(.pauseGame)
-            }
             store.gameAction(.resetBoard)
         }
         let cancel = ActionSheet.Button.cancel() {}
