@@ -10,22 +10,17 @@ import SwiftUI
 
 public struct ChessOpponentSelector: View {
     @EnvironmentObject public var store: ChessStore
-    enum Bot {
-        case random
-        case greedy
-        case cautious
-    }
     let player: Chess.Player
-    func selectPlayer() {
+    func playerChosen() {
         switch player.side {
         case .black:
-            switchToBlack()
+            playerChosenBlack()
         case .white:
-            switchToWhite()
+            playerChosenWhite()
             store.game.white = player
         }
     }
-    func switchToBlack() {
+    func playerChosenBlack() {
         var prevBot: Chess.Robot
         if let bot = store.game.black as? Chess.Robot {
             prevBot = bot
@@ -33,12 +28,13 @@ public struct ChessOpponentSelector: View {
             prevBot = Chess.Robot(side: .black)
         }
         store.game.black = player
-        if !store.game.white.isBot() {
+        if !player.isBot() && !store.game.white.isBot() {
+            // We don't allow 2 player game, make the other player a bot
             prevBot.side = .white
             store.game.white = prevBot
         }
     }
-    func switchToWhite() {
+    func playerChosenWhite() {
         var prevBot: Chess.Robot
         if let bot = store.game.white as? Chess.Robot {
             prevBot = bot
@@ -46,7 +42,8 @@ public struct ChessOpponentSelector: View {
             prevBot = Chess.Robot(side: .white)
         }
         store.game.white = player
-        if !store.game.black.isBot() {
+        if !player.isBot() && !store.game.black.isBot() {
+            // We don't allow 2 player game, make the other player a bot
             prevBot.side = .black
             store.game.black = prevBot
         }
@@ -64,7 +61,7 @@ public struct ChessOpponentSelector: View {
     public var body: some View {
         HStack {
             Button(action: {
-                selectPlayer()
+                playerChosen()
             }, label: {
                 PlayerTitleView(player: player)
             })
