@@ -4,7 +4,6 @@
 //
 //  Created by Douglas Pedley on 12/16/20.
 //
-
 import Foundation
 import SwiftUI
 
@@ -16,7 +15,7 @@ public struct PlayPauseButton: View {
                 store.gameAction(.pauseGame)
             }
             store.gameAction(.resetBoard)
-        } label: { () -> AnyView in 
+        } label: { () -> AnyView in
             let image: Image
             if store.game.userPaused {
                 // We don't show the play button is the user is white, they just start by playing

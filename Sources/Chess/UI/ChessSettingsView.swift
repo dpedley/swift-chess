@@ -11,7 +11,7 @@ public struct ChessSettingsButton: View {
     @EnvironmentObject public var store: ChessStore
     let action: () -> Void
     public var body: some View {
-        Button (action: action, label: {
+        Button(action: action, label: {
             Image(systemName: "gearshape.fill")
                 .scaleEffect(1.5)
                 .foregroundColor(.black)
