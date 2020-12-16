@@ -7,60 +7,40 @@
 import Foundation
 import SwiftUI
 
-public struct ChessPlayers {
-    static let human: [Chess.Side: Chess.Player] = [
-        .black: Chess.HumanPlayer(side: .black),
-        .white: Chess.HumanPlayer(side: .white)
-    ]
-    static let randomBot: [Chess.Side: Chess.Player] = [
-        .black: Chess.Robot(side: .black),
-        .white: Chess.Robot(side: .white)
-    ]
-    static let greedyBot: [Chess.Side: Chess.Player] = [
-        .black: Chess.Robot.GreedyBot(side: .black),
-        .white: Chess.Robot.GreedyBot(side: .white)
-    ]
-    static let cautiousBot: [Chess.Side: Chess.Player] = [
-        .black: Chess.Robot.CautiousBot(side: .black),
-        .white: Chess.Robot.CautiousBot(side: .white)
-    ]
-}
-
 public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
-    @State var playingAs: Int = 0 {
+    @State var playingAs: PlayAsButton.Choice = .white {
         didSet {
             switch playingAs {
-            case 0:
+            case .white:
                 self.playerSelectedWhite()
-            case 1:
+            case .black:
                 self.playerSelectedBlack()
-            case 2:
+            case .watch:
                 self.playerSelectedWatcher()
-            default:
-                break
             }
         }
     }
     public var body: some View {
         Form {
             Section(header: Text("Game Setup")) {
-                Picker("Playing as", selection: self.$playingAs) {
-                    HStack {
-                        Image(systemName: ChessPlayers.human[.white]!.iconName())
-                        Text("Play as white")
-                            .tag(0)
-                    }
-                    HStack {
-                        Image(systemName: ChessPlayers.human[.black]!.iconName())
-                        Text("Play as black")
-                            .tag(1)
-                    }
-                    HStack {
-                        Image(systemName: "eyeglasses")
-                        Text("Watch the bots play")
-                            .tag(2)
-                    }
+                HStack {
+                    Text("Play")
+                    Button(action: {
+                        self.playingAs = .white
+                    }, label: {
+                        PlayAsButton(.white, $playingAs)
+                    })
+                    Button(action: {
+                        self.playingAs = .black
+                    }, label: {
+                        PlayAsButton(.black, $playingAs)
+                    })
+                    Button(action: {
+                        self.playingAs = .watch
+                    }, label: {
+                        PlayAsButton(.watch, $playingAs)
+                    })
                 }
                 Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                     Text("Show highlights for the last move")
@@ -68,6 +48,14 @@ public struct ChessSettingsView: View {
                 Toggle(isOn: $store.environment.preferences.highlightChoices, label: {
                     Text("Show valid choices when moving")
                 })
+            }
+            Section(header: Text("Robot Chess Opponents")) {
+                ChessOpponentSelector(playingAs, bot: .random)
+                    .environmentObject(store)
+                ChessOpponentSelector(playingAs, bot: .greedy)
+                    .environmentObject(store)
+                ChessOpponentSelector(playingAs, bot: .cautious)
+                    .environmentObject(store)
             }
         }
     }
