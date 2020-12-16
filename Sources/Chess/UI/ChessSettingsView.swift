@@ -27,21 +27,18 @@ public struct ChessPlayers {
 }
 
 public struct ChessSettingsView: View {
-    enum SettingsPlayingAs: Int {
-        case white = 0
-        case black
-        case watchingBotsPlay
-    }
     @EnvironmentObject public var store: ChessStore
-    @State var playingAs: SettingsPlayingAs = .white {
+    @State var playingAs: Int = 0 {
         didSet {
             switch playingAs {
-            case .white:
+            case 0:
                 self.playerSelectedWhite()
-            case .black:
+            case 1:
                 self.playerSelectedBlack()
-            case .watchingBotsPlay:
+            case 2:
                 self.playerSelectedWatcher()
+            default:
+                break
             }
         }
     }
@@ -51,18 +48,18 @@ public struct ChessSettingsView: View {
                 Picker("Playing as", selection: self.$playingAs) {
                     HStack {
                         Image(systemName: ChessPlayers.human[.white]!.iconName())
-                        Text(ChessPlayers.human[.white]!.menuName())
-                            .tag(SettingsPlayingAs.white.rawValue)
+                        Text("Play as white")
+                            .tag(0)
                     }
                     HStack {
                         Image(systemName: ChessPlayers.human[.black]!.iconName())
-                        Text(ChessPlayers.human[.black]!.menuName())
-                            .tag(SettingsPlayingAs.black.rawValue)
+                        Text("Play as black")
+                            .tag(1)
                     }
                     HStack {
                         Image(systemName: "eyeglasses")
                         Text("Watch the bots play")
-                            .tag(SettingsPlayingAs.watchingBotsPlay.rawValue)
+                            .tag(2)
                     }
                 }
                 Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
