@@ -12,7 +12,7 @@ public struct ChessSettingsButton: View {
     let action: () -> Void
     public var body: some View {
         Button(action: action, label: {
-            Image(systemName: "gearshape.fill")
+            Image(systemName: "gearshape")
                 .scaleEffect(1.5)
                 .foregroundColor(.black)
         })
