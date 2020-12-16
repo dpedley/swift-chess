@@ -32,6 +32,12 @@ public struct ChessSettingsView: View {
                 ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .black))
                     .environmentObject(store)
             }
+            Section(header: Text("Colors")) {
+                BoardColorSelector(.brown).environmentObject(store)
+                BoardColorSelector(.blue).environmentObject(store)
+                BoardColorSelector(.green).environmentObject(store)
+                BoardColorSelector(.purple).environmentObject(store)
+            }
             Section(header: Text("Highlights")) {
                 Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                     Text("Show highlights for the last move")

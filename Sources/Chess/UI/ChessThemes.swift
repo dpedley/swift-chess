@@ -15,7 +15,7 @@ public extension Chess.UI {
         case blue
         case green
         case purple
-        var dark: Color {
+        public var dark: Color {
             switch self {
             case .brown:
                 return .chessBoardBrown
@@ -27,7 +27,7 @@ public extension Chess.UI {
                 return .chessBoardPurple
             }
         }
-        var light: Color {
+        public var light: Color {
             switch self {
             case .brown:
                 return .chessBoardBrownLight
@@ -37,6 +37,18 @@ public extension Chess.UI {
                 return .chessBoardGreenLight
             case .purple:
                 return .chessBoardPurpleLight
+            }
+        }
+        public var name: LocalizedStringKey {
+            switch self {
+            case .brown:
+                return "Brown"
+            case .blue:
+                return "Blue"
+            case .green:
+                return "Green"
+            case .purple:
+                return "Purple"
             }
         }
     }
