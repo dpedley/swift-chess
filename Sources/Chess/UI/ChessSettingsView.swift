@@ -14,29 +14,21 @@ public struct ChessSettingsView: View {
         Form {
             Section(header: Text("White")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .white))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot(side: .white))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .white))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .white))
-                    .environmentObject(store)
             }
             Section(header: Text("Black")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot(side: .black))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .black))
-                    .environmentObject(store)
                 ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .black))
-                    .environmentObject(store)
             }
             Section(header: Text("Colors")) {
-                BoardColorSelector(.brown).environmentObject(store)
-                BoardColorSelector(.blue).environmentObject(store)
-                BoardColorSelector(.green).environmentObject(store)
-                BoardColorSelector(.purple).environmentObject(store)
+                BoardColorSelector(.brown)
+                BoardColorSelector(.blue)
+                BoardColorSelector(.green)
+                BoardColorSelector(.purple)
             }
             Section(header: Text("Highlights")) {
                 Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {

@@ -30,7 +30,6 @@ public struct BoardView: View {
                                 .fill(targeted(store.environment.preferences.highlightChoices,
                                                square: store.game.board.squares[idx]))
                             PieceView(position: idx)
-                                .environmentObject(store)
                                 .onDrag({ NSItemProvider(object: Chess.Position(idx).FEN as NSString) })
                         }
                         .onTapGesture {
