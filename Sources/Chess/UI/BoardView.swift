@@ -21,7 +21,7 @@ public struct BoardView: View {
                             SquareMoveHighlight(idx)
                             SquareSelected(idx)
                             SquareTargeted(idx)
-                            PieceView(position: idx)
+                            DraggablePiece(position: idx)
                         }
                         .onTapGesture {
                             store.gameAction(.userTappedSquare(position: idx))

@@ -8,6 +8,15 @@
 import Foundation
 import SwiftUI
 
+public struct DraggablePiece: View {
+    @EnvironmentObject var store: ChessStore
+    let position: Chess.Position
+    public var body: some View {
+        PieceView(position: position)
+            .pieceDrag(position)
+    }
+}
+
 /// PieceView
 ///
 /// This is the view used for the chess pieces.
@@ -28,7 +37,6 @@ public struct PieceView: View {
             PieceShape.Details(artwork: store.game.board.squares[position].piece?.artwork)?
                 .stroke(store.game.board.squares[position].piece?.style.highlight ?? .clear, lineWidth: 1.5)
         }
-        .pieceDrag(position)
     }
 }
 
