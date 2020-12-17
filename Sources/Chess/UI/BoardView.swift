@@ -18,12 +18,10 @@ public struct BoardView: View {
                     ForEach(0..<64) { idx in
                         ZStack {
                             SquareBackground(idx)
-                                .pieceDrop(idx)
                             SquareMoveHighlight(idx)
                             SquareSelected(idx)
                             SquareTargeted(idx)
                             PieceView(position: idx)
-                                .pieceDrag(idx)
                         }
                         .onTapGesture {
                             store.gameAction(.userTappedSquare(position: idx))

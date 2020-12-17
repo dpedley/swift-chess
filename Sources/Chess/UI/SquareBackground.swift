@@ -12,6 +12,7 @@ public struct SquareBackground: View {
         Rectangle() // The square background
             .fill(color(store.environment.theme.color, for: position))
             .aspectRatio(1, contentMode: .fill)
+            .pieceDrop(position, game: store.game)
     }
     public func color(_ themeColor: Chess.UI.BoardColor, for position: Chess.Position) -> Color {
         let evenSquare: Bool = (position.rank + position.fileNumber) % 2 == 0

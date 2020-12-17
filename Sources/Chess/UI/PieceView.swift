@@ -28,6 +28,8 @@ public struct PieceView: View {
             PieceShape.Details(artwork: store.game.board.squares[position].piece?.artwork)?
                 .stroke(store.game.board.squares[position].piece?.style.highlight ?? .clear, lineWidth: 1.5)
         }
+        .drawingGroup()
+        .pieceDrag(position)
     }
 }
 

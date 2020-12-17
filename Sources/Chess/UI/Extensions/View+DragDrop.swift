@@ -7,17 +7,17 @@
 import SwiftUI
 
 extension View {
-    func pieceDrag(_ idx: Int) -> some View {
+    func pieceDrag(_ position: Chess.Position) -> some View {
         return onDrag({
-            let position = Chess.Position(idx)
             Chess.log.info("Drag started \(position.FEN)")
             return NSItemProvider(object: position.FEN as NSString)
         })
     }
-    func pieceDrop(_ idx: Int, isTargeted: Binding<Bool>? = nil) -> some View {
+    func pieceDrop(_ position: Chess.Position, game: Chess.Game, isTargeted: Binding<Bool>? = nil) -> some View {
         return onDrop(of: [.plainText],
                       isTargeted: isTargeted,
                       perform: { providers in
+                        Chess.log.info("Dropped \(position.FEN)")
             guard let provider = providers.first else {
                 return false
             }
@@ -30,8 +30,14 @@ extension View {
                                     guard let FEN = FEN as? String else {
                                         return
                                     }
-                                    let position = Chess.Position.from(rankAndFile: FEN)
-                                    Chess.log.info("Dropped \(position.FEN)")
+                                    let start = Chess.Position.from(rankAndFile: FEN)
+                                    guard let piece = game.board.squares[start].piece else {
+                                        // No piece to move
+                                        return
+                                    }
+                                    let move = Chess.Move(side: piece.side, start: start, end: position)
+                                    Chess.log.info("DnD Move \(move.description)")
+                                    game.delegate?.gameAction(.makeMove(move: move))
                                 })
             return true
         })
