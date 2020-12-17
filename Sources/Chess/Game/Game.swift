@@ -142,9 +142,7 @@ public extension Chess {
                                                          fenAfterMove: board.FEN,
                                                          annotation: nil)
             pgn.moves.append(annotatedMove)
-            // STILL UNDONE: we may need to account for non-boardmoves
-//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
-//                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
+            clearActivePlayerSelections()
 
             // we need to update the UI here
             // Note piece is at `move.end` now as the move is complete.
@@ -190,10 +188,11 @@ public extension Chess {
                 }
             }
         }
-        private func clearActivePlayerSelections() {
-            // STILL UNDONE: Vet the use of the old UI update here.
-//            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
-//            board.ui.apply(board: board, updates: updates)
+        mutating public func clearActivePlayerSelections() {
+            for idx in 0..<64 {
+                board.squares[idx].selected = false
+                board.squares[idx].targetedBySelected = false
+            }
         }
         private func flashKing() {
             // STILL UNDONE: Vet the use of the old UI update here.
@@ -201,7 +200,7 @@ public extension Chess {
 //            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        private func updateBoard(human: Chess.HumanPlayer,
+        mutating public func updateBoard(human: Chess.HumanPlayer,
                                  failed move: Chess.Move,
                                  with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
