@@ -13,29 +13,9 @@ public struct SquareBackground: View {
             .fill(color(store.environment.theme.color, for: position))
             .aspectRatio(1, contentMode: .fill)
             .onDrop(of: [.plainText, .text, .utf8PlainText],
-                    isTargeted: nil) { items in
+                    isTargeted: nil) { _ in
                 Chess.log.info("Dropped \(position.FEN)")
-                guard let item = items.first else {
-                    return false
-                }
-                item.loadObject(ofClass: NSString.self,
-                                completionHandler: { FEN, error in
-                                    guard error == nil else {
-                                        Chess.log.error("Drop error: \(error!.localizedDescription)")
-                                        return
-                                    }
-                                    guard let FEN = FEN as? String else {
-                                        return
-                                    }
-                                    let start = Chess.Position.from(rankAndFile: FEN)
-                                    guard let piece = store.game.board.squares[start].piece else {
-                                        // No piece to move
-                                        return
-                                    }
-                                    let move = Chess.Move(side: piece.side, start: start, end: position)
-                                    Chess.log.info("DnD Move \(move.description)")
-                                    store.gameAction(.makeMove(move: move))
-                                })
+                store.gameAction(.userTappedSquare(position: position))
                 return true
       }
     }

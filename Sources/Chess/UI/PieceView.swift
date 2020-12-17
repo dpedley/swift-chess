@@ -15,6 +15,7 @@ public struct DraggablePiece: View {
         PieceView(position: position)
             .onDrag {
                 Chess.log.info("Dragged \(position.FEN)")
+                store.gameAction(.userTappedSquare(position: position))
                 return NSItemProvider(object: self.position.FEN as NSString)
             }
     }
