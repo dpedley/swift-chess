@@ -57,16 +57,16 @@ public extension ChessStore {
         }
 
     }
-    private static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
+    static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
         guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
             return
         }
+        clearSelections(game: &game)
         if game.userPaused {
             game.start()
         }
         guard let moveStart = human.initialPositionTapped else {
             // This was the first tap, setup the selection
-            clearSelections(game: &game)
             human.initialPositionTapped = position
             game.board.squares[position].selected = true
             if let targetedPositions =
@@ -79,8 +79,6 @@ public extension ChessStore {
         }
         // Check if they retapped the same square
         guard moveStart != position else {
-            // They are deselecting the start
-            clearSelections(game: &game)
             return
         }
         let move = Chess.Move(side: human.side, start: moveStart, end: position)
