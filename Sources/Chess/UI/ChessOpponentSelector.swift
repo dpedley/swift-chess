@@ -48,8 +48,8 @@ public struct ChessOpponentSelector: View {
             store.game.black = prevBot
         }
     }
-    func checkmarkView() -> some View {
-        let storePlayer = player.side == .black ? store.game.black : store.game.white
+    func checkmarkView(game: Chess.Game) -> some View {
+        let storePlayer = player.side == .black ? game.black : game.white
         if storePlayer.menuName() == player.menuName() {
             let image = Image(systemName: "checkmark.circle.fill")
                 .scaleEffect(1.5)
@@ -66,7 +66,7 @@ public struct ChessOpponentSelector: View {
                 PlayerTitleView(player: player)
             })
             Spacer()
-            checkmarkView()
+            checkmarkView(game: store.game)
         }
     }
     public init(player: Chess.Player) {
