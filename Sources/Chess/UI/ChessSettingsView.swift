@@ -13,7 +13,6 @@ public struct ChessSettingsButton: View {
     public var body: some View {
         Button(action: action, label: {
             Image(systemName: "gearshape")
-                .scaleEffect(1.5)
                 .foregroundColor(.black)
         })
     }

@@ -29,7 +29,6 @@ public struct BoardColorSelector: View {
     func checkmarkView(themeColor: Chess.UI.BoardColor) -> some View {
         if color == themeColor {
             let image = Image(systemName: "checkmark.circle.fill")
-                .scaleEffect(1.5)
                 .foregroundColor(.green)
             return AnyView(image)
         }

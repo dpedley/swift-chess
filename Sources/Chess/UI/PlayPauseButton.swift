@@ -31,9 +31,7 @@ public struct PlayPauseButton: View {
                 }
                 image = Image(systemName: "pause.circle")
             }
-            return AnyView(image
-                            .scaleEffect(1.5)
-                            .foregroundColor(.black))
+            return AnyView(image.foregroundColor(.black))
         }
     }
     public init() {}

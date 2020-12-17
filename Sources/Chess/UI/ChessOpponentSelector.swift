@@ -53,7 +53,6 @@ public struct ChessOpponentSelector: View {
         let storePlayer = player.side == .black ? game.black : game.white
         if storePlayer.menuName() == player.menuName() {
             let image = Image(systemName: "checkmark.circle.fill")
-                .scaleEffect(1.5)
                 .foregroundColor(.green)
             return AnyView(image)
         }
