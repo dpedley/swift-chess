@@ -13,7 +13,9 @@ public struct DraggablePiece: View {
     let position: Chess.Position
     public var body: some View {
         PieceView(position: position)
-            .pieceDrag(position)
+            .onDrag {
+                return NSItemProvider(object: self.position.FEN as NSString)
+            }
     }
 }
 
