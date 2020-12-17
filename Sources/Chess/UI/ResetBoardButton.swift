@@ -32,7 +32,7 @@ public struct ResetBoardButton: View {
         let reset = ActionSheet.Button.default(Text("Yes")) {
             store.gameAction(.resetBoard)
         }
-        let cancel = ActionSheet.Button.cancel() {}
+        let cancel = ActionSheet.Button.cancel {}
         return Alert(title: Text("Reset Board"),
                      message: Text("Are you sure?"),
                      primaryButton: reset,

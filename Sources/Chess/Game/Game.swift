@@ -127,6 +127,15 @@ public extension Chess {
                 black.responseDelay = responseDelay
             }
         }
+        public func robotPlaybackSpeed() -> TimeInterval {
+            if let white = white as? Chess.Robot {
+                return white.responseDelay
+            }
+            if let black = black as? Chess.Robot {
+                return black.responseDelay
+            }
+            return 1
+        }
         mutating private func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",

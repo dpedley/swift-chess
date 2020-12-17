@@ -29,15 +29,15 @@ public struct ChessSettingsView: View {
         Form {
             Section(header: Text("White")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .white))
-                ChessOpponentSelector(player: Chess.Robot(side: .white))
-                ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .white))
-                ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .white))
+                ChessOpponentSelector(player: random(store.game, side: .white))
+                ChessOpponentSelector(player: greedy(store.game, side: .white))
+                ChessOpponentSelector(player: cautious(store.game, side: .white))
             }
             Section(header: Text("Black")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
-                ChessOpponentSelector(player: Chess.Robot(side: .black))
-                ChessOpponentSelector(player: Chess.Robot.GreedyBot(side: .black))
-                ChessOpponentSelector(player: Chess.Robot.CautiousBot(side: .black))
+                ChessOpponentSelector(player: random(store.game, side: .black))
+                ChessOpponentSelector(player: greedy(store.game, side: .black))
+                ChessOpponentSelector(player: cautious(store.game, side: .black))
             }
             Section(header: Text("Robot Move Delay \(String(format: "%#0.1#2f", robotDelay)) seconds")) {
                 Slider(value: $robotDelay, in: 0.1...10,
@@ -61,6 +61,21 @@ public struct ChessSettingsView: View {
                 })
             }
         }.foregroundColor(.black)
+    }
+    func random(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
+        let robot = Chess.Robot(side: side)
+        robot.responseDelay = game.robotPlaybackSpeed()
+        return robot
+    }
+    func greedy(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
+        let robot = Chess.Robot.GreedyBot(side: side)
+        robot.responseDelay = game.robotPlaybackSpeed()
+        return robot
+    }
+    func cautious(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
+        let robot = Chess.Robot.CautiousBot(side: side)
+        robot.responseDelay = game.robotPlaybackSpeed()
+        return robot
     }
     public init() {}
 }

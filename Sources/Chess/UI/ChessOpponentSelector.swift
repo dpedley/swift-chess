@@ -17,7 +17,6 @@ public struct ChessOpponentSelector: View {
             playerChosenBlack()
         case .white:
             playerChosenWhite()
-            store.game.white = player
         }
     }
     func playerChosenBlack() {
@@ -26,6 +25,7 @@ public struct ChessOpponentSelector: View {
             prevBot = bot
         } else {
             prevBot = Chess.Robot(side: .black)
+            prevBot.responseDelay = store.game.robotPlaybackSpeed()
         }
         store.game.black = player
         if !player.isBot() && !store.game.white.isBot() {
@@ -40,6 +40,7 @@ public struct ChessOpponentSelector: View {
             prevBot = bot
         } else {
             prevBot = Chess.Robot(side: .white)
+            prevBot.responseDelay = store.game.robotPlaybackSpeed()
         }
         store.game.white = player
         if !player.isBot() && !store.game.black.isBot() {
