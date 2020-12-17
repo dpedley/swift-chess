@@ -12,7 +12,7 @@ public struct SquareBackground: View {
         Rectangle() // The square background
             .fill(color(store.environment.theme.color, for: position))
             .aspectRatio(1, contentMode: .fill)
-            .onDrop(of: [.plainText],
+            .onDrop(of: [.plainText, .text, .utf8PlainText],
                     isTargeted: nil) { items in
                 Chess.log.info("Dropped \(position.FEN)")
                 guard let item = items.first else {
