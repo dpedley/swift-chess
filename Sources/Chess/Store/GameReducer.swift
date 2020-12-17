@@ -61,7 +61,9 @@ public extension ChessStore {
         guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
             return
         }
-        game.userPaused = false
+        if game.userPaused {
+            game.start()
+        }
         guard let moveStart = human.initialPositionTapped else {
             // This was the first tap, setup the selection
             clearSelections(game: &game)
