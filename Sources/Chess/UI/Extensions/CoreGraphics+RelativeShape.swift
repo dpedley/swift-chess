@@ -32,7 +32,6 @@ extension CGPoint {
     // swiftlint:enable identifier_name
 }
 
-
 extension CGSize {
     var minimumLength: CGFloat {
         return width > height ? height : width

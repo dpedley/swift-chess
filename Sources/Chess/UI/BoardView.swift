@@ -18,11 +18,12 @@ public struct BoardView: View {
                     ForEach(0..<64) { idx in
                         ZStack {
                             SquareBackground(idx)
+                                .pieceDrop(idx)
                             SquareMoveHighlight(idx)
                             SquareSelected(idx)
                             SquareTargeted(idx)
                             PieceView(position: idx)
-                                .onDrag({ NSItemProvider(object: Chess.Position(idx).FEN as NSString) })
+                                .pieceDrag(idx)
                         }
                         .onTapGesture {
                             store.gameAction(.userTappedSquare(position: idx))
