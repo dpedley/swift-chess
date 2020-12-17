@@ -50,19 +50,37 @@ public extension ChessStore {
             game.changeSides(move.side.opposingSide)
         }
     }
+    private static func clearSelections(game: inout Chess.Game) {
+        for idx in 0..<64 {
+            game.board.squares[idx].selected = false
+            game.board.squares[idx].targetedBySelected = false
+        }
+
+    }
     private static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
-        game.board.squares[position].selected.toggle()
-        if game.board.squares[position].selected {
+        guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
+            return
+        }
+        guard let moveStart = human.initialPositionTapped else {
+            // This was the first tap, setup the selection
+            clearSelections(game: &game)
+            human.initialPositionTapped = position
+            game.board.squares[position].selected = true
             if let targetedPositions =
                 game.board.squares[position].buildMoveDestinations(board: game.board) {
                 targetedPositions.forEach {
                     game.board.squares[$0].targetedBySelected = true
                 }
             }
-        } else {
-            for idx in 0..<64 {
-                game.board.squares[idx].targetedBySelected = false
-            }
+            return
         }
+        // Check if they retapped the same square
+        guard moveStart != position else {
+            // They are deselecting the start
+            clearSelections(game: &game)
+            return
+        }
+        let move = Chess.Move(side: human.side, start: moveStart, end: position)
+        human.moveAttempt = move
     }
 }
