@@ -16,12 +16,12 @@ extension View {
     func pieceDrop(_ position: Chess.Position, game: Chess.Game, isTargeted: Binding<Bool>? = nil) -> some View {
         return onDrop(of: [.plainText],
                       isTargeted: isTargeted,
-                      perform: { providers in
+                      perform: { items in
                         Chess.log.info("Dropped \(position.FEN)")
-            guard let provider = providers.first else {
+            guard let item = items.first else {
                 return false
             }
-            provider.loadObject(ofClass: NSString.self,
+            item.loadObject(ofClass: NSString.self,
                                 completionHandler: { FEN, error in
                                     guard error == nil else {
                                         Chess.log.error("Drop error: \(error!.localizedDescription)")
