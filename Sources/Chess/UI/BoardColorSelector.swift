@@ -16,7 +16,10 @@ public struct BoardColorSelector: View {
             }, label: {
                 HStack {
                     BoardIconView(color)
+                        .frame(height: 50)
+                        .aspectRatio(1, contentMode: .fit)
                     Text(color.name)
+                        .offset(x: 4.0, y: 0)
                 }
             })
             Spacer()

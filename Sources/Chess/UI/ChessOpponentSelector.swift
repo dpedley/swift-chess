@@ -74,3 +74,35 @@ public struct ChessOpponentSelector: View {
         self.player = player
     }
 }
+
+struct ChessOpponentSelectorPreviews: PreviewProvider {
+    static var previews: some View {
+        Form {
+            Section(header: Text("White")) {
+                ChessOpponentSelector(player: Chess.HumanPlayer(side: .white))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot(side: .white))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.GreedyBot(side: .white))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.CautiousBot(side: .white))
+                    .environmentObject(previewChessStore)
+            }
+            Section(header: Text("Black")) {
+                ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player: Chess.Robot(side: .black))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.GreedyBot(side: .black))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.CautiousBot(side: .black))
+                    .environmentObject(previewChessStore)
+            }
+        }.foregroundColor(.black)
+    }
+}
