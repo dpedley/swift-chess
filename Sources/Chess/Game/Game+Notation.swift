@@ -44,7 +44,7 @@ public extension Chess.Game {
         public var site: String      // the location of the event. This is in City, Region COUNTRY format,
                               // where COUNTRY is the three-letter International Olympic Committee code
                               // for the country. An example is New York City, NY USA.
-        public var date: Date        // the starting date of the game, in YYYY.MM.DD form. ?? is used for unknown values.
+        public var date: Date        // the starting date of the game, in YYYY.MM.DD form. ?? is used for unknown.
         public var round: Int        // the playing round ordinal of the game within the event.
         public var black: String     // the player of the black pieces, in Lastname, Firstname format.
         public var white: String     // the player of the white pieces, same format as black.
