@@ -16,5 +16,7 @@ extension Chess {
         case setBoard(fen: String)
         case makeMove(move: Chess.Move)
         case userTappedSquare(position: Chess.Position)
+        case userDragged(position: Chess.Position)
+        case userDropped(position: Chess.Position)
     }
 }

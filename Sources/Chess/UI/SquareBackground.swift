@@ -29,8 +29,7 @@ extension SquareBackground: DropDelegate {
     }
     
     public func performDrop(info: DropInfo) -> Bool {
-        Chess.log.info("Dropped \(position.FEN)")
-        store.gameAction(.userTappedSquare(position: position))
+        store.gameAction(.userDropped(position: position))
         
         guard let square = store.game.board.squares.first(where: { $0.selected }) else {
             Chess.log.error("Dropped \(position.FEN) without start")

@@ -62,7 +62,7 @@ public struct SquareTargeted: View {
         }
         return AnyView(selected)
     }
-    static let chessChoiceHighlight = Color(.sRGB, red: 0.6, green: 0.6, blue: 0.6, opacity: 0.3)
+    static let chessChoiceHighlight = Color(.sRGB, red: 0.6, green: 0.3, blue: 0.3, opacity: 0.5)
     public init(_ idx: Int) {
         self.position = Chess.Position(idx)
     }

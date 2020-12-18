@@ -193,6 +193,12 @@ public extension Chess {
                 board.squares[idx].selected = false
                 board.squares[idx].targetedBySelected = false
             }
+            if let human = black as? HumanPlayer {
+                human.initialPositionTapped = nil
+            }
+            if let human = white as? HumanPlayer {
+                human.initialPositionTapped = nil
+            }
         }
         private func flashKing() {
             // STILL UNDONE: Vet the use of the old UI update here.

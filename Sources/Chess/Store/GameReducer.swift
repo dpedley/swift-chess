@@ -41,6 +41,14 @@ public extension ChessStore {
         case .userTappedSquare(let position):
             Chess.log.info("userTappedSquare: \(position)")
             userTappedSquare(position, game: &mutableGame)
+        case .userDragged(let position):
+            Chess.log.info("userDragged: \(position)")
+            // Clear before the drag starts in case they've also selected a square by tapping
+            mutableGame.clearActivePlayerSelections()
+            userTappedSquare(position, game: &mutableGame)
+        case .userDropped(let position):
+            Chess.log.info("userDropped: \(position)")
+            userTappedSquare(position, game: &mutableGame)
         }
         passThrough.send(mutableGame)
     }
@@ -54,12 +62,12 @@ public extension ChessStore {
         guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
             return
         }
-        game.clearActivePlayerSelections()
         if game.userPaused {
             game.start()
         }
         guard let moveStart = human.initialPositionTapped else {
             // This was the first tap, setup the selection
+            game.clearActivePlayerSelections()
             human.initialPositionTapped = position
             game.board.squares[position].selected = true
             if let targetedPositions =
@@ -76,5 +84,6 @@ public extension ChessStore {
         }
         let move = Chess.Move(side: human.side, start: moveStart, end: position)
         human.moveAttempt = move
+        game.clearActivePlayerSelections()
     }
 }
