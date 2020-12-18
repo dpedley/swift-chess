@@ -207,8 +207,8 @@ public extension Chess {
 //            board.ui.apply(board: board, updates: updates)
         }
         mutating public func updateBoard(human: Chess.HumanPlayer,
-                                 failed move: Chess.Move,
-                                 with reason: Chess.Move.Limitation) {
+                                         failed move: Chess.Move,
+                                         with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
             case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove,

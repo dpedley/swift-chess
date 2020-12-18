@@ -27,20 +27,16 @@ extension SquareBackground: DropDelegate {
     public func dropUpdated(info: DropInfo) -> DropProposal? {
         return DropProposal(operation: .move)
     }
-    
     public func performDrop(info: DropInfo) -> Bool {
         store.gameAction(.userDropped(position: position))
-        
         guard let square = store.game.board.squares.first(where: { $0.selected }) else {
             Chess.log.error("Dropped \(position.FEN) without start")
             return false
         }
-        
         guard let piece = square.piece else {
             Chess.log.error("Dropped \(position.FEN) without piece at start")
             return false
         }
-        
         // Try to construct the move to predict if the drop is successful
         var testMove = Chess.Move(side: piece.side, start: square.position, end: position)
         var testBoard = Chess.Board(FEN: store.game.board.FEN)
