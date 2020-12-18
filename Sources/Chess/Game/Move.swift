@@ -9,6 +9,7 @@ import Foundation
 
 // swiftlint:disable nesting
 public extension Chess {
+    typealias MoveResult = Result<Chess.Piece?, Chess.Move.Limitation>
     struct Turn {
         var white: Move?
         var black: Move?
@@ -25,10 +26,6 @@ public extension Chess {
             case invalidMoveForPiece = "This piece doesn't move that way."
             case sameSideAlreadyOccupiesDestination = "Two pieces cannot occupy the same square."
             case kingWouldBeUnderAttackAfterMove = "You must save your king, piece is pinned."
-        }
-        public enum Result {
-            case success(capturedPiece: Piece?)
-            case failed(reason: Limitation)
         }
         // Core properties
         let side: Chess.Side

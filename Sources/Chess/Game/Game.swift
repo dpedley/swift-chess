@@ -107,7 +107,7 @@ public extension Chess {
             switch moveTry {
             case .success(let capturedPiece):
                 executeSuccess(move: move, capturedPiece: capturedPiece)
-            case .failed(reason: let reason):
+            case .failure(let reason):
                 Chess.log.debug("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     updateBoard(human: human, failed: move, with: reason)

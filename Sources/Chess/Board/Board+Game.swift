@@ -108,7 +108,7 @@ extension Chess.Board {
 /// Mutation board game methods
 extension Chess.Board {
     // Returns false if move cannot be made
-    mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.Move.Result {
+    mutating func attemptMove(_ move: inout Chess.Move, applyVariants: Bool = true) -> Chess.MoveResult {
         // We prepare the move, which will throw a limitation if the move cannot be made.
         do {
             try prepareMove(&move, applyVariants: applyVariants)
@@ -117,7 +117,7 @@ extension Chess.Board {
                   limitation != .unknown else {
                 fatalError("Tried to apply variants and got an unknown error \(error)")
             }
-            return .failed(reason: limitation)
+            return .failure(limitation)
         }
         // Before we `commit` the move grab the destination square's piece,
         // if there is one, `commit` will over write it.
@@ -134,11 +134,11 @@ extension Chess.Board {
             try commit(move, capturedPiece: capturedPiece)
         } catch let error {
             guard let limitation = error as? Chess.Move.Limitation else {
-                return .failed(reason: .invalidMoveForPiece)
+                return .failure(.invalidMoveForPiece)
             }
-            return .failed(reason: limitation)
+            return .failure(limitation)
         }
-        return .success(capturedPiece: capturedPiece)
+        return .success(capturedPiece)
     }
     mutating func commitSideEffect(_ move: Chess.Move, piece: inout Chess.Piece, capturedPiece: Chess.Piece?) throws {
         switch move.sideEffect {
