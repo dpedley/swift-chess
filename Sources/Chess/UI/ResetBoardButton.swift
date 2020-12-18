@@ -29,10 +29,10 @@ public struct ResetBoardButton: View {
     }
     public init() {}
     func resetWarning() -> Alert {
-        let reset = ActionSheet.Button.default(Text("Yes")) {
+        let reset = Alert.Button.default(Text("Yes")) {
             store.gameAction(.resetBoard)
         }
-        let cancel = ActionSheet.Button.cancel {}
+        let cancel = Alert.Button.cancel {}
         return Alert(title: Text("Reset Board"),
                      message: Text("Are you sure?"),
                      primaryButton: reset,
