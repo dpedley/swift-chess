@@ -24,7 +24,7 @@ public extension Chess {
 }
 
 public extension Chess.Game {
-    func status() -> Chess.GameStatus {
+    func computeGameStatus() -> Chess.GameStatus {
         guard let lastMove = board.lastMove else {
             if board.FEN == Chess.Board.startingFEN {
                 return .notYetStarted

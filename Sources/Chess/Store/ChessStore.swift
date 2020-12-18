@@ -74,13 +74,34 @@ extension ChessStore {
         let opposingSide = self.game.board.playingSide.opposingSide
         self.game = updatedGame
         guard opposingSide == self.game.board.playingSide else {
-            // The turn didn't update, no need to continue.
+            // The turn didn't update, no look further.
             return
         }
-        guard !game.userPaused else {
-            return
+        // Check the status and update our result if the game is over
+        let status = updatedGame.computeGameStatus()
+        switch status {
+        case .notYetStarted, .paused, .unknown:
+            // We do nothing.
+            break
+        case .active:
+            self.gameAction(.nextTurn)
+        case .drawByMoves,
+             .drawByRepetition,
+             .drawBecauseOfInsufficientMatingMaterial,
+             .stalemate:
+            self.gameAction(.gameResult(result: .draw))
+        case .mate:
+            let winningSide = opposingSide.opposingSide // The opposingSide lost, so...
+            let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
+            self.gameAction(.gameResult(result: result))
+        case .resign, .timeout:
+            // Resign and timeout have their side kept in last move.
+            guard let winningSide = self.game.board.lastMove?.side.opposingSide else {
+                return
+            }
+            let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
+            self.gameAction(.gameResult(result: result))
         }
-        self.gameAction(.nextTurn)
     }
 }
 

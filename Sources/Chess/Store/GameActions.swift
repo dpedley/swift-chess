@@ -14,6 +14,7 @@ extension Chess {
         case pauseGame
         case resetBoard
         case setBoard(fen: String)
+        case gameResult(result: Chess.Game.PGNResult)
         case makeMove(move: Chess.Move)
         case userTappedSquare(position: Chess.Position)
         case userDragged(position: Chess.Position)

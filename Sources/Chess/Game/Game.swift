@@ -18,22 +18,6 @@ public extension Chess {
         weak var delegate: ChessGameDelegate?
         public var userPaused = true
         public var board = Chess.Board(populateExpensiveVisuals: true)
-        public var winningSide: Side? {
-            didSet {
-                if let winningSide = winningSide {
-                    switch winningSide {
-                    case .black:
-                        pgn.result = .blackWon
-                    case .white:
-                        pgn.result = .whiteWon
-                    }
-                }
-            }
-        }
-        public var winner: Player? {
-            guard let winningSide = winningSide else { return nil }
-            return (winningSide == .black) ? black : white
-        }
         public var black: Player
         public var white: Player
         public var round: Int = 1
@@ -93,9 +77,7 @@ public extension Chess {
         public mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
-                    // STILL UNDONE: do we push the resign onto [turns] and the UI stack as well here?
-//                        strongSelf.board.lastMove = move
-                    winningSide = move.side.opposingSide
+                    appendLedger(move)
                     return
                 }
                 Chess.log.critical("Need to diagnose this scenario, shouldn't come here.")
@@ -114,7 +96,8 @@ public extension Chess {
                 } else {
                     // a bot failed to move, for some this means resign
                     // STILL UNDONE message user
-                    winningSide = board.playingSide.opposingSide
+                    let winningSide = board.playingSide.opposingSide
+                    pgn.result = winningSide == .black ? .blackWon : .whiteWon
                     Chess.log.debug("\nUnknown: \n\(pgn.formattedString)")
                 }
             }
@@ -143,49 +126,24 @@ public extension Chess {
                                                          annotation: nil)
             pgn.moves.append(annotatedMove)
             clearActivePlayerSelections()
-
-            // we need to update the UI here
             // Note piece is at `move.end` now as the move is complete.
-            if let piece = board.squares[move.end].piece {
-                let moveUpdate: Chess.UI.PieceUpdate
-                if let capturedPiece = capturedPiece {
-                    moveUpdate = Chess.UI.PieceUpdate.capture(piece: piece.UI,
-                                                              start: move.start,
-                                                              captured: capturedPiece.UI,
-                                                              end: move.end)
-                } else {
-                    moveUpdate = Chess.UI.PieceUpdate.moved(piece: piece.UI, start: move.start, end: move.end)
-                }
-                // Update the board with the move
-                var updates = [Chess.UI.Update.piece(moveUpdate)]
-                updates.append(Chess.UI.Update.highlight([move.start, move.end]))
-                // Add any side effects
-                switch move.sideEffect {
-                case .castling(let rookStart, let rookEnd):
-                    if let rook = board.squares[rookEnd].piece {
-                        let rookUpdate = Chess.UI.PieceUpdate.moved(piece: rook.UI, start: rookStart, end: rookEnd)
-                        updates.append( Chess.UI.Update.piece(rookUpdate) )
-                    }
-                case .enPassantCapture, .enPassantInvade, .promotion, .notKnown, .noneish:
-                    // These cases don't imply another uiUpdate is needed.
-                    break
-                }
-                // STILL UNDONE Check for check and mate and update game
-
+            if board.squares[move.end].piece != nil {
                 // Lastly add this move to our ledger
-                updates.append(Chess.UI.Update.ledger(move))
-                if board.playingSide == .black {
-                    if board.turns.count == 0 {
-                        // This should only happen in board variants.
-                        board.turns.append(Chess.Turn(white: move, black: nil))
-                    } else {
-                        // This is the usual black move follows white, so the turn exists in the stack.
-                        board.turns[board.turns.count - 1].black = move
-                    }
-                    board.fullMoves += 1
-                } else {
+                appendLedger(move)
+            }
+        }
+        mutating public func appendLedger(_ move: Chess.Move) {
+            if board.playingSide == .black {
+                if board.turns.count == 0 {
+                    // This should only happen in board variants.
                     board.turns.append(Chess.Turn(white: move, black: nil))
+                } else {
+                    // This is the usual black move follows white, so the turn exists in the stack.
+                    board.turns[board.turns.count - 1].black = move
                 }
+                board.fullMoves += 1
+            } else {
+                board.turns.append(Chess.Turn(white: move, black: nil))
             }
         }
         mutating public func clearActivePlayerSelections() {
