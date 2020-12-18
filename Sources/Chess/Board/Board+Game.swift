@@ -316,11 +316,11 @@ extension Chess.Board {
     }
     func isKingMated() -> Bool {
         // Check for mate
-        if square(squareForActiveKing.position, canBeAttackedBy: playingSide) {
-            if let allVariantBoards = createValidVariants(for: playingSide) {
+        if square(squareForActiveKing.position, canBeAttackedBy: playingSide.opposingSide) {
+            if let allVariantBoards = createValidVariants(for: playingSide.opposingSide) {
                 for boardVariant in allVariantBoards {
                     if let kingSquare = boardVariant.board.findOptionalKing(playingSide),
-                       boardVariant.board.square(kingSquare.position, canBeAttackedBy: playingSide) {
+                       boardVariant.board.square(kingSquare.position, canBeAttackedBy: playingSide.opposingSide) {
                         return false
                     }
                 }

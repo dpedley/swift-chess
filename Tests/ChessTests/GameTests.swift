@@ -45,8 +45,42 @@ final class GameTests: XCTestCase {
         self.store?.gameAction(.startGame)
         waitForExpectations(timeout: 10, handler: nil)
     }
-
+    func testGameCheckmates() {
+        // This test verifies the result of a game that should end in checkmate.
+        var initialGame = Chess.Robot.playback(moves: [
+            Chess.Move.white.e2.e4,
+            Chess.Move.black.b8.c6,
+            Chess.Move.white.f1.c4,
+            Chess.Move.black.g7.g6,
+            Chess.Move.white.d1.f3,
+            Chess.Move.black.c6.d4,
+            Chess.Move.white.f3.f7])
+        initialGame.setRobotPlaybackSpeed(0.2)
+        initialGame.userPaused = false
+        let store = ChessStore(game: initialGame)
+        self.store = store
+        let mateExpectation = expectation(description: "f3f7")
+        var mate: String? = "r1bqkbnr/pppppQ1p/6p1/8/2BnP3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4"
+        // Setup our game test listener to see if the moves are completed
+        self.store?.$game
+            .sink(receiveValue: { testGame in
+            let testFEN = testGame.board.FEN
+            // Check if the first move has been completed.
+            if testFEN == mate {
+                mate = nil // So we don't match more than once.
+                let status = testGame.computeGameStatus()
+                guard status == .mate else {
+                    XCTFail("Error: The board isn't in the right state.")
+                    return
+                }
+                mateExpectation.fulfill()
+            }
+        }).store(in: &cancellables)
+        self.store?.gameAction(.startGame)
+        waitForExpectations(timeout: 10, handler: nil)
+    }
     static var allTests = [
-        ("testGameSetup", testGameSetup)
+        ("testGameSetup", testGameSetup),
+        ("testGameCheckmates", testGameCheckmates)
     ]
 }
