@@ -16,17 +16,19 @@ public struct BoardColorSelector: View {
             }, label: {
                 HStack {
                     BoardIconView(color)
+                        .frame(height: 50)
+                        .aspectRatio(1, contentMode: .fit)
                     Text(color.name)
+                        .offset(x: 4.0, y: 0)
                 }
             })
             Spacer()
-            checkmarkView()
+            checkmarkView(themeColor: store.environment.theme.color)
         }
     }
-    func checkmarkView() -> some View {
-        if color == store.environment.theme.color {
+    func checkmarkView(themeColor: Chess.UI.BoardColor) -> some View {
+        if color == themeColor {
             let image = Image(systemName: "checkmark.circle.fill")
-                .scaleEffect(1.5)
                 .foregroundColor(.green)
             return AnyView(image)
         }

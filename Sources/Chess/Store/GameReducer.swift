@@ -41,6 +41,14 @@ public extension ChessStore {
         case .userTappedSquare(let position):
             Chess.log.info("userTappedSquare: \(position)")
             userTappedSquare(position, game: &mutableGame)
+        case .userDragged(let position):
+            Chess.log.info("userDragged: \(position)")
+            // Clear before the drag starts in case they've also selected a square by tapping
+            mutableGame.clearActivePlayerSelections()
+            userTappedSquare(position, game: &mutableGame)
+        case .userDropped(let position):
+            Chess.log.info("userDropped: \(position)")
+            userTappedSquare(position, game: &mutableGame)
         }
         passThrough.send(mutableGame)
     }
@@ -50,19 +58,32 @@ public extension ChessStore {
             game.changeSides(move.side.opposingSide)
         }
     }
-    private static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
-        game.board.squares[position].selected.toggle()
-        if game.board.squares[position].selected {
+    static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
+        guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
+            return
+        }
+        if game.userPaused {
+            game.start()
+        }
+        guard let moveStart = human.initialPositionTapped else {
+            // This was the first tap, setup the selection
+            game.clearActivePlayerSelections()
+            human.initialPositionTapped = position
+            game.board.squares[position].selected = true
             if let targetedPositions =
                 game.board.squares[position].buildMoveDestinations(board: game.board) {
                 targetedPositions.forEach {
                     game.board.squares[$0].targetedBySelected = true
                 }
             }
-        } else {
-            for idx in 0..<64 {
-                game.board.squares[idx].targetedBySelected = false
-            }
+            return
         }
+        // Check if they retapped the same square
+        guard moveStart != position else {
+            return
+        }
+        let move = Chess.Move(side: human.side, start: moveStart, end: position)
+        human.moveAttempt = move
+        game.clearActivePlayerSelections()
     }
 }

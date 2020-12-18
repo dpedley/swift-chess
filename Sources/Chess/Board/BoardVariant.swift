@@ -25,7 +25,7 @@ public extension Chess {
                 case .moveMade(var move):
                     let result = board.attemptMove(&move, applyVariants: deepVariant)
                     switch result {
-                    case .failed(let reason):
+                    case .failure(let reason):
                         actualChanges.append(.moveFailed(move: move, reason: reason))
                     case .success:
                         // Note about warning, we may want to include the piece loss for variant analysis stuff here.

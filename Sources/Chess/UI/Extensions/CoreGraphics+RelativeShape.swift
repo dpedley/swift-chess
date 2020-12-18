@@ -23,6 +23,9 @@ extension CGPoint {
                        y: yOffset + rect.midY)
     }
     // swiftlint:disable identifier_name
+    func offset(dx: CGFloat = 0, dy: CGFloat = 0) -> CGPoint {
+        return .xy(x + dx, y + dy)
+    }
     static func xy(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
         return .init(x: x, y: y)
     }

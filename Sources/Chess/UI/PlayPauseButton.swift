@@ -11,15 +11,16 @@ public struct PlayPauseButton: View {
     @EnvironmentObject public var store: ChessStore
     public var body: some View {
         Button {
-            if !store.game.userPaused {
+            if store.game.userPaused {
+                store.gameAction(.startGame)
+            } else {
                 store.gameAction(.pauseGame)
             }
-            store.gameAction(.resetBoard)
         } label: { () -> AnyView in
             let image: Image
             if store.game.userPaused {
-                // We don't show the play button is the user is white, they just start by playing
-                guard store.game.white.isBot() else {
+                // We don't show the play button if it's the user's turn
+                guard store.game.activePlayer.isBot() else {
                     return AnyView(EmptyView())
                 }
                 image = Image(systemName: "play.circle")
@@ -30,9 +31,8 @@ public struct PlayPauseButton: View {
                 }
                 image = Image(systemName: "pause.circle")
             }
-            return AnyView(image
-                            .scaleEffect(1.5)
-                            .foregroundColor(.black))
+            return AnyView(image.foregroundColor(.black))
         }
     }
+    public init() {}
 }

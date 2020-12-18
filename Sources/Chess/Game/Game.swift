@@ -38,7 +38,7 @@ public extension Chess {
         public var white: Player
         public var round: Int = 1
         public var pgn: Chess.Game.PortableNotation
-        public var activePlayer: Player? {
+        public var activePlayer: Player {
             switch board.playingSide {
             case .white:
                 return white
@@ -84,8 +84,7 @@ public extension Chess {
             userPaused = true
         }
         public mutating func nextTurn() {
-            guard let player = activePlayer else { return }
-            player.turnUpdate(game: self)
+            activePlayer.turnUpdate(game: self)
         }
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
@@ -108,7 +107,7 @@ public extension Chess {
             switch moveTry {
             case .success(let capturedPiece):
                 executeSuccess(move: move, capturedPiece: capturedPiece)
-            case .failed(reason: let reason):
+            case .failure(let reason):
                 Chess.log.debug("Move failed: \(move) \(reason)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     updateBoard(human: human, failed: move, with: reason)
@@ -128,15 +127,22 @@ public extension Chess {
                 black.responseDelay = responseDelay
             }
         }
+        public func robotPlaybackSpeed() -> TimeInterval {
+            if let white = white as? Chess.Robot {
+                return white.responseDelay
+            }
+            if let black = black as? Chess.Robot {
+                return black.responseDelay
+            }
+            return 1
+        }
         mutating private func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
                                                          fenAfterMove: board.FEN,
                                                          annotation: nil)
             pgn.moves.append(annotatedMove)
-            // STILL UNDONE: we may need to account for non-boardmoves
-//                let clearPreviousMoves = Chess.UI.Update.deselect(.highlight)
-//                board.ui.apply(board: board, updates: [clearPreviousMoves, Chess.UI.Update.highlight([move.start])])
+            clearActivePlayerSelections()
 
             // we need to update the UI here
             // Note piece is at `move.end` now as the move is complete.
@@ -182,10 +188,17 @@ public extension Chess {
                 }
             }
         }
-        private func clearActivePlayerSelections() {
-            // STILL UNDONE: Vet the use of the old UI update here.
-//            let updates = [Chess.UI.Update.deselect(.premove), Chess.UI.Update.deselect(.target)]
-//            board.ui.apply(board: board, updates: updates)
+        mutating public func clearActivePlayerSelections() {
+            for idx in 0..<64 {
+                board.squares[idx].selected = false
+                board.squares[idx].targetedBySelected = false
+            }
+            if let human = black as? HumanPlayer {
+                human.initialPositionTapped = nil
+            }
+            if let human = white as? HumanPlayer {
+                human.initialPositionTapped = nil
+            }
         }
         private func flashKing() {
             // STILL UNDONE: Vet the use of the old UI update here.
@@ -193,9 +206,9 @@ public extension Chess {
 //            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        private func updateBoard(human: Chess.HumanPlayer,
-                                 failed move: Chess.Move,
-                                 with reason: Chess.Move.Limitation) {
+        mutating public func updateBoard(human: Chess.HumanPlayer,
+                                         failed move: Chess.Move,
+                                         with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
             case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove,

@@ -16,9 +16,13 @@ let store = ChessStore(game: game)
 
 You might then use the store as the environment variable for a BoardView. 
 
-You will find previews in the code where it is helpful to get a visual guide. Here's XCode showing the preview in BoardView.swift
+There is a lot to discover,  you will find previews in the code, this can be helpful to get a visual guide. 
 
+Here's XCode showing the preview of `SquareTargeted.swift`. 
 
 ![](Screenshots/boardview.png)
+
+When a user taps a square we show the possible moves on the board.
+
 
 TODO: This readme should have a better ending.
