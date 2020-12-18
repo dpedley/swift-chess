@@ -24,6 +24,10 @@ public struct SquareBackground: View {
 }
 
 extension SquareBackground: DropDelegate {
+    public func dropUpdated(info: DropInfo) -> DropProposal? {
+        return DropProposal(operation: .move)
+    }
+    
     public func performDrop(info: DropInfo) -> Bool {
         Chess.log.info("Dropped \(position.FEN)")
         store.gameAction(.userTappedSquare(position: position))
