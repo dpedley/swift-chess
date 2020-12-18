@@ -62,7 +62,7 @@ public struct SquareTargeted: View {
         }
         return AnyView(selected)
     }
-    static let chessChoiceHighlight = Color(.sRGB, red: 0.6, green: 0.3, blue: 0.3, opacity: 0.5)
+    static let chessChoiceHighlight = Color(.sRGB, red: 0.5, green: 0.3, blue: 0.3, opacity: 0.35)
     public init(_ idx: Int) {
         self.position = Chess.Position(idx)
     }
@@ -77,6 +77,7 @@ struct SquareTargetedPreview: PreviewProvider {
         game.board.resetBoard(FEN: FEN)
         ChessStore.userTappedSquare(.e3, game: &game)
         let store = ChessStore(game: game)
+        store.environment.theme.color = .blue
         return store
     }()
     static var previews: some View {
