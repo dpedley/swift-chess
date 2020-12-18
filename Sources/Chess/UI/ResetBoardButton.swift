@@ -21,7 +21,7 @@ public struct ResetBoardButton: View {
             }
             self.showAlert = true
         } label: {
-            Image(systemName: "gobackward")
+            Image(systemName: "backward")
                 .foregroundColor(.black)
         }
         .alert(isPresented: $showAlert, content: resetWarning)
