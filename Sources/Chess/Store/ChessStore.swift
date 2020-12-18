@@ -79,6 +79,7 @@ extension ChessStore {
         }
         // Check the status and update our result if the game is over
         let status = updatedGame.computeGameStatus()
+        Chess.log.debug("Computed game status: \(status)")
         switch status {
         case .notYetStarted, .paused, .unknown:
             // We do nothing.
