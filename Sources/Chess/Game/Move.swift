@@ -10,11 +10,13 @@ import Foundation
 // swiftlint:disable nesting
 public extension Chess {
     typealias MoveResult = Result<Chess.Piece?, Chess.Move.Limitation>
+    // swiftlint:disable identifier_name
     struct Turn: Identifiable {
         public let id = UUID()
         public var white: Move?
         public var black: Move?
     }
+    // swiftlint:enable identifier_name
     class Move: NSObject {
         public static func == (lhs: Move, rhs: Move) -> Bool {
             return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
