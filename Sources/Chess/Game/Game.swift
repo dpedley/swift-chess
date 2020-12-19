@@ -17,6 +17,8 @@ public extension Chess {
         private var botPausedMove: Chess.Move?
         weak var delegate: ChessGameDelegate?
         public var userPaused = true
+        public var blackDungeon: [Chess.Piece] = [] // Captured white pieces
+        public var whiteDungeon: [Chess.Piece] = []
         public var board = Chess.Board(populateExpensiveVisuals: true)
         public var black: Player
         public var white: Player
@@ -124,6 +126,15 @@ public extension Chess {
             return 1
         }
         mutating private func executeSuccess(move: Chess.Move, capturedPiece: Chess.Piece?) {
+            if let piece = capturedPiece {
+                // The captured piece is thrown in the dungeon
+                switch piece.side {
+                case .black:
+                    whiteDungeon.append(piece)
+                case .white:
+                    blackDungeon.append(piece)
+                }
+            }
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
                                                          fenAfterMove: board.FEN,
