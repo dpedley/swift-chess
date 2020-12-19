@@ -12,11 +12,18 @@ public struct DraggablePiece: View {
     @EnvironmentObject var store: ChessStore
     let position: Chess.Position
     public var body: some View {
-        PieceView(position: position)
+        guard let piece = store.game.board.squares[position].piece else {
+            return AnyView(EmptyView())
+        }
+        return AnyView(PieceView(piece: piece)
             .onDrag {
                 store.gameAction(.userDragged(position: position))
                 return NSItemProvider(object: self.position.FEN as NSString)
             }
+        )
+    }
+    public init(position: Chess.Position) {
+        self.position = position
     }
 }
 
@@ -26,20 +33,22 @@ public struct DraggablePiece: View {
 /// The artwork controls which piece you see
 /// The style has the colors.
 public struct PieceView: View {
-    @EnvironmentObject var store: ChessStore
-    let position: Chess.Position
+    let piece: Chess.Piece
     public var body: some View {
         ZStack {
             // Paint the piece
-            PieceShape(artwork: store.game.board.squares[position].piece?.artwork)
-            .foregroundColor(store.game.board.squares[position].piece?.style.fill)
+            PieceShape(artwork: piece.artwork)
+            .foregroundColor(piece.style.fill)
             // Then outline it
-            PieceShape(artwork: store.game.board.squares[position].piece?.artwork)?
-            .stroke(store.game.board.squares[position].piece?.style.outline ?? .clear)
+            PieceShape(artwork: piece.artwork)?
+            .stroke(piece.style.outline)
             // Render the details in the highlight color
-            PieceShape.Details(artwork: store.game.board.squares[position].piece?.artwork)?
-                .stroke(store.game.board.squares[position].piece?.style.highlight ?? .clear, lineWidth: 1.5)
+            PieceShape.Details(artwork: piece.artwork)?
+                .stroke(piece.style.highlight, lineWidth: 1.5)
         }
+    }
+    public init(piece: Chess.Piece) {
+        self.piece = piece
     }
 }
 
@@ -48,19 +57,19 @@ struct PieceViewPreview: PreviewProvider {
     static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
-            PieceView(position: .d8)
+            DraggablePiece(position: .d8)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: -50)
-            PieceView(position: .c1)
+            DraggablePiece(position: .c1)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: -50)
-            PieceView(position: .e1)
+            DraggablePiece(position: .e1)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: 50)
-            PieceView(position: .b8)
+            DraggablePiece(position: .b8)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: 50)
