@@ -7,9 +7,42 @@
 
 import Foundation
 
-extension Chess.Board {
+public extension Chess.Board {
     static let startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     var FEN: String { return createCurrentFENString() }
+    mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
+        turns.removeAll()
+        let FENParts = FEN.components(separatedBy: " ")
+        guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
+            Chess.log.critical("Invalid FEN: Cannot find active side.")
+            return
+        }
+        guard let moveCount = Int(FENParts[5]) else {
+            Chess.log.critical("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
+            return
+        }
+        // Still UNDONE: castling checks in the hasMoved below
+        // en passant square last move side effect additions
+        guard let piecesString = FENParts.first else {
+            Chess.log.critical("Invalid FEN")
+            return
+        }
+        let ranks = piecesString.components(separatedBy: "/")
+        guard ranks.count==8 else {
+            Chess.log.critical("Invalid FEN")
+            return
+        }
+        fullMoves = moveCount
+        var rankIndex = 0
+        for rankString in ranks {
+            processFENRankString(rankString, rankIndex: rankIndex)
+            rankIndex+=1
+        }
+        playingSide = newSide
+    }
+}
+
+extension Chess.Board {
     private func createCurrentFENString() -> String {
         var fen = ""
         var emptyCount = 0
@@ -64,7 +97,9 @@ extension Chess.Board {
                 }
                 let updatedPiece: Chess.Piece
                 if !isValid(startingSquare: squares[fenIndex], for: piece) {
-                    updatedPiece = Chess.Piece(side: piece.side, pieceType: piece.pieceType.pieceMoved())
+                    var movedPiece = piece
+                    movedPiece.pieceType = piece.pieceType.pieceMoved()
+                    updatedPiece = movedPiece
                 } else {
                     updatedPiece = piece
                 }
@@ -72,39 +107,5 @@ extension Chess.Board {
                 fileIndex+=1
             }
         }
-    }
-    mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
-        turns.removeAll()
-        let FENParts = FEN.components(separatedBy: " ")
-        guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
-            Chess.log.critical("Invalid FEN: Cannot find active side.")
-            return
-        }
-        guard let moveCount = Int(FENParts[5]) else {
-            Chess.log.critical("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
-            return
-        }
-        // Still UNDONE: castling checks in the hasMoved below
-        // en passant square last move side effect additions
-        guard let piecesString = FENParts.first else {
-            Chess.log.critical("Invalid FEN")
-            return
-        }
-        let ranks = piecesString.components(separatedBy: "/")
-        guard ranks.count==8 else {
-            Chess.log.critical("Invalid FEN")
-            return
-        }
-        fullMoves = moveCount
-        var rankIndex = 0
-        for rankString in ranks {
-            processFENRankString(rankString, rankIndex: rankIndex)
-            rankIndex+=1
-        }
-        playingSide = newSide
-        // Update the UI
-        // STILL UNDONE: Vet the use of the old UI update here.
-//        let uiUpdate = Chess.UI.Update.resetBoard(squares.map { $0.piece?.UI ?? .none })
-//        self.ui.apply(board: self, updates: [uiUpdate])
     }
 }
