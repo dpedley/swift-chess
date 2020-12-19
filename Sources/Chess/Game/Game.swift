@@ -47,18 +47,21 @@ public extension Chess {
                 black = player
                 white = challenger
             }
-            self.pgn = Chess.Game.PortableNotation(eventName: "Game \(Date())",
-                                              site: PortableNotation.deviceSite(),
-                                              date: Date(),
-                                              round: 1,
-                                              black: black.pgnName,
-                                              white: white.pgnName,
-                                              result: .other,
-                                              tags: [:],
-                                              moves: [])
+            self.pgn = Self.freshPGN(black, white)
             self.white = white
             self.black = black
             self.board.resetBoard()
+        }
+        static func freshPGN(_ blackPlayer: Chess.Player, _ whitePlayer: Chess.Player) -> Chess.Game.PortableNotation {
+            Chess.Game.PortableNotation(eventName: "Game \(Date())",
+                                              site: PortableNotation.deviceSite(),
+                                              date: Date(),
+                                              round: 1,
+                                              black: blackPlayer.pgnName,
+                                              white: whitePlayer.pgnName,
+                                              result: .other,
+                                              tags: [:],
+                                              moves: [])
         }
         public mutating func start() {
             userPaused = false

@@ -31,9 +31,11 @@ public extension ChessStore {
             mutableGame.userPaused = true
         case .setBoard(let fen):
             Chess.log.info("setBoard: Board setup as: \(fen)")
+            mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
             mutableGame.board.resetBoard(FEN: fen)
         case .resetBoard:
             Chess.log.info("resetBoard: resetting...")
+            mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
             mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
         case .gameResult(let result):
             Chess.log.info("gameResult: \(result.rawValue)")
