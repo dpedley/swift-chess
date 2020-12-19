@@ -10,7 +10,8 @@ import Foundation
 // swiftlint:disable nesting
 public extension Chess {
     typealias MoveResult = Result<Chess.Piece?, Chess.Move.Limitation>
-    struct Turn {
+    struct Turn: Identifiable {
+        public let id = UUID()
         public var white: Move?
         public var black: Move?
     }
