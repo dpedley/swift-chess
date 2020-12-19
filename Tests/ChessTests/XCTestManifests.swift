@@ -5,16 +5,16 @@ import Combine
 extension XCTestCase {
     func testMove(_ attempt: Chess.MoveResult) {
         switch attempt {
-        case .failure(let reason):
-            XCTFail(reason.rawValue)
+        case .failure(let limitation):
+            XCTFail(limitation.rawValue)
         default:
             break
         }
     }
     func testMoveFails(_ attempt: Chess.MoveResult) -> Chess.Move.Limitation? {
         switch attempt {
-        case .failure(let reason):
-            return reason
+        case .failure(let limitation):
+            return limitation
         default:
             break
         }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+/*
 extension Chess.Move.SideEffect {
     enum BaseInt: Int64 {
         case notKnown = 0, castling, enPassantInvade, enPassantCapture, promotion, none
@@ -83,17 +83,4 @@ extension Chess.Move.SideEffect {
         return Chess.Move.SideEffect.from(Int64: self.asInt64())!
     }
 }
-
-extension Chess.Side {
-    func clone() -> Chess.Side {
-        return (self == .black) ? .black : .white
-    }
-}
-
-extension Chess.Move {
-    func clone() -> Chess.Move {
-        let cloned = Chess.Move(side: side.clone(), start: start, end: end)
-        cloned.sideEffect = sideEffect.clone()
-        return cloned
-    }
-}
+*/

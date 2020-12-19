@@ -8,7 +8,10 @@
 import Foundation
 
 public extension Chess {
-    struct Piece: Identifiable {
+    struct Piece: Identifiable, Equatable {
+        public static func == (lhs: Piece, rhs: Piece) -> Bool {
+            return lhs.pieceType.fen() == rhs.pieceType.fen()
+        }
         // swiftlint:disable identifier_name
         public let id = UUID()
         // swiftlint:enable identifier_name

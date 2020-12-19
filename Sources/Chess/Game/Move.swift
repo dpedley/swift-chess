@@ -17,7 +17,7 @@ public extension Chess {
         public var white: Move?
         public var black: Move?
     }
-    class Move: NSObject {
+    struct Move: Equatable {
         public static func == (lhs: Move, rhs: Move) -> Bool {
             return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
         }
@@ -43,7 +43,7 @@ public extension Chess {
         public let rankDirection: Int
         public let fileDirection: Int
         public var timeElapsed: TimeInterval?
-        public var sideEffect: SideEffect = .notKnown
+        public var sideEffect: SideEffect
         public var isResign: Bool {
             return end.isResign
         }
@@ -53,7 +53,7 @@ public extension Chess {
         public var continuesGameplay: Bool {
             return end.isBoardPosition
         }
-        override public var description: String {
+        public var description: String {
             let desc: String
             if isResign {
                 desc = "Resigned"
@@ -67,10 +67,19 @@ public extension Chess {
             }
             return desc
         }
-        public init(side: Chess.Side, start: Chess.Position, end: Chess.Position, ponderTime: TimeInterval? = nil) {
+        mutating func verify() {
+            guard case .notKnown = sideEffect else { return }
+            sideEffect = .verified
+        }
+        public init(side: Chess.Side,
+                    start: Chess.Position,
+                    end: Chess.Position,
+                    sideEffect: Chess.Move.SideEffect = .notKnown,
+                    ponderTime: TimeInterval? = nil) {
             self.side = side
             self.start = start
             self.end = end
+            self.sideEffect = sideEffect
             self.timeElapsed = ponderTime
             guard !end.isResign else {
                 self.rankDistance = 0

@@ -46,7 +46,8 @@ extension Chess.Piece {
                 return try Chess.Rules.isValidKingMove(move, hasMoved: hasMoved)
             } catch let error {
                 guard let sideEffect = error as? Chess.Move.SideEffect else {
-                    fatalError("Unknown error - \(error)")
+                    Chess.log.critical("Unknown king error: \(error)")
+                    fatalError("Unknown king error - \(error)")
                 }
                 move.sideEffect = sideEffect
                 return true

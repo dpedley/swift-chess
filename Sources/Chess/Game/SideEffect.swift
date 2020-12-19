@@ -13,23 +13,15 @@ public extension Chess.Move {
         case castling(rook: Int, destination: Int)
         case enPassantInvade(territory: Int, invader: Int)
         case enPassantCapture(attack: Int, trespasser: Int)
-        case promotion(piece: Chess.Piece)
-        case noneish // Don't make this none until we're done
+        case promotion(piece: Chess.PieceType)
+        case verified
         var isUnknown: Bool {
             switch self {
-            case .notKnown, .noneish:
+            case .notKnown, .verified:
                 return true
             default:
                 return false
             }
-        }
-    }
-    func setVerified() {
-        switch sideEffect {
-        case .notKnown:
-            sideEffect = .noneish
-        default:
-            break
         }
     }
 }

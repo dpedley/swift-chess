@@ -94,11 +94,11 @@ public extension Chess {
             let moveTry = board.attemptMove(&moveAttempt)
             switch moveTry {
             case .success(let capturedPiece):
-                executeSuccess(move: move, capturedPiece: capturedPiece)
-            case .failure(let reason):
-                Chess.log.debug("Move failed: \(move) \(reason)")
+                executeSuccess(move: moveAttempt, capturedPiece: capturedPiece)
+            case .failure(let limitation):
+                Chess.log.critical("Move failed: \(limitation)")
                 if let human = activePlayer as? Chess.HumanPlayer {
-                    updateBoard(human: human, failed: move, with: reason)
+                    updateBoard(human: human, failed: moveAttempt, with: limitation)
                 } else {
                     // a bot failed to move, for some this means resign
                     // STILL UNDONE message user
