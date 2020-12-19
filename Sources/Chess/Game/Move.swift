@@ -10,12 +10,15 @@ import Foundation
 // swiftlint:disable nesting
 public extension Chess {
     typealias MoveResult = Result<Chess.Piece?, Chess.Move.Limitation>
-    struct Turn {
-        var white: Move?
-        var black: Move?
+    // swiftlint:disable identifier_name
+    struct Turn: Identifiable {
+        public let id = UUID()
+        public var white: Move?
+        public var black: Move?
     }
+    // swiftlint:enable identifier_name
     class Move: NSObject {
-        static func == (lhs: Move, rhs: Move) -> Bool {
+        public static func == (lhs: Move, rhs: Move) -> Bool {
             return lhs.side == rhs.side && lhs.start == rhs.start && lhs.end == rhs.end
         }
         public enum Limitation: String, Error {
@@ -28,26 +31,26 @@ public extension Chess {
             case kingWouldBeUnderAttackAfterMove = "You must save your king, piece is pinned."
         }
         // Core properties
-        let side: Chess.Side
-        let start: Chess.Position
-        let end: Chess.Position
+        public let side: Chess.Side
+        public let start: Chess.Position
+        public let end: Chess.Position
 
         // Computed move constants
-        var unicodePGN: String? // THis is set when the move is committed.
-        var PGN: String? // THis is set when the move is committed.
-        let rankDistance: Int
-        let fileDistance: Int
-        let rankDirection: Int
-        let fileDirection: Int
-        var timeElapsed: TimeInterval?
-        var sideEffect: SideEffect = .notKnown
-        var isResign: Bool {
+        public var unicodePGN: String? // THis is set when the move is committed.
+        public var PGN: String? // THis is set when the move is committed.
+        public let rankDistance: Int
+        public let fileDistance: Int
+        public let rankDirection: Int
+        public let fileDirection: Int
+        public var timeElapsed: TimeInterval?
+        public var sideEffect: SideEffect = .notKnown
+        public var isResign: Bool {
             return end.isResign
         }
-        var isTimeout: Bool {
+        public var isTimeout: Bool {
             return end.isTimeout
         }
-        var continuesGameplay: Bool {
+        public var continuesGameplay: Bool {
             return end.isBoardPosition
         }
         override public var description: String {
@@ -64,7 +67,7 @@ public extension Chess {
             }
             return desc
         }
-        init(side: Chess.Side, start: Chess.Position, end: Chess.Position, ponderTime: TimeInterval? = nil) {
+        public init(side: Chess.Side, start: Chess.Position, end: Chess.Position, ponderTime: TimeInterval? = nil) {
             self.side = side
             self.start = start
             self.end = end

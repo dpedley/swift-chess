@@ -9,13 +9,13 @@ import Foundation
 
 extension Chess {
     public struct Square {
-        let position: Position
-        var piece: Piece?
-        var isKingSide: Bool { return (position.fileNumber > 3) }
-        var isEmpty: Bool { return piece==nil }
-        var selected: Bool = false
-        var targetedBySelected: Bool = false
-        func attackedSquares(board: Chess.Board) -> [Square]? {
+        public let position: Position
+        public var piece: Piece?
+        public var isKingSide: Bool { return (position.fileNumber > 3) }
+        public var isEmpty: Bool { return piece==nil }
+        public var selected: Bool = false
+        public var targetedBySelected: Bool = false
+        public func attackedSquares(board: Chess.Board) -> [Square]? {
             guard let piece = piece else { return nil }
             var positions: [Square] = []
             for testIndex in 0..<board.squares.count {
@@ -42,7 +42,7 @@ extension Chess {
                 return true
             }
         }
-        func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
+        public func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }
             var destinations: [Chess.Position] = []
             for fenIndex in 0..<64 {
@@ -62,10 +62,10 @@ extension Chess {
             guard destinations.count>0 else { return nil }
             return destinations
         }
-        init(position: Position) {
+        public init(position: Position) {
             self.position = position
         }
-        mutating func clear() {
+        public mutating func clear() {
             self.piece = nil
         }
         public var description: String {
