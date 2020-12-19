@@ -1,5 +1,5 @@
 //
-//  Game+Status.swift
+//  GameStatus.swift
 //  
 //
 //  Created by Douglas Pedley on 11/27/20.
@@ -12,6 +12,7 @@ public extension Chess {
         case unknown
         case notYetStarted
         case active
+        case paused
         case mate
         case resign
         case timeout
@@ -19,7 +20,26 @@ public extension Chess {
         case drawByMoves
         case drawBecauseOfInsufficientMatingMaterial
         case stalemate
-        case paused
+        public var gameEnder: String? {
+            switch self {
+            case .unknown, .notYetStarted, .active, .paused:
+                return nil
+            case .mate:
+                return "Checkmate"
+            case .resign:
+                return "Resign"
+            case .stalemate:
+                return "Stalemate"
+            case .drawByMoves:
+                return "Move limit reached"
+            case .drawByRepetition:
+                return "Move repetition"
+            case .drawBecauseOfInsufficientMatingMaterial:
+                return "No mating material"
+            case .timeout:
+                return "Timed out"
+            }
+        }
     }
 }
 
