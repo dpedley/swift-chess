@@ -43,6 +43,7 @@ public extension ChessStore {
             Chess.log.info("gameResult: \(result.rawValue)")
             mutableGame.pgn.result = result
             mutableGame.info = .gameEnded(result: result, status: status)
+            mutableGame.userPaused = true
         case .makeMove(let move):
             Chess.log.info("makeMove: \(move.side) \(move.description)")
             makeMove(move, game: &mutableGame)
