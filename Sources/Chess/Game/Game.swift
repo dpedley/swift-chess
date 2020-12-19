@@ -12,10 +12,6 @@ public protocol ChessGameDelegate: AnyObject {
     func gameAction(_ action: Chess.GameAction)
 }
 
-public enum GameUpdate {
-    case gameEnded(result: Chess.Game.PGNResult, status: Chess.GameStatus)
-}
-
 public extension Chess {
     struct Game {
         private var botPausedMove: Chess.Move?
