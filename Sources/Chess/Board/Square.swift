@@ -27,6 +27,21 @@ extension Chess {
             }
             return positions.count > 0 ? positions : nil
         }
+        private func validateSideEffects(_ move: Chess.Move, board: Chess.Board) -> Bool {
+            switch move.sideEffect {
+            case .noneish, .notKnown, .enPassantCapture, .enPassantInvade, .promotion:
+                return true
+            case .castling(let rook, _):
+                let kingStart: Chess.Position = move.side == .black ? .e8 : .e1
+                let isKingSide: Bool = move.fileDirection > 0 ? true : false
+                let validRook = Chess.Rules.startingPositionForRook(side: move.side, kingSide: isKingSide)
+                guard move.start == kingStart,
+                      rook == validRook else {
+                    return false
+                }
+                return true
+            }
+        }
         func buildMoveDestinations(board: Chess.Board) -> [Chess.Position]? {
             guard let piece = self.piece else { return nil }
             var destinations: [Chess.Position] = []
@@ -34,11 +49,14 @@ extension Chess {
                 let end = Chess.Position(fenIndex)
                 guard end != position else { continue }
                 var move = Chess.Move(side: piece.side, start: position, end: end)
-                if piece.isMoveValid(&move) {
-                    destinations.append(end)
-                }
-                if piece.pieceType.isPawn(), piece.isAttackValid(&move) {
-                    destinations.append(end)
+                if piece.isAttackValid(&move) {
+                    if validateSideEffects(move, board: board) {
+                        destinations.append(end)
+                    }
+                } else if piece.pieceType.isPawn(), piece.isMoveValid(&move) {
+                    if validateSideEffects(move, board: board) {
+                        destinations.append(end)
+                    }
                 }
             }
             guard destinations.count>0 else { return nil }

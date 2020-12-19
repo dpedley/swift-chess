@@ -56,7 +56,7 @@ public extension Chess {
             if self is Chess.Robot {
                 return "RandomBot"
             }
-            return firstName ?? lastName ?? "Player"
+            return firstName ?? lastName ?? "You"
         }
     }
 }

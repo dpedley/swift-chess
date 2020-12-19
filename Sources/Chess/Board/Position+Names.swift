@@ -8,7 +8,7 @@
 import Foundation
 
 // swiftlint:disable identifier_name
-extension Chess.Position {
+public extension Chess.Position {
     static let a1: Chess.Position = 56
     static let a2: Chess.Position = 48
     static let a3: Chess.Position = 40

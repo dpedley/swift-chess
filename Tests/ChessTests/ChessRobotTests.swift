@@ -10,18 +10,19 @@ final class ChessRobotTests: XCTestCase {
     var cancellables = Set<AnyCancellable>()
     func testPlaybackBot() {
         var game = Chess.Game.sampleGame()
-        game.setRobotPlaybackSpeed(0.03)
+        game.setRobotPlaybackSpeed(0.01)
         let store = ChessStore(game: game)
         let gameCompleted = expectation(description: "testPlaybackBot")
-        var fulfilled = false
+        var playbackCompleteFEN: String? = "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 0 43"
         store.$game.sink(receiveValue: { game in
-            guard game.board.FEN == "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 0 43", !fulfilled else { return }
-            fulfilled = true
+            let testFEN = game.board.FEN
+            guard testFEN == playbackCompleteFEN else { return }
+            playbackCompleteFEN = nil
             gameCompleted.fulfill()
         }).store(in: &cancellables)
         store.gameAction(.startGame)
         self.store = store
-        waitForExpectations(timeout: 30, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testGreedyBot() {

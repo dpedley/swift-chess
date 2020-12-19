@@ -26,6 +26,7 @@ extension XCTestCase {
 #if !canImport(ObjectiveC)
 public func allTests() -> [XCTestCaseEntry] {
     return [
+        testCase(BoardAnalysisTests.allTests),
         testCase(BoardFenTests.allTests),
         testCase(ChessRobotTests.allTests),
         testCase(ChessTests.allTests),
@@ -36,7 +37,6 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(PieceWeightTests.allTests),
         testCase(PositionTests.allTests),
         testCase(PromotionTests.allTests),
-        testCase(RankAndFilesTests.allTests)
-    ]
+        testCase(RankAndFilesTests.allTests)]
 }
 #endif

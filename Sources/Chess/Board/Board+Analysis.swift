@@ -7,14 +7,14 @@
 
 import Foundation
 
-typealias GameAnalysis = [Chess.Side: Double]
-extension GameAnalysis {
+public typealias GameAnalysis = [Chess.Side: Double]
+public extension GameAnalysis {
     func value(for side: Chess.Side) -> Double {
         return self[side] ?? 0
     }
 }
 
-extension Chess.Board {
+public extension Chess.Board {
     func validVariantExists(for side: Chess.Side) -> Bool {
         for square in squares {
             if let piece = square.piece, piece.side == side,

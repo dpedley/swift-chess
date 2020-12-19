@@ -34,26 +34,26 @@ public extension Chess.Game {
         case other = "*"
     }
     struct AnnotatedMove {
-        var side: Chess.Side
-        var move: String
-        var fenAfterMove: String
-        var annotation: String?
+        public var side: Chess.Side
+        public var move: String
+        public var fenAfterMove: String
+        public var annotation: String?
     }
     struct PortableNotation { // PGN
-        var eventName: String // the name of the tournament or match event.
-        var site: String      // the location of the event. This is in City, Region COUNTRY format,
+        public var eventName: String // the name of the tournament or match event.
+        public var site: String      // the location of the event. This is in City, Region COUNTRY format,
                               // where COUNTRY is the three-letter International Olympic Committee code
                               // for the country. An example is New York City, NY USA.
-        var date: Date        // the starting date of the game, in YYYY.MM.DD form. ?? is used for unknown values.
-        var round: Int        // the playing round ordinal of the game within the event.
-        var black: String     // the player of the black pieces, in Lastname, Firstname format.
-        var white: String     // the player of the white pieces, same format as black.
-        var result: PGNResult // the result of the game. This can only have four possible values:
+        public var date: Date        // the starting date of the game, in YYYY.MM.DD form. ?? is used for unknown.
+        public var round: Int        // the playing round ordinal of the game within the event.
+        public var black: String     // the player of the black pieces, in Lastname, Firstname format.
+        public var white: String     // the player of the white pieces, same format as black.
+        public var result: PGNResult // the result of the game. This can only have four possible values:
                               // 1-0 (White won), 0-1 (Black won), 1/2-1/2 (Draw),
                               // or * (other, e.g., the game is ongoing).
-        var tags: [String: String] = [:]
-        var moves: [AnnotatedMove]
-        var formattedString: String {
+        public var tags: [String: String] = [:]
+        public var moves: [AnnotatedMove]
+        public var formattedString: String {
             var PGN = "[Event \"\(eventName)\"]\n" +
                 "[Site \"\(site)\"]\n[Date \"\(date)\"]\n[Round \"\(round)\"]\n" +
                 "[White \"\(white)\"]\n[Black \"\(black)\"]\n[Result \"\(result.rawValue)\"]\n"

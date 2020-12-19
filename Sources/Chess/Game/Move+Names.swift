@@ -16,100 +16,100 @@
 
 import Foundation
 
-extension Chess.Move {
+public extension Chess.Move {
     static let black = Chess.MoveStartSide(side: .black)
     static let white = Chess.MoveStartSide(side: .white)
 }
 
 // swiftlint:disable identifier_name
-extension Chess {
+public extension Chess {
     struct MoveStart {
-        let side: Chess.Side
-        let position: Chess.Position
+        public let side: Chess.Side
+        public let position: Chess.Position
     }
     struct MoveStartSide {
-        let side: Chess.Side
-        var O_O: Chess.Move { castleKingside }
-        var castleKingside: Chess.Move {
+        public let side: Chess.Side
+        public var O_O: Chess.Move { castleKingside }
+        public var castleKingside: Chess.Move {
             switch side {
             case .black: return e8.g8
             case .white: return e1.g1
             }
         }
-        var O_O_O: Chess.Move { castleQueenside }
-        var castleQueenside: Chess.Move {
+        public var O_O_O: Chess.Move { castleQueenside }
+        public var castleQueenside: Chess.Move {
             switch side {
             case .black: return e8.c8
             case .white: return e1.c1
             }
         }
-        let a1: Chess.MoveStart
-        let a2: Chess.MoveStart
-        let a3: Chess.MoveStart
-        let a4: Chess.MoveStart
-        let a5: Chess.MoveStart
-        let a6: Chess.MoveStart
-        let a7: Chess.MoveStart
-        let a8: Chess.MoveStart
-        let b1: Chess.MoveStart
-        let b2: Chess.MoveStart
-        let b3: Chess.MoveStart
-        let b4: Chess.MoveStart
-        let b5: Chess.MoveStart
-        let b6: Chess.MoveStart
-        let b7: Chess.MoveStart
-        let b8: Chess.MoveStart
-        let c1: Chess.MoveStart
-        let c2: Chess.MoveStart
-        let c3: Chess.MoveStart
-        let c4: Chess.MoveStart
-        let c5: Chess.MoveStart
-        let c6: Chess.MoveStart
-        let c7: Chess.MoveStart
-        let c8: Chess.MoveStart
-        let d1: Chess.MoveStart
-        let d2: Chess.MoveStart
-        let d3: Chess.MoveStart
-        let d4: Chess.MoveStart
-        let d5: Chess.MoveStart
-        let d6: Chess.MoveStart
-        let d7: Chess.MoveStart
-        let d8: Chess.MoveStart
-        let e1: Chess.MoveStart
-        let e2: Chess.MoveStart
-        let e3: Chess.MoveStart
-        let e4: Chess.MoveStart
-        let e5: Chess.MoveStart
-        let e6: Chess.MoveStart
-        let e7: Chess.MoveStart
-        let e8: Chess.MoveStart
-        let f1: Chess.MoveStart
-        let f2: Chess.MoveStart
-        let f3: Chess.MoveStart
-        let f4: Chess.MoveStart
-        let f5: Chess.MoveStart
-        let f6: Chess.MoveStart
-        let f7: Chess.MoveStart
-        let f8: Chess.MoveStart
-        let g1: Chess.MoveStart
-        let g2: Chess.MoveStart
-        let g3: Chess.MoveStart
-        let g4: Chess.MoveStart
-        let g5: Chess.MoveStart
-        let g6: Chess.MoveStart
-        let g7: Chess.MoveStart
-        let g8: Chess.MoveStart
-        let h1: Chess.MoveStart
-        let h2: Chess.MoveStart
-        let h3: Chess.MoveStart
-        let h4: Chess.MoveStart
-        let h5: Chess.MoveStart
-        let h6: Chess.MoveStart
-        let h7: Chess.MoveStart
-        let h8: Chess.MoveStart
+        public let a1: Chess.MoveStart
+        public let a2: Chess.MoveStart
+        public let a3: Chess.MoveStart
+        public let a4: Chess.MoveStart
+        public let a5: Chess.MoveStart
+        public let a6: Chess.MoveStart
+        public let a7: Chess.MoveStart
+        public let a8: Chess.MoveStart
+        public let b1: Chess.MoveStart
+        public let b2: Chess.MoveStart
+        public let b3: Chess.MoveStart
+        public let b4: Chess.MoveStart
+        public let b5: Chess.MoveStart
+        public let b6: Chess.MoveStart
+        public let b7: Chess.MoveStart
+        public let b8: Chess.MoveStart
+        public let c1: Chess.MoveStart
+        public let c2: Chess.MoveStart
+        public let c3: Chess.MoveStart
+        public let c4: Chess.MoveStart
+        public let c5: Chess.MoveStart
+        public let c6: Chess.MoveStart
+        public let c7: Chess.MoveStart
+        public let c8: Chess.MoveStart
+        public let d1: Chess.MoveStart
+        public let d2: Chess.MoveStart
+        public let d3: Chess.MoveStart
+        public let d4: Chess.MoveStart
+        public let d5: Chess.MoveStart
+        public let d6: Chess.MoveStart
+        public let d7: Chess.MoveStart
+        public let d8: Chess.MoveStart
+        public let e1: Chess.MoveStart
+        public let e2: Chess.MoveStart
+        public let e3: Chess.MoveStart
+        public let e4: Chess.MoveStart
+        public let e5: Chess.MoveStart
+        public let e6: Chess.MoveStart
+        public let e7: Chess.MoveStart
+        public let e8: Chess.MoveStart
+        public let f1: Chess.MoveStart
+        public let f2: Chess.MoveStart
+        public let f3: Chess.MoveStart
+        public let f4: Chess.MoveStart
+        public let f5: Chess.MoveStart
+        public let f6: Chess.MoveStart
+        public let f7: Chess.MoveStart
+        public let f8: Chess.MoveStart
+        public let g1: Chess.MoveStart
+        public let g2: Chess.MoveStart
+        public let g3: Chess.MoveStart
+        public let g4: Chess.MoveStart
+        public let g5: Chess.MoveStart
+        public let g6: Chess.MoveStart
+        public let g7: Chess.MoveStart
+        public let g8: Chess.MoveStart
+        public let h1: Chess.MoveStart
+        public let h2: Chess.MoveStart
+        public let h3: Chess.MoveStart
+        public let h4: Chess.MoveStart
+        public let h5: Chess.MoveStart
+        public let h6: Chess.MoveStart
+        public let h7: Chess.MoveStart
+        public let h8: Chess.MoveStart
 
         // swiftlint:disable function_body_length
-        init(side: Chess.Side) {
+        public init(side: Chess.Side) {
             self.side = side
             self.a1 = .init(side: side, position: .a1)
             self.a2 = .init(side: side, position: .a2)
@@ -180,7 +180,7 @@ extension Chess {
     }
 }
 
-extension Chess.MoveStart {
+public extension Chess.MoveStart {
     var a1: Chess.Move { return .init(side: side, start: position, end: .a1) }
     var a2: Chess.Move { return .init(side: side, start: position, end: .a2) }
     var a3: Chess.Move { return .init(side: side, start: position, end: .a3) }

@@ -23,13 +23,13 @@ public struct PlayPauseButton: View {
                 guard store.game.activePlayer.isBot() else {
                     return AnyView(EmptyView())
                 }
-                image = Image(systemName: "play.circle")
+                image = Image(systemName: "play")
             } else {
                 // The game is playing, we only show the pause button if both sides are bots.
                 guard store.game.white.isBot(), store.game.black.isBot() else {
                     return AnyView(EmptyView())
                 }
-                image = Image(systemName: "pause.circle")
+                image = Image(systemName: "pause")
             }
             return AnyView(image.foregroundColor(.black))
         }

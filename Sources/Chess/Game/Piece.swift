@@ -10,7 +10,7 @@ import Foundation
 public extension Chess {
     struct Piece {
         public let side: Side
-        public let pieceType: PieceType
+        public var pieceType: PieceType
         public var hasMoved: Bool { return pieceType.hasMoved }
         public var FEN: String {
             switch side {
