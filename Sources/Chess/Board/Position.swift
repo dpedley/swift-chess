@@ -7,30 +7,18 @@
 
 import Foundation
 
-extension Chess {
-    public typealias Position = Int // 0-63 like a FEN index
+public extension Chess {
+    typealias Position = Int // 0-63 like a FEN index
 }
-
-extension Chess.Position {
-    // The number's aren't meaningful, just negative and unique
-    private static let timeoutPositionInt = -4
-    private static let resignPositionInt = -17
-    private static let pausedPositionInt = -1971
-    // Note: fileNumber is a 0 based index into the file charaters
-    //       rank is 1 based to reflect position
-    private static let validRanks: [Int] = [1, 2, 3, 4, 5, 6, 7, 8]
-    private static let validFiles: [Int] = [0, 1, 2, 3, 4, 5, 6, 7]
-    private static let isNotBoardPositionError = "Tried to access a position privates when it wasn't a board position"
-    private static let fileCharacters: [Character] = [ "a", "b", "c", "d", "e", "f", "g", "h" ]
-    private static let rankCharacters: [Character] = [ "X", "1", "2", "3", "4", "5", "6", "7", "8" ]
+public extension Chess.Position {
     static func from(fileNumber: Int, rank: Int) -> Chess.Position {
         return ((8 - rank) * 8) + fileNumber
     }
-    public var rawIndex: Int { get { return self } set { self = newValue } }
-    public var fileNumber: Int {
+    var rawIndex: Int { get { return self } set { self = newValue } }
+    var fileNumber: Int {
         return self % 8
     }
-    public var rank: Int {
+    var rank: Int {
         return ((63 - self) / 8) + 1 // The +1 is because we are 1 based.
     }
     var file: Character {
@@ -81,4 +69,17 @@ extension Chess.Position {
     static var timedOutPosition: Chess.Position {
         return Chess.Position.timeoutPositionInt
     }
+}
+extension Chess.Position {
+    // The number's aren't meaningful, just negative and unique
+    private static let timeoutPositionInt = -4
+    private static let resignPositionInt = -17
+    private static let pausedPositionInt = -1971
+    // Note: fileNumber is a 0 based index into the file charaters
+    //       rank is 1 based to reflect position
+    private static let validRanks: [Int] = [1, 2, 3, 4, 5, 6, 7, 8]
+    private static let validFiles: [Int] = [0, 1, 2, 3, 4, 5, 6, 7]
+    private static let isNotBoardPositionError = "Tried to access a position privates when it wasn't a board position"
+    private static let fileCharacters: [Character] = [ "a", "b", "c", "d", "e", "f", "g", "h" ]
+    private static let rankCharacters: [Character] = [ "X", "1", "2", "3", "4", "5", "6", "7", "8" ]
 }
