@@ -73,6 +73,10 @@ public extension Chess {
         public mutating func pause() {
             userPaused = true
         }
+        public mutating func clearDungeons() {
+            blackDungeon.removeAll()
+            whiteDungeon.removeAll()
+        }
         public mutating func nextTurn() {
             activePlayer.turnUpdate(game: self)
         }

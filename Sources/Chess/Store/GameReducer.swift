@@ -34,11 +34,13 @@ public extension ChessStore {
             mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
             mutableGame.info = nil
             mutableGame.board.resetBoard(FEN: fen)
+            mutableGame.clearDungeons()
         case .resetBoard:
             Chess.log.info("resetBoard: resetting...")
             mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
             mutableGame.info = nil
             mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
+            mutableGame.clearDungeons()
         case .gameResult(let result, let status):
             Chess.log.info("gameResult: \(result.rawValue)")
             mutableGame.pgn.result = result
