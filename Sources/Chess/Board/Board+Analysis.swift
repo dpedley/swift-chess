@@ -35,6 +35,7 @@ extension Chess.Board {
         return false
     }
     func createValidVariants(for side: Chess.Side, deepVariants: Bool = false) -> [Chess.SingleMoveVariant]? {
+        // TODO: why doesn't this build attack variants.
         var boards: [Chess.SingleMoveVariant] = []
         let currentFEN = self.FEN
         for square in squares {

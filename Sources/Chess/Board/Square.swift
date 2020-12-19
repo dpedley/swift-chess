@@ -34,10 +34,10 @@ extension Chess {
                 let end = Chess.Position(fenIndex)
                 guard end != position else { continue }
                 var move = Chess.Move(side: piece.side, start: position, end: end)
-                if piece.isMoveValid(&move) {
+                if piece.isAttackValid(&move) {
                     destinations.append(end)
                 }
-                if piece.pieceType.isPawn(), piece.isAttackValid(&move) {
+                if piece.pieceType.isPawn(), piece.isMoveValid(&move) {
                     destinations.append(end)
                 }
             }
