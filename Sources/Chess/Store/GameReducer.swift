@@ -32,14 +32,17 @@ public extension ChessStore {
         case .setBoard(let fen):
             Chess.log.info("setBoard: Board setup as: \(fen)")
             mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
+            mutableGame.info = nil
             mutableGame.board.resetBoard(FEN: fen)
         case .resetBoard:
             Chess.log.info("resetBoard: resetting...")
             mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
+            mutableGame.info = nil
             mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
-        case .gameResult(let result):
+        case .gameResult(let result, let status):
             Chess.log.info("gameResult: \(result.rawValue)")
             mutableGame.pgn.result = result
+            mutableGame.info = .gameEnded(result: result, status: status)
         case .makeMove(let move):
             Chess.log.info("makeMove: \(move.side) \(move.description)")
             makeMove(move, game: &mutableGame)

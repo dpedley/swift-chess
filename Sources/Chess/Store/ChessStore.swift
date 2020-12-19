@@ -90,18 +90,18 @@ extension ChessStore {
              .drawByRepetition,
              .drawBecauseOfInsufficientMatingMaterial,
              .stalemate:
-            self.gameAction(.gameResult(result: .draw))
+            self.gameAction(.gameResult(result: .draw, status: status))
         case .mate:
             let winningSide = opposingSide.opposingSide // The opposingSide lost, so...
             let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
-            self.gameAction(.gameResult(result: result))
+            self.gameAction(.gameResult(result: result, status: status))
         case .resign, .timeout:
             // Resign and timeout have their side kept in last move.
             guard let winningSide = self.game.board.lastMove?.side.opposingSide else {
                 return
             }
             let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
-            self.gameAction(.gameResult(result: result))
+            self.gameAction(.gameResult(result: result, status: status))
         }
     }
 }

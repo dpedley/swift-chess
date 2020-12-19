@@ -12,6 +12,10 @@ public protocol ChessGameDelegate: AnyObject {
     func gameAction(_ action: Chess.GameAction)
 }
 
+public enum GameUpdate {
+    case gameEnded(result: Chess.Game.PGNResult, status: Chess.GameStatus)
+}
+
 public extension Chess {
     struct Game {
         private var botPausedMove: Chess.Move?
@@ -22,6 +26,7 @@ public extension Chess {
         public var white: Player
         public var round: Int = 1
         public var pgn: Chess.Game.PortableNotation
+        public var info: GameUpdate?
         public var activePlayer: Player {
             switch board.playingSide {
             case .white:
