@@ -12,10 +12,10 @@ public extension Chess.UI {
             var color: BoardColor = .blue
     }
     enum BoardColor: String {
-        case brown = "brown"
-        case blue = "blue"
-        case green = "green"
-        case purple = "purple"
+        case brown
+        case blue
+        case green
+        case purple
         public var dark: Color {
             switch self {
             case .brown:
