@@ -22,7 +22,7 @@ final class MoveTests: XCTestCase {
         XCTAssertEqual(whitePawn.UI, .whitePawn)
         var whiteMoveForwardTwo = Chess.Move.white.f2.f4
         testMove(board.attemptMove(&whiteMoveForwardTwo))
-        board.turns.append(Chess.Turn(white: whiteMoveForwardTwo, black: nil))
+        board.turns.append(Chess.Turn(0, white: whiteMoveForwardTwo, black: nil))
         board.playingSide = .black
         var takeEnPassant = Chess.Move.black.g4.f3
         testMove(board.attemptMove(&takeEnPassant))

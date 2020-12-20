@@ -12,10 +12,15 @@ public extension Chess {
     typealias MoveResult = Result<Chess.Piece?, Chess.Move.Limitation>
     struct Turn: Identifiable {
         // swiftlint:disable identifier_name
-        public let id = UUID()
+        public let id: Int
         // swiftlint:enable identifier_name
         public var white: Move?
         public var black: Move?
+        init(_ id: Int, white: Move?, black: Move?) {
+            self.id = id
+            self.white = white
+            self.black = black
+        }
     }
     struct Move: Equatable {
         public static func == (lhs: Move, rhs: Move) -> Bool {

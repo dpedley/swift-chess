@@ -155,14 +155,15 @@ public extension Chess {
             if board.playingSide == .black {
                 if board.turns.count == 0 {
                     // This should only happen in board variants.
-                    board.turns.append(Chess.Turn(white: move, black: nil))
+                    board.turns.append(Chess.Turn(0, white: move, black: nil))
                 } else {
                     // This is the usual black move follows white, so the turn exists in the stack.
                     board.turns[board.turns.count - 1].black = move
                 }
                 board.fullMoves += 1
             } else {
-                board.turns.append(Chess.Turn(white: move, black: nil))
+                let index = board.turns.count
+                board.turns.append(Chess.Turn(index, white: move, black: nil))
             }
         }
         mutating public func clearActivePlayerSelections() {
