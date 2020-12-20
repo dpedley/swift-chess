@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 public struct ChessEnvironment {
+    static let defaults = UserDefaults(suiteName: "Chess")
     public enum TargetEnvironment {
         case production
         case development
