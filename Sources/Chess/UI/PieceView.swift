@@ -34,21 +34,32 @@ public struct DraggablePiece: View {
 /// The style has the colors.
 public struct PieceView: View {
     let piece: Chess.Piece
+    let addDetails: Bool
+    func details(piece: Chess.Piece) -> some View {
+        guard addDetails else {
+            return AnyView(EmptyView())
+        }
+        return AnyView(
+            // Render the details in the highlight color
+            PieceShape.Details(artwork: piece.artwork)
+                .stroke(piece.style.highlight, lineWidth: 1.5)
+        )
+    }
     public var body: some View {
         ZStack {
             // Paint the piece
             PieceShape(artwork: piece.artwork)
-            .foregroundColor(piece.style.fill)
+                .foregroundColor(piece.style.fill)
             // Then outline it
-            PieceShape(artwork: piece.artwork)?
-            .stroke(piece.style.outline)
-            // Render the details in the highlight color
-            PieceShape.Details(artwork: piece.artwork)?
-                .stroke(piece.style.highlight, lineWidth: 1.5)
+            PieceShape(artwork: piece.artwork)
+                .stroke(piece.style.outline)
+            details(piece: piece)
         }
     }
-    public init(piece: Chess.Piece) {
+    public init(piece: Chess.Piece,
+                addDetails: Bool = true) {
         self.piece = piece
+        self.addDetails = addDetails
     }
 }
 
