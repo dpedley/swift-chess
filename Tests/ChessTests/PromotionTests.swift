@@ -18,7 +18,7 @@ final class PromotionTests: XCTestCase {
         // Next with explicit queen promotion
         var board2 = Chess.Board(FEN: promoteFEN)
         var move2 = Chess.Move.black.e2.e1 // black's pawn moves to first rank
-        move2.sideEffect = .promotion(piece: .queen(hasMoved: true))
+        move2.sideEffect = .promotion(piece: .queen)
         testMove(board2.attemptMove(&move2))
         board2.playingSide = move2.side.opposingSide
         XCTAssertEqual(board2.FEN, promotedFEN)
@@ -35,7 +35,7 @@ final class PromotionTests: XCTestCase {
         // Rook promotion
         var board = Chess.Board(FEN: promoteFEN)
         var move = Chess.Move.white.d7.d8 // white's pawn moves to eighth rank
-        move.sideEffect = .promotion(piece: .rook(hasMoved: true, isKingSide: false))
+        move.sideEffect = .promotion(piece: .rook)
         testMove(board.attemptMove(&move))
         board.playingSide = move.side.opposingSide
         XCTAssertEqual(board.FEN, promotedFEN)
@@ -50,7 +50,7 @@ final class PromotionTests: XCTestCase {
         // Rook promotion
         var board = Chess.Board(FEN: promoteFEN)
         var move = Chess.Move.black.c2.c1 // black's pawn moves to first rank
-        let sideEffect = Chess.Move.SideEffect.promotion(piece: .bishop(hasMoved: true))
+        let sideEffect = Chess.Move.SideEffect.promotion(piece: .bishop)
         move.sideEffect = sideEffect
         testMove(board.attemptMove(&move))
         board.playingSide = move.side.opposingSide
@@ -67,7 +67,7 @@ final class PromotionTests: XCTestCase {
         // Knight promotion
         var board = Chess.Board(FEN: promoteFEN)
         var move = Chess.Move.black.c2.c1 // black's pawn moves to first rank
-        move.sideEffect = .promotion(piece: .knight(hasMoved: true))
+        move.sideEffect = .promotion(piece: .knight)
         testMove(board.attemptMove(&move))
         board.playingSide = move.side.opposingSide
         XCTAssertEqual(board.FEN, promotedFEN)

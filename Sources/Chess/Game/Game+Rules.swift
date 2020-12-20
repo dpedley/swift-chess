@@ -9,14 +9,17 @@ import Foundation
 
 extension Chess {
     enum Rules {
-        static func isValidKingMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+        static func isValidKingMove(_ move: Chess.Move) throws -> Bool {
             guard move.rankDistance != 0 || move.fileDistance != 0 else { return false }
             if move.rankDistance<2, move.fileDistance<2 {
                 // Not a castling, and only 1 square in any direction, looks good.
                 return true
             }
             // Are we trying to castle?
-            if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
+            // We can only castle if the king hasn't moved
+            // (Note we don't check the rooks here, this is possible moves w/o regard to the board)
+            let startingPosition: Chess.Position = move.side == .black ? .e8 : .e1
+            if move.start == startingPosition, move.rankDistance == 0, move.fileDistance == 2 {
                 let rookDistance = move.fileDirection < 0 ? 2 : 1
                 let rook = move.end + (move.fileDirection * rookDistance)
                 // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
@@ -46,7 +49,7 @@ extension Chess {
             guard move.rankDistance == move.fileDistance else { return false }
             return true
         }
-        static func isValidPawnMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+        static func isValidPawnMove(_ move: Chess.Move) throws -> Bool {
             guard move.rankDistance != 0 || move.fileDistance != 0 else { return false }
             // Only forward
             if move.rankDirection == move.side.rankDirection {
@@ -54,10 +57,6 @@ extension Chess {
                     return true
                 }
                 if move.rankDistance == 2, move.fileDistance == 0 {
-                    // Two step is only allow as the first move
-                    if hasMoved {
-                        return false
-                    }
                     // a two step pawn move is only valid from the pawn's initial rank
                     guard move.start.rank == move.side.pawnsInitialRank else {
                         return false

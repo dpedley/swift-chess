@@ -9,39 +9,12 @@ import Foundation
 
 public extension Chess {
     enum PieceType {
-        case pawn(hasMoved: Bool)
-        case knight(hasMoved: Bool)
-        case bishop(hasMoved: Bool)
-        case rook(hasMoved: Bool, isKingSide: Bool)
-        case queen(hasMoved: Bool)
-        case king(hasMoved: Bool)
-        var hasMoved: Bool {
-            switch self {
-            case .pawn(let hasMoved),
-                 .knight(let hasMoved),
-                 .bishop(let hasMoved),
-                 .rook(let hasMoved, _),
-                 .queen(let hasMoved),
-                 .king(let hasMoved):
-                return hasMoved
-            }
-        }
-        func pieceMoved() -> PieceType {
-            switch self {
-            case .pawn(let hasMoved):
-                return hasMoved ? .pawn(hasMoved: true) : self
-            case .rook(let hasMoved, let isKingSide):
-                return hasMoved ? .rook(hasMoved: true, isKingSide: isKingSide) : self
-            case .king(let hasMoved):
-                return hasMoved ? .king(hasMoved: true) : self
-            case .knight(let hasMoved):
-                return hasMoved ? .knight(hasMoved: true) : self
-            case .bishop(let hasMoved):
-                return hasMoved ? .bishop(hasMoved: true) : self
-            case .queen(let hasMoved):
-                return hasMoved ? .queen(hasMoved: true) : self
-            }
-        }
+        case pawn
+        case knight
+        case bishop
+        case rook
+        case queen
+        case king
         func fen(_ side: Side = .black) -> String {
             let upper: String
             switch self {

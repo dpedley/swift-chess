@@ -31,9 +31,9 @@ extension Chess.Piece {
             return Chess.Rules.isValidRookMove(move)
         case .queen:
             return Chess.Rules.isValidQueenMove(move)
-        case .pawn(let hasMoved):
+        case .pawn:
             do {
-                return try Chess.Rules.isValidPawnMove(move, hasMoved: hasMoved)
+                return try Chess.Rules.isValidPawnMove(move)
             } catch let error {
                 guard let sideEffect = error as? Chess.Move.SideEffect else {
                     fatalError("Unknown error - \(error)")
@@ -41,9 +41,9 @@ extension Chess.Piece {
                 move.sideEffect = sideEffect
                 return true
             }
-        case .king(let hasMoved):
+        case .king:
             do {
-                return try Chess.Rules.isValidKingMove(move, hasMoved: hasMoved)
+                return try Chess.Rules.isValidKingMove(move)
             } catch let error {
                 guard let sideEffect = error as? Chess.Move.SideEffect else {
                     Chess.log.critical("Unknown king error: \(error)")

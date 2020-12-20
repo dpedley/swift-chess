@@ -13,6 +13,10 @@ public extension Chess {
         public var squares: [Square] = []
         public var turns: [Turn] = []
         public var isInCheck: Bool?
+        public var blackCastleKingSide: Bool?
+        public var blackCastleQueenSide: Bool?
+        public var whiteCastleKingSide: Bool?
+        public var whiteCastleQueenSide: Bool?
         public var playingSide: Side = .white {
             didSet {
                 // Only do this for an active visual board, it's expensive for a NilVisualizer

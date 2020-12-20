@@ -124,7 +124,7 @@ public extension Chess.Board {
         // When pawns move to their last rank, we need a promotion side effect
         // we default to queen promotion if none is given.
         if piece.isLastRank(move.end), move.sideEffect.isUnknown {
-            move.sideEffect = .promotion(piece: .queen(hasMoved: true))
+            move.sideEffect = .promotion(piece: .queen)
         }
         try commitSideEffect(&move, piece: &piece, capturedPiece: capturedPiece)
         squares[move.start].piece = piece
@@ -140,6 +140,36 @@ public extension Chess.Board {
                 move.unicodePGN = "\(piece.unicode)\(unicodeCapture)\(move.end.FEN)"
                 move.PGN = "\(piece.FEN)\(unicodeCapture)\(move.end.FEN)"
             }
+        }
+        updateCastlingRights(move, piece: piece)
+    }
+    private mutating func updateCastlingRights(_ move: Chess.Move, piece: Chess.Piece) {
+        switch piece.pieceType {
+        case .king:
+            if move.side == .black {
+                blackCastleKingSide = false
+                blackCastleQueenSide = false
+            } else {
+                whiteCastleKingSide = false
+                whiteCastleQueenSide = false
+            }
+        case .rook:
+            if move.start == Chess.Rules.startingPositionForRook(side: move.side, kingSide: true) {
+                if move.side == .black {
+                    blackCastleKingSide = false
+                } else {
+                    whiteCastleKingSide = false
+                }
+            }
+            if move.start == Chess.Rules.startingPositionForRook(side: move.side, kingSide: false) {
+                if move.side == .black {
+                    blackCastleQueenSide = false
+                } else {
+                    whiteCastleQueenSide = false
+                }
+            }
+        case .pawn, .knight, .bishop, .queen:
+            break
         }
     }
     func isKingMated() -> Bool {
@@ -254,7 +284,7 @@ extension Chess.Board {
             return canPieceMove(&move, piece: piece)
         }
     }
-    private func canPawnMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+    private func canPawnMove(_ move: Chess.Move) throws -> Bool {
         // Only forward
         if move.rankDirection == move.side.rankDirection {
             if !squares[move.end].isEmpty {
@@ -266,7 +296,7 @@ extension Chess.Board {
             }
             if move.rankDistance == 2, move.fileDistance == 0 {
                 // Two step is only allow as the first move
-                guard !hasMoved else { return false }
+                guard move.start.rank == move.side.pawnsInitialRank else { return false }
                 // Ensure the pawn isn't trying to jump a piece
                 let jumpPosition = (move.start + move.end) / 2
                 // If there is a piece in the spot one space forward, we can't move 2 spaces.
@@ -285,16 +315,19 @@ extension Chess.Board {
         }
         return false
     }
-    private func canKingMove(_ move: Chess.Move, hasMoved: Bool) throws -> Bool {
+    private func canKingMove(_ move: Chess.Move) throws -> Bool {
         if move.rankDistance<2, move.fileDistance<2 {
             return true
         }
         // Are we trying to castle?
-        if !hasMoved, move.rankDistance == 0, move.fileDistance == 2 {
+        if move.rankDistance == 0, move.fileDistance == 2 {
             let isKingSide: Bool = move.fileDirection > 0
             let rookPosition = Chess.Rules.startingPositionForRook(side: move.side, kingSide: isKingSide)
             let square = squares[rookPosition]
-            if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
+            let allowed: Bool? = move.side == .black ?
+                (isKingSide ? blackCastleKingSide : blackCastleQueenSide) :
+                (isKingSide ? whiteCastleKingSide : whiteCastleQueenSide)
+            if let rook = square.piece, rook.pieceType == .rook, allowed == true {
                 // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
                 throw Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection)
             }
@@ -307,9 +340,9 @@ extension Chess.Board {
             return false
         }
         switch piece.pieceType {
-        case .pawn(let hasMoved):
+        case .pawn:
             do {
-                return try canPawnMove(move, hasMoved: hasMoved)
+                return try canPawnMove(move)
             } catch let error {
                 guard let sideEffect = error as? Chess.Move.SideEffect else {
                     fatalError("Unknown side effect when moving pawn.")
@@ -322,9 +355,9 @@ extension Chess.Board {
         case .bishop, .rook, .queen:
             guard piece.isMoveValid(&move) else { return false }
             return isMovePathOpen(move)
-        case .king(let hasMoved):
+        case .king:
             do {
-                return try canKingMove(move, hasMoved: hasMoved)
+                return try canKingMove(move)
             } catch let error {
                 guard let sideEffect = error as? Chess.Move.SideEffect else {
                     fatalError("Unknown side effect when moving pawn.")
