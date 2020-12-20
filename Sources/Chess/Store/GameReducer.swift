@@ -58,10 +58,10 @@ public extension ChessStore {
         passThrough.send(mutableGame)
     }
     private static func resetBoard(FEN: String, game: inout Chess.Game) {
-        mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
-        mutableGame.info = nil
-        mutableGame.board.resetBoard(FEN: FEN)
-        mutableGame.clearDungeons()
+        game.pgn = Chess.Game.freshPGN(game.black, game.white)
+        game.info = nil
+        game.board.resetBoard(FEN: FEN)
+        game.clearDungeons()
     }
     private static func makeMove(_ move: Chess.Move, game: inout Chess.Game) {
         game.execute(move: move)
