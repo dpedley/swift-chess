@@ -29,16 +29,12 @@ public extension ChessStore {
         case .pauseGame:
             Chess.log.info("pauseGame: Pausing...")
             mutableGame.userPaused = true
-        case .setBoard(let fen):
-            Chess.log.info("setBoard: Board setup as: \(fen)")
-            mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
-            mutableGame.info = nil
-            mutableGame.board.resetBoard(FEN: fen)
+        case .setBoard(let FEN):
+            Chess.log.info("setBoard: Board setup as: \(FEN)")
+            resetBoard(FEN: FEN, game: &mutableGame)
         case .resetBoard:
             Chess.log.info("resetBoard: resetting...")
-            mutableGame.pgn = Chess.Game.freshPGN(mutableGame.black, mutableGame.white)
-            mutableGame.info = nil
-            mutableGame.board.resetBoard(FEN: Chess.Board.startingFEN)
+            resetBoard(FEN: Chess.Board.startingFEN, game: &mutableGame)
         case .gameResult(let result, let status):
             Chess.log.info("gameResult: \(result.rawValue)")
             mutableGame.pgn.result = result
@@ -60,6 +56,12 @@ public extension ChessStore {
             userTappedSquare(position, game: &mutableGame)
         }
         passThrough.send(mutableGame)
+    }
+    private static func resetBoard(FEN: String, game: inout Chess.Game) {
+        game.pgn = Chess.Game.freshPGN(game.black, game.white)
+        game.info = nil
+        game.board.resetBoard(FEN: FEN)
+        game.clearDungeons()
     }
     private static func makeMove(_ move: Chess.Move, game: inout Chess.Game) {
         game.execute(move: move)

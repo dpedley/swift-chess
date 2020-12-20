@@ -21,7 +21,9 @@ public extension Chess.Board {
                let toSquares = square.buildMoveDestinations(board: self) {
                 // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    let moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
+                    let moveAttempt = Chess.Move(side: side,
+                                                 start: square.position,
+                                                 end: toSquare)
                     let boardChange = Chess.BoardChange.moveMade(move: moveAttempt)
                     let variant = Chess.SingleMoveVariant(originalFEN: self.FEN,
                                                           changesToAttempt: [boardChange],
@@ -42,12 +44,15 @@ public extension Chess.Board {
                let toSquares = square.buildMoveDestinations(board: self) {
                     // Try to create a tmp board from every square this piece thinks it can attack.
                 for toSquare in toSquares {
-                    var moveAttempt = Chess.Move(side: side, start: square.position, end: toSquare)
+                    var moveAttempt = Chess.Move(side: side,
+                                                 start: square.position,
+                                                 end: toSquare)
                     var tmpBoard = Chess.Board(FEN: currentFEN)
                     let attempt = tmpBoard.attemptMove(&moveAttempt)
                     switch attempt {
                     case .success:
-                        let change = Chess.BoardChange.moveMade(move: moveAttempt.clone())
+                        let moveChange = moveAttempt
+                        let change = Chess.BoardChange.moveMade(move: moveChange)
                         let variant = Chess.SingleMoveVariant(originalFEN: self.FEN,
                                                               changesToAttempt: [change],
                                                               deepVariant: deepVariants)
@@ -85,7 +90,9 @@ public extension Chess.Board {
             }
             for toSquare in toSquares {
                 var tmpBoard = Chess.Board(FEN: currentFEN)
-                var moveAttempt = Chess.Move(side: self.playingSide, start: square.position, end: toSquare)
+                var moveAttempt = Chess.Move(side: self.playingSide,
+                                             start: square.position,
+                                             end: toSquare)
                 let attempt = tmpBoard.attemptMove(&moveAttempt)
                 switch attempt {
                 case .success:

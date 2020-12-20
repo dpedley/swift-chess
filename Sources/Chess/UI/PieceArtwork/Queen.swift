@@ -81,11 +81,11 @@ struct QueenPreview: PreviewProvider {
     static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
-            PieceView(position: .d8)
+            DraggablePiece(position: .d8)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: 0)
-            PieceView(position: .d1)
+            DraggablePiece(position: .d1)
                 .environmentObject(store)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: 0)

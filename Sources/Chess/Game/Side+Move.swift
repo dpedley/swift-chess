@@ -31,12 +31,12 @@ public extension Chess.Side {
         if fromString.count != 4 {
             // Is this a promotion? eg. a2a1q
             guard fromString.count == 5,
-                let promotingMove = twoSquareMove(fromString: String(fromString.dropLast()) ),
+                var promotingMove = twoSquareMove(fromString: String(fromString.dropLast()) ),
                 let promotedPiece = Chess.Piece.from(fen: String(fromString.dropFirst(4))) else {
                     // We couldn't make a move
                     return nil
             }
-            promotingMove.sideEffect = .promotion(piece: promotedPiece)
+            promotingMove.sideEffect = .promotion(piece: promotedPiece.pieceType)
             return promotingMove
         }
         let startPosition = String(fromString.dropLast(2))

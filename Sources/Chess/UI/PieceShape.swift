@@ -45,8 +45,7 @@ struct PieceShape: Shape {
             }
         }
     }
-    init?(artwork: PieceArtwork?) {
-        guard let artwork = artwork else { return nil }
+    init(artwork: PieceArtwork) {
         self.artwork = artwork
     }
 }

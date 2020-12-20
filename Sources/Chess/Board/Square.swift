@@ -20,7 +20,9 @@ extension Chess {
             var positions: [Square] = []
             for testIndex in 0..<board.squares.count {
                 let testSquare = board.squares[testIndex]
-                var moveTest = Move(side: piece.side, start: position, end: testSquare.position)
+                var moveTest = Move(side: piece.side,
+                                    start: position,
+                                    end: testSquare.position)
                 if piece.isAttackValid(&moveTest) {
                     positions.append(testSquare)
                 }
@@ -29,7 +31,7 @@ extension Chess {
         }
         private func validateSideEffects(_ move: Chess.Move, board: Chess.Board) -> Bool {
             switch move.sideEffect {
-            case .noneish, .notKnown, .enPassantCapture, .enPassantInvade, .promotion:
+            case .verified, .notKnown, .enPassantCapture, .enPassantInvade, .promotion:
                 return true
             case .castling(let rook, _):
                 let kingStart: Chess.Position = move.side == .black ? .e8 : .e1
@@ -48,7 +50,9 @@ extension Chess {
             for fenIndex in 0..<64 {
                 let end = Chess.Position(fenIndex)
                 guard end != position else { continue }
-                var move = Chess.Move(side: piece.side, start: position, end: end)
+                var move = Chess.Move(side: piece.side,
+                                      start: position,
+                                      end: end)
                 if piece.isAttackValid(&move) {
                     if validateSideEffects(move, board: board) {
                         destinations.append(end)

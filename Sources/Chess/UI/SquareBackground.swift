@@ -38,7 +38,9 @@ extension SquareBackground: DropDelegate {
             return false
         }
         // Try to construct the move to predict if the drop is successful
-        var testMove = Chess.Move(side: piece.side, start: square.position, end: position)
+        var testMove = Chess.Move(side: piece.side,
+                                  start: square.position,
+                                  end: position)
         var testBoard = Chess.Board(FEN: store.game.board.FEN)
         let result = testBoard.attemptMove(&testMove)
         switch result {

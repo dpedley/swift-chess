@@ -15,7 +15,9 @@ public extension Chess.Board {
         var attackers: [Chess.Square] = []
         for square in squares {
             guard let piece = square.piece, piece.side == side else { continue }
-            var attack = Chess.Move(side: side, start: square.position, end: targetSquare.position)
+            var attack = Chess.Move(side: side,
+                                    start: square.position,
+                                    end: targetSquare.position)
             var tmpBoard = Chess.Board(FEN: self.FEN)
             tmpBoard.playingSide = side
             let result = tmpBoard.attemptMove(&attack, applyVariants: applyVariants)
@@ -71,7 +73,7 @@ public extension Chess.Board {
         }
         // We commit the move, which will throw a limitation if the move cannot be applied to the board.
         do {
-            try commit(move, capturedPiece: capturedPiece)
+            try commit(&move, capturedPiece: capturedPiece)
         } catch let error {
             guard let limitation = error as? Chess.Move.Limitation else {
                 return .failure(.invalidMoveForPiece)
@@ -81,7 +83,7 @@ public extension Chess.Board {
         return .success(capturedPiece)
     }
     mutating private
-    func commitSideEffect(_ move: Chess.Move, piece: inout Chess.Piece, capturedPiece: Chess.Piece?) throws {
+    func commitSideEffect(_ move: inout Chess.Move, piece: inout Chess.Piece, capturedPiece: Chess.Piece?) throws {
         switch move.sideEffect {
         case .notKnown:
             throw move.sideEffect
@@ -97,21 +99,21 @@ public extension Chess.Board {
             squares[destinationIndex].piece = rook
         case .promotion(let promotedPiece):
             // omg we're getting an upgrade.
-            piece = promotedPiece
+            piece = Chess.Piece(side: move.side, pieceType: promotedPiece)
             let captureBase = (capturedPiece != nil) ? "\(move.start.file)x" : ""
-            move.unicodePGN = "\(captureBase)\(move.end.FEN)=\(promotedPiece.unicode)"
-            move.PGN = "\(captureBase)\(move.end.FEN)=\(promotedPiece.FEN)"
+            move.unicodePGN = "\(captureBase)\(move.end.FEN)=\(piece.unicode)"
+            move.PGN = "\(captureBase)\(move.end.FEN)=\(piece.FEN)"
         case .enPassantInvade:
             break // This is handled by lastMove. We check that later to see if the invader double stepped.
         case .enPassantCapture: // This was handled before the commit, see capturedPiece.
             move.unicodePGN = "\(move.start.file)x\(move.end)"
             move.PGN = move.unicodePGN
-        case .noneish:
+        case .verified:
             break // Do nothing ish
         }
     }
     // Crashes if the move cannot be made, vet using attemptMove first.
-    mutating func commit(_ move: Chess.Move, capturedPiece: Chess.Piece?) throws {
+    mutating func commit(_ move: inout Chess.Move, capturedPiece: Chess.Piece?) throws {
         guard let movingPiece = squares[move.start].piece else {
             throw Chess.Move.Limitation.noPieceToMove
         }
@@ -122,9 +124,9 @@ public extension Chess.Board {
         // When pawns move to their last rank, we need a promotion side effect
         // we default to queen promotion if none is given.
         if piece.isLastRank(move.end), move.sideEffect.isUnknown {
-            move.sideEffect = .promotion(piece: .init(side: piece.side, pieceType: .queen(hasMoved: true)))
+            move.sideEffect = .promotion(piece: .queen(hasMoved: true))
         }
-        try commitSideEffect(move, piece: &piece, capturedPiece: capturedPiece)
+        try commitSideEffect(&move, piece: &piece, capturedPiece: capturedPiece)
         squares[move.start].piece = piece
         squares[move.end].piece = squares[move.start].piece
         squares[move.start].piece = nil
@@ -178,7 +180,7 @@ extension Chess.Board {
                 try applyVariantsForMoveAttempt(move)
             }
             // The move passed our tests, we can commit it safely
-            move.setVerified()
+            move.verify()
             return
         }
         guard piece.side != toPiece.side else {
@@ -192,7 +194,7 @@ extension Chess.Board {
             try applyVariantsForMoveAttempt(move)
         }
         // The move passed our tests, we can commit it safely
-        move.setVerified()
+        move.verify()
     }
     private func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
         let boardChange = Chess.BoardChange.moveMade(move: move)
@@ -294,7 +296,7 @@ extension Chess.Board {
             let square = squares[rookPosition]
             if let rook = square.piece, case .rook(let hasMoved, _) = rook.pieceType, !hasMoved {
                 // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
-               throw Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection)
+                throw Chess.Move.SideEffect.castling(rook: square.position, destination: move.end - move.fileDirection)
             }
         }
         return false
