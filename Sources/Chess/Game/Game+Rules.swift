@@ -15,9 +15,11 @@ extension Chess {
                 // Not a castling, and only 1 square in any direction, looks good.
                 return true
             }
-            // STILL UNDONE here we need to check initial spots to see if we can still castle.
             // Are we trying to castle?
-            if move.rankDistance == 0, move.fileDistance == 2 {
+            // We can only castle if the king hasn't moved
+            // (Note we don't check the rooks here, this is possible moves w/o regard to the board)
+            let startingPosition: Chess.Position = move.side == .black ? .e8 : .e1
+            if move.start == startingPosition, move.rankDistance == 0, move.fileDistance == 2 {
                 let rookDistance = move.fileDirection < 0 ? 2 : 1
                 let rook = move.end + (move.fileDirection * rookDistance)
                 // Note "move.end - move.fileDirection" is always the square the king passes over when castling.
