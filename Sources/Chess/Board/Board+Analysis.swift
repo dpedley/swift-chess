@@ -77,7 +77,7 @@ public extension Chess.Board {
     func square(_ position: Chess.Position, isDefendedBy side: Chess.Side) -> Bool {
         var shallowCopy = Chess.Board(FEN: FEN)
         // Make sure the spot can be attacked in our test by placing an opposing pawn there.
-        shallowCopy.squares[position].piece = Chess.Piece(side: side.opposingSide, pieceType: .pawn(hasMoved: true))
+        shallowCopy.squares[position].piece = Chess.Piece(side: side.opposingSide, pieceType: .pawn)
         let attackers = shallowCopy.allSquaresAttacking(squares[position], side: side, applyVariants: true)
         return attackers.count > 0
     }

@@ -17,11 +17,12 @@ public extension Chess.Board {
             Chess.log.critical("Invalid FEN: Cannot find active side.")
             return
         }
+        let castlingRights = FENParts[2]
+        parseCastlingString(castlingRights)
         guard let moveCount = Int(FENParts[5]) else {
             Chess.log.critical("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
             return
         }
-        // Still UNDONE: castling checks in the hasMoved below
         // en passant square last move side effect additions
         guard let piecesString = FENParts.first else {
             Chess.log.critical("Invalid FEN")
@@ -52,18 +53,26 @@ extension Chess.Board {
         fen += " \(playingSide.FEN) \(createCastlingString()) \(enPassantPosition?.FEN ?? "-") 0 \(fullMoves)"
         return fen
     }
+    private mutating func parseCastlingString(_ castling: String) {
+        guard castling.count > 0, castling != "-" else {
+            blackCastleKingSide = false
+            blackCastleQueenSide = false
+            whiteCastleKingSide = false
+            whiteCastleQueenSide = false
+            return
+        }
+        blackCastleKingSide = castling.contains("k")
+        blackCastleQueenSide = castling.contains("q")
+        whiteCastleKingSide = castling.contains("K")
+        whiteCastleQueenSide = castling.contains("Q")
+    }
     private func createCastlingString() -> String {
         var castling = ""
         // whiteKing = .e1
-        if squares[.e1].piece?.hasMoved == false {
-            if squares[.h1].piece?.hasMoved == false { castling += "K" }
-            if squares[.a1].piece?.hasMoved == false { castling += "Q" }
-        }
-        // blackKing = .e8
-        if squares[.e8].piece?.hasMoved == false {
-            if squares[.h8].piece?.hasMoved == false { castling += "k" }
-            if squares[.a8].piece?.hasMoved == false { castling += "q" }
-        }
+        if whiteCastleKingSide == true { castling += "K" }
+        if whiteCastleQueenSide == true { castling += "Q" }
+        if blackCastleKingSide == true { castling += "k" }
+        if blackCastleQueenSide == true { castling += "q" }
         if castling.count == 0 { castling = "-" }
         return castling
     }
@@ -95,15 +104,7 @@ extension Chess.Board {
                     Chess.log.critical("FEN Character \(fenChar) invalid at: \(Chess.Position(fenIndex).FEN)")
                     return
                 }
-                let updatedPiece: Chess.Piece
-                if isValid(startingSquare: squares[fenIndex], for: piece) {
-                    updatedPiece = piece
-                } else {
-                    var movedPiece = piece
-                    movedPiece.pieceType = piece.pieceType.pieceMoved()
-                    updatedPiece = movedPiece
-                }
-                self.squares[fenIndex].piece = updatedPiece
+                self.squares[fenIndex].piece = piece
                 fileIndex+=1
             }
         }

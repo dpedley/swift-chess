@@ -17,7 +17,6 @@ public extension Chess {
         // swiftlint:enable identifier_name
         public let side: Side
         public var pieceType: PieceType
-        public var hasMoved: Bool { return pieceType.hasMoved }
         public var FEN: String {
             switch side {
             case .black:
@@ -43,17 +42,17 @@ public extension Chess {
             let side: Side = (lower == fen) ? .black : .white
             var foundType: PieceType?
             if lower == "p" {
-                foundType = .pawn(hasMoved: false)
+                foundType = .pawn
             } else if lower == "n" {
-                foundType = .knight(hasMoved: false)
+                foundType = .knight
             } else if lower == "b" {
-                foundType = .bishop(hasMoved: false)
+                foundType = .bishop
             } else if lower == "r" {
-                foundType = .rook(hasMoved: false, isKingSide: true)
+                foundType = .rook
             } else if lower == "q" {
-                foundType = .queen(hasMoved: false)
+                foundType = .queen
             } else if lower == "k" {
-                foundType = .king(hasMoved: false)
+                foundType = .king
             }
             guard let pieceType = foundType else {
                 return nil
