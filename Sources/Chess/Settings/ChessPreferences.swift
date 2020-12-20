@@ -5,11 +5,13 @@
 //  Created by Douglas Pedley on 12/14/20.
 //
 
-import Foundation
+import SwiftUI
 
 public extension Chess.UI {
     struct Preferences {
-        var highlightLastMove: Bool = true
-        var highlightChoices: Bool = true
+        @AppStorage("highlightLastMove", store: ChessEnvironment.defaults)
+            var highlightLastMove: Bool = true
+        @AppStorage("highlightChoices", store: ChessEnvironment.defaults)
+            var highlightChoices: Bool = true
     }
 }
