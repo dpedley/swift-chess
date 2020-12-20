@@ -1,21 +1,13 @@
 //
-//  Piece.swift
+//  PieceGlyph.swift
 //
 //  Created by Douglas Pedley on 1/12/19.
-//  Copyright © 2019 d0. All rights reserved.
 //
 
 import SwiftUI
 
-extension Chess.UI {
-    public enum Selection {
-        case none
-        case premove
-        case highlight
-        case target
-        case attention
-    }
-    public enum Piece: String, Equatable {
+extension Chess {
+    public enum PieceGlyph: String, Equatable {
         case blackKing = "\u{265A}"
         case blackQueen = "\u{265B}"
         case blackRook = "\u{265C}"

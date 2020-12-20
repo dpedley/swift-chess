@@ -2,7 +2,6 @@
 //  Game+Notation.swift
 //
 //  Created by Douglas Pedley on 1/18/19.
-//  Copyright © 2019 d0. All rights reserved.
 //
 
 /*

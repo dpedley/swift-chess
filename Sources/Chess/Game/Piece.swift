@@ -2,7 +2,6 @@
 //  Piece.swift
 //
 //  Created by Douglas Pedley on 1/5/19.
-//  Copyright © 2019 d0. All rights reserved.
 //
 
 import Foundation
@@ -26,12 +25,12 @@ public extension Chess {
             }
         }
         // swiftlint:disable identifier_name
-        public let UI: UI.Piece // Let's revisit this name
+        public let UI: PieceGlyph // Let's revisit this name
         // swiftlint:enable identifier_name
         public init(side: Side, pieceType: PieceType) {
             self.side = side
             self.pieceType = pieceType
-            self.UI = Chess.UI.Piece(side: side, pieceType: pieceType)
+            self.UI = Chess.PieceGlyph(side: side, pieceType: pieceType)
         }
         public static func from(fen: String) -> Piece? {
             guard fen.count == 1 else {

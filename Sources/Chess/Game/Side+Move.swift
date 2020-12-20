@@ -2,7 +2,6 @@
 //  Side+Move.swift
 //
 //  Created by Douglas Pedley on 1/17/19.
-//  Copyright © 2019 d0. All rights reserved.
 //
 
 import Foundation
