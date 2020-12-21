@@ -8,7 +8,7 @@
 import Foundation
 import GameplayKit
 
-public extension Chess {
+public extension Chess.Robot {
     /// A min / max strategist using GKGameModel
     class MindyMaxBot: Chess.Player {
         var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
@@ -24,9 +24,9 @@ public extension Chess {
         public override func iconName() -> String {
             switch side {
             case .black:
-                return "ladybug.fill"
+                return "bolt.fill"
             case .white:
-                return "ladybug"
+                return "bolt"
             }
         }
         /// The main override from Chess.Player

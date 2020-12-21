@@ -8,7 +8,7 @@
 import Foundation
 import GameplayKit
 
-public extension Chess {
+public extension Chess.Robot {
     /// A monty carlo strategist using GKGameModel
     class MontyCarloBot: Chess.Player {
         var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
@@ -25,9 +25,9 @@ public extension Chess {
         public override func iconName() -> String {
             switch side {
             case .black:
-                return "ladybug.fill"
+                return "frame.fill"
             case .white:
-                return "ladybug"
+                return "frame"
             }
         }
         /// The main override from Chess.Player
