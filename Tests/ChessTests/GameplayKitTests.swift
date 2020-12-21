@@ -7,13 +7,12 @@
 import XCTest
 import Combine
 @testable import Chess
-///#if !canImport(ObjectiveC)
 //import GameplayKit
 
 final class GameplayKitTests: XCTestCase {
     var store: ChessStore?
     var cancellables = Set<AnyCancellable>()
-    var testDelegate: GameTestDelegate?
+    var test: GameTestDelegate?
     var testGame: Chess.Game?
     func testMindyMaxBot() {
         /*
@@ -30,7 +29,7 @@ final class GameplayKitTests: XCTestCase {
         }
         game.delegate = delegate
         testGame = game
-        testDelegate = delegate
+        test = delegate
         game.nextTurn()
         waitForExpectations(timeout: 10, handler: nil)
  */
@@ -50,7 +49,7 @@ final class GameplayKitTests: XCTestCase {
         }
         game.delegate = delegate
         testGame = game
-        testDelegate = delegate
+        test = delegate
         game.nextTurn()
         waitForExpectations(timeout: 120, handler: nil)
  */
@@ -60,4 +59,3 @@ final class GameplayKitTests: XCTestCase {
         ("testMontyCarloBot", testMontyCarloBot)
     ]
 }
-///#endif

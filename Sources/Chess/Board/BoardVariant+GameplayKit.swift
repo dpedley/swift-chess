@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  BoardVariant+GameplayKit.swift
 //  
 //
 //  Created by Douglas Pedley on 12/21/20.
