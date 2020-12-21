@@ -101,8 +101,47 @@ extension Chess.BoardVariant: GKGameModel {
             Chess.log.error("Couldn't apply GameplayKit update: \(gameModelUpdate)")
             return
         }
-        var moveAttempt = update.move
-        _ = board.attemptMove(&moveAttempt)
+        do {
+            try makeMove(update.move, deepVariant: true)
+        } catch let error {
+            Chess.log.error("GameModel apply move failed: \(error.localizedDescription)")
+        }
+    }
+    public func unapplyGameModelUpdate(_ gameModelUpdate: GKGameModelUpdate) {
+        guard let update = gameModelUpdate as? Chess.GameModelUpdate else {
+            Chess.log.error("Couldn't apply GameplayKit update: \(gameModelUpdate)")
+            return
+        }
+        do {
+            try undoMove(update.move)
+        } catch let error {
+            Chess.log.error("GameModel undo move failed: \(error.localizedDescription)")
+        }
+    }
+    public func score(for player: GKGameModelPlayer) -> Int {
+        guard let player = player as? Chess.GameModelPlayer else {
+            fatalError("Misconfigured gameplaykit.")
+        }
+        let score = Int(board.pieceWeights().value(for: player.side) * 1000)
+        return score
+    }
+    public func isWin(for player: GKGameModelPlayer) -> Bool {
+        guard let player = player as? Chess.GameModelPlayer else {
+            fatalError("Misconfigured gameplaykit.")
+        }
+        guard player.side == board.playingSide.opposingSide, board.isKingMated() else {
+            return false
+        }
+        return true
+    }
+    public func isLoss(for player: GKGameModelPlayer) -> Bool {
+        guard let player = player as? Chess.GameModelPlayer else {
+            fatalError("Misconfigured gameplaykit.")
+        }
+        guard player.side == board.playingSide, board.isKingMated() else {
+            return false
+        }
+        return true
     }
     public func copy(with zone: NSZone? = nil) -> Any {
         let copyBoard = Chess.BoardVariant(originalFEN: originalFEN, deepVariant: true)
