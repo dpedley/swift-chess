@@ -14,7 +14,7 @@ public extension Chess.Robot {
         var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
         let strategist: GKMinmaxStrategist = {
             let strategist = GKMinmaxStrategist()
-            strategist.maxLookAheadDepth = 5
+            strategist.maxLookAheadDepth = 3
             return strategist
         }()
         /// A few overrides from Chess.Player

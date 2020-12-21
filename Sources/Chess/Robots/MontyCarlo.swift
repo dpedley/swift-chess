@@ -14,8 +14,8 @@ public extension Chess.Robot {
         var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
         let strategist: GKMonteCarloStrategist = {
             let strategist = GKMonteCarloStrategist()
-            strategist.budget = 8
-            strategist.explorationParameter = 4
+            strategist.budget = 4
+            strategist.explorationParameter = 3
             return strategist
         }()
         /// A few overrides from Chess.Player
