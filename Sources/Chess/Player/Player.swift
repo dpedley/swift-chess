@@ -52,6 +52,12 @@ public extension Chess {
             if self is Chess.Robot.GreedyBot {
                 return "GreedyBot"
             }
+            if self is Chess.Robot.MindyMaxBot {
+                return "MindyMax"
+            }
+            if self is Chess.Robot.MontyCarloBot {
+                return "MontyCarlo"
+            }
             if self is Chess.Robot {
                 return "RandomBot"
             }
