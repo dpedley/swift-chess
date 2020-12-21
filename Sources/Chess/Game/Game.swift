@@ -137,6 +137,9 @@ public extension Chess {
                 case .white:
                     blackDungeon.append(piece)
                 }
+                Chess.Sounds.Capture.play()
+            } else {
+                Chess.Sounds.Move.play()
             }
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
