@@ -28,7 +28,7 @@ public extension Chess {
                 changes.append(moveAttempt)
             }
         }
-        public func undoMove(_ move: Chess.Move) throws {
+        public func undoMove(_ move: Chess.Move, deepVariant: Bool) throws {
             guard let lastMove = changes.last else {
                 throw BoardVariantError.noMoveToUndo
             }
@@ -42,12 +42,16 @@ public extension Chess {
                 var moveAttempt = change
                 // Note this assumption, undo is used primarily with
                 // GameplayKit Strategist which wants the apply variants
-                _ = board.attemptMove(&moveAttempt, applyVariants: true)
+                _ = board.attemptMove(&moveAttempt, applyVariants: deepVariant)
             }
         }
-        public init(originalFEN: String, deepVariant: Bool) {
+        public init(originalFEN: String) {
             self.originalFEN = originalFEN
             self.board = Board(FEN: originalFEN)
+        }
+        public init(originalBoard: Chess.Board) {
+            self.board = originalBoard
+            self.originalFEN = originalBoard.FEN
         }
     }
 }
@@ -62,10 +66,23 @@ public extension Chess {
         }
     }
     class GameModelUpdate: NSObject, GKGameModelUpdate {
-        let move: Chess.Move
+        let variant: Chess.BoardVariant
         public var value: Int = 0
-        public required init(_ move: Chess.Move) {
-            self.move = move
+        public required init(_ variant: Chess.BoardVariant) {
+            guard let move = variant.changes.last else {
+                fatalError("Game model update assume at least one move.")
+            }
+            self.variant = variant
+            guard let rollback = variant.copy() as? Chess.BoardVariant else { return }
+            do {
+                try rollback.undoMove(move, deepVariant: true)
+                self.value = Self.evaluate(before: rollback, after: variant, side: move.side)
+            } catch let error {
+                Chess.log.error("GameModelUpdate: error rollback - \(error.localizedDescription)")
+            }
+        }
+        static func evaluate(before: Chess.BoardVariant, after: Chess.BoardVariant, side: Chess.Side) -> Int {
+            return Int(1000 * (after.pieceWeights().value(for: side) - before.pieceWeights().value(for: side)))
         }
     }
 }
@@ -92,28 +109,30 @@ extension Chess.BoardVariant: GKGameModel {
         guard let player = player as? Chess.GameModelPlayer else { return nil }
         let variants = board.createValidVariants(for: player.side)
         return variants?.compactMap {
-            guard let move = $0.move else { return nil }
-            return Chess.GameModelUpdate(move)
+            guard $0.move != nil else { return nil }
+            return Chess.GameModelUpdate($0)
         }
     }
     public func apply(_ gameModelUpdate: GKGameModelUpdate) {
-        guard let update = gameModelUpdate as? Chess.GameModelUpdate else {
+        guard let update = gameModelUpdate as? Chess.GameModelUpdate,
+              let move = update.variant.changes.last else {
             Chess.log.error("Couldn't apply GameplayKit update: \(gameModelUpdate)")
             return
         }
         do {
-            try makeMove(update.move, deepVariant: true)
+            try makeMove(move, deepVariant: true)
         } catch let error {
             Chess.log.error("GameModel apply move failed: \(error.localizedDescription)")
         }
     }
     public func unapplyGameModelUpdate(_ gameModelUpdate: GKGameModelUpdate) {
-        guard let update = gameModelUpdate as? Chess.GameModelUpdate else {
+        guard let update = gameModelUpdate as? Chess.GameModelUpdate,
+              let move = update.variant.changes.last else {
             Chess.log.error("Couldn't apply GameplayKit update: \(gameModelUpdate)")
             return
         }
         do {
-            try undoMove(update.move)
+            try undoMove(move, deepVariant: true)
         } catch let error {
             Chess.log.error("GameModel undo move failed: \(error.localizedDescription)")
         }
@@ -144,7 +163,7 @@ extension Chess.BoardVariant: GKGameModel {
         return true
     }
     public func copy(with zone: NSZone? = nil) -> Any {
-        let copyBoard = Chess.BoardVariant(originalFEN: originalFEN, deepVariant: true)
+        let copyBoard = Chess.BoardVariant(originalFEN: originalFEN)
         copyBoard.board = board
         copyBoard.changes = changes
         return copyBoard

@@ -24,8 +24,7 @@ public extension Chess.Board {
                                                  start: square.position,
                                                  end: toSquare)
                     let variant = Chess.SingleMoveVariant(originalFEN: self.FEN,
-                                                          move: moveAttempt,
-                                                          deepVariant: true)
+                                                          move: moveAttempt)
                     if variant.move != nil {
                         return true
                     }

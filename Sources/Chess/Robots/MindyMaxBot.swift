@@ -11,12 +11,8 @@ import GameplayKit
 public extension Chess.Robot {
     /// A min / max strategist using GKGameModel
     class MindyMaxBot: Chess.Player {
-        var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
-        let strategist: GKMinmaxStrategist = {
-            let strategist = GKMinmaxStrategist()
-            strategist.maxLookAheadDepth = 3
-            return strategist
-        }()
+        var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN)
+        let strategist: GKMinmaxStrategist
         /// A few overrides from Chess.Player
         public override func isBot() -> Bool { return true }
         public override func prepareForGame() { }
@@ -45,7 +41,7 @@ public extension Chess.Robot {
                 Chess.log.critical("Cannot run a game turn without a game delegate.")
                 return
             }
-            board = Chess.BoardVariant(originalFEN: game.board.FEN, deepVariant: true)
+            board = Chess.BoardVariant(originalFEN: game.board.FEN)
             strategist.gameModel = board
             strategist.randomSource = GKARC4RandomSource()
             weak var weakSelf = self
@@ -62,14 +58,18 @@ public extension Chess.Robot {
                     delegate.gameAction(.makeMove(move: move))
                     return
                 }
-                guard let move = (strategy as? Chess.GameModelUpdate)?.move else {
-                    Chess.log.critical("Misconfigured strategist, model update not validz.")
+                guard let variant = (strategy as? Chess.GameModelUpdate)?.variant,
+                      let move = variant.changes.last else {
+                    Chess.log.critical("Misconfigured strategist, model update not valid.")
                     return
                 }
                 delegate.gameAction(.makeMove(move: move))
             }
         }
-        public init(side: Chess.Side) {
+        public init(side: Chess.Side, maxDepth: Int = 2) {
+            let mixmax = GKMinmaxStrategist()
+            mixmax.maxLookAheadDepth = maxDepth
+            self.strategist = mixmax
             super.init(side: side, matchLength: nil)
         }
     }

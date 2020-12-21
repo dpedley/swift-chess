@@ -12,8 +12,8 @@ public extension Chess {
         var move: Move? {
             return changes.first
         }
-        public required init(originalFEN: String, move: Chess.Move, deepVariant: Bool) {
-            super.init(originalFEN: originalFEN, deepVariant: deepVariant)
+        public required init(originalFEN: String, move: Chess.Move, deepVariant: Bool = true) {
+            super.init(originalFEN: originalFEN)
             try? makeMove(move, deepVariant: deepVariant)
         }
     }

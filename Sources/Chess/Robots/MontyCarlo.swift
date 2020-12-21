@@ -11,13 +11,8 @@ import GameplayKit
 public extension Chess.Robot {
     /// A monty carlo strategist using GKGameModel
     class MontyCarloBot: Chess.Player {
-        var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
-        let strategist: GKMonteCarloStrategist = {
-            let strategist = GKMonteCarloStrategist()
-            strategist.budget = 4
-            strategist.explorationParameter = 3
-            return strategist
-        }()
+        var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN)
+        let strategist: GKMonteCarloStrategist
         /// A few overrides from Chess.Player
         public override func isBot() -> Bool { return true }
         public override func prepareForGame() { }
@@ -46,7 +41,7 @@ public extension Chess.Robot {
                 Chess.log.critical("Cannot run a game turn without a game delegate.")
                 return
             }
-            board = Chess.BoardVariant(originalFEN: game.board.FEN, deepVariant: true)
+            board = Chess.BoardVariant(originalFEN: game.board.FEN)
             strategist.gameModel = board
             strategist.randomSource = GKARC4RandomSource()
             weak var weakSelf = self
@@ -63,14 +58,19 @@ public extension Chess.Robot {
                     delegate.gameAction(.makeMove(move: move))
                     return
                 }
-                guard let move = (strategy as? Chess.GameModelUpdate)?.move else {
+                guard let variant = (strategy as? Chess.GameModelUpdate)?.variant,
+                      let move = variant.changes.last else {
                     Chess.log.critical("Misconfigured strategist, model update not validz.")
                     return
                 }
                 delegate.gameAction(.makeMove(move: move))
             }
         }
-        public init(side: Chess.Side) {
+        public init(side: Chess.Side, budget: Int = 2, explore: Int = 2) {
+            let monty = GKMonteCarloStrategist()
+            monty.budget = budget
+            monty.explorationParameter = explore
+            self.strategist = monty
             super.init(side: side, matchLength: nil)
         }
     }

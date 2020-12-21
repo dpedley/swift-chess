@@ -2,6 +2,22 @@ import XCTest
 import Combine
 @testable import Chess
 
+typealias GameTestMoveHandler = (Chess.Move) -> Void
+class GameTestDelegate: ChessGameDelegate {
+    let moveHandler: GameTestMoveHandler
+    func gameAction(_ action: Chess.GameAction) {
+        switch action {
+        case .makeMove(let move):
+            moveHandler(move)
+        default:
+            XCTFail("GameTestDelegate only expects moves.")
+        }
+    }
+    init(_ moveHandler: @escaping GameTestMoveHandler) {
+        self.moveHandler = moveHandler
+    }
+}
+
 final class GameTests: XCTestCase {
     var store: ChessStore?
     var cancellables = Set<AnyCancellable>()
