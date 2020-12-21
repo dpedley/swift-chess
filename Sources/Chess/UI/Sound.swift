@@ -4,26 +4,34 @@
 //  Created by Douglas Pedley on 1/21/19.
 //
 
-import AVFoundation
+/// The sound is handled outside of this library, but for timing the optional
+/// methods are included here.
+public protocol ChessSoundEffectDelegate: class {
+    func move()
+    func capture()
+    func check()
+    func defeat()
+    func victory()
+}
 
-extension Chess {
-    enum Sounds {
-        private static func sound(url: URL?) -> AVAudioPlayer {
-            guard let url = url,
-                  let player = try? AVAudioPlayer(contentsOf: url) else {
-                return AVAudioPlayer()
-            }
-            return player
+public extension Chess {
+    static var soundDelegate: ChessSoundEffectDelegate?
+    class Sounds: ChessSoundEffectDelegate {
+        public func move() {
+            Chess.soundDelegate?.move()
         }
-        private static let CaptureURL = Bundle.main.url(forResource: "Capture", withExtension: "mp3")
-        private static let CheckURL = Bundle.main.url(forResource: "Check", withExtension: "mp3")
-        private static let DefeatURL = Bundle.main.url(forResource: "Defeat", withExtension: "mp3")
-        private static let MoveURL = Bundle.main.url(forResource: "Move", withExtension: "mp3")
-        private static let VictoryURL = Bundle.main.url(forResource: "Victory", withExtension: "mp3")
-        public static let Capture = sound(url: CaptureURL)
-        public static let Check = sound(url: CheckURL)
-        public static let Defeat = sound(url: DefeatURL)
-        public static let Victory = sound(url: VictoryURL)
-        public static let Move = sound(url: MoveURL)
+        public func capture() {
+            Chess.soundDelegate?.capture()
+        }
+        public func check() {
+            Chess.soundDelegate?.check()
+        }
+        public func defeat() {
+            Chess.soundDelegate?.defeat()
+        }
+        public func victory() {
+            Chess.soundDelegate?.victory()
+        }
+        public init() {}
     }
 }

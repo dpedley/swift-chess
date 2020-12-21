@@ -68,7 +68,7 @@ public extension ChessStore {
         if game.board.lastMove == move {
             game.changeSides(move.side.opposingSide)
             if game.board.isInCheck == true {
-                Chess.Sounds.Check.play()
+                Chess.Sounds().check()
             }
         }
     }

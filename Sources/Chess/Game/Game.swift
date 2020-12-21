@@ -137,9 +137,9 @@ public extension Chess {
                 case .white:
                     blackDungeon.append(piece)
                 }
-                Chess.Sounds.Capture.play()
+                Chess.Sounds().capture()
             } else {
-                Chess.Sounds.Move.play()
+                Chess.Sounds().move()
             }
             let annotatedMove = Chess.Game.AnnotatedMove(side: move.side,
                                                          move: move.PGN ?? "??",
@@ -197,7 +197,7 @@ public extension Chess {
                 break
             case .kingWouldBeUnderAttackAfterMove:
                 flashKing()
-                Chess.Sounds.Check.play()
+                Chess.Sounds().check()
             case .unknown:
                 Chess.log.info("Human's move had unknown limitation.")
             }
