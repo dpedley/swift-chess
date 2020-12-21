@@ -14,7 +14,7 @@ public extension Chess.Robot {
         var board = Chess.BoardVariant(originalFEN: Chess.Board.startingFEN, deepVariant: true)
         let strategist: GKMonteCarloStrategist = {
             let strategist = GKMonteCarloStrategist()
-            strategist.budget = 15
+            strategist.budget = 8
             strategist.explorationParameter = 4
             return strategist
         }()
@@ -25,9 +25,9 @@ public extension Chess.Robot {
         public override func iconName() -> String {
             switch side {
             case .black:
-                return "frame.fill"
+                return "flame.fill"
             case .white:
-                return "frame"
+                return "flame"
             }
         }
         /// The main override from Chess.Player
