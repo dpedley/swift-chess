@@ -226,9 +226,8 @@ extension Chess.Board {
         move.verify()
     }
     private func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
-        let boardChange = Chess.BoardChange.moveMade(move: move)
         let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN,
-                                                  changesToAttempt: [boardChange],
+                                                  move: move,
                                                   deepVariant: false)
         // Are we defending the king properly?
         if let kingSquare = testVariant.board.findOptionalKing(move.side) {

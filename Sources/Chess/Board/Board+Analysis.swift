@@ -23,9 +23,8 @@ public extension Chess.Board {
                     let moveAttempt = Chess.Move(side: side,
                                                  start: square.position,
                                                  end: toSquare)
-                    let boardChange = Chess.BoardChange.moveMade(move: moveAttempt)
                     let variant = Chess.SingleMoveVariant(originalFEN: self.FEN,
-                                                          changesToAttempt: [boardChange],
+                                                          move: moveAttempt,
                                                           deepVariant: true)
                     if variant.move != nil {
                         return true
@@ -51,9 +50,8 @@ public extension Chess.Board {
                     switch attempt {
                     case .success:
                         let moveChange = moveAttempt
-                        let change = Chess.BoardChange.moveMade(move: moveChange)
                         let variant = Chess.SingleMoveVariant(originalFEN: self.FEN,
-                                                              changesToAttempt: [change],
+                                                              move: moveChange,
                                                               deepVariant: deepVariants)
                         if variant.move != nil {
                             boards.append(variant)

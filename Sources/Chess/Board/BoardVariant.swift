@@ -7,55 +7,47 @@
 import Foundation
 
 public extension Chess {
-    enum BoardChange {
-        case moveMade(move: Move)
-        case moveFailed(move: Move, reason: Move.Limitation)
+    enum BoardVariantError: Error {
+        case noMoveToUndo
+        case canOnlyUndoLastMove
     }
     class BoardVariant: NSObject {
-        let originalFEN: String
-        let changes: [BoardChange]
-        var board: Board
-        init(originalFEN: String, changesToAttempt: [BoardChange], deepVariant: Bool) {
-            self.originalFEN = originalFEN
-            var board = Board(FEN: originalFEN)
-            var actualChanges: [BoardChange] = []
-            for change in changesToAttempt {
-                switch change {
-                case .moveMade(var move):
-                    let result = board.attemptMove(&move, applyVariants: deepVariant)
-                    switch result {
-                    case .failure(let limitation):
-                        actualChanges.append(.moveFailed(move: move, reason: limitation))
-                    case .success:
-                        // Note about warning, we may want to include the piece loss for variant analysis stuff here.
-                        actualChanges.append(.moveMade(move: move))
-                    }
-                case .moveFailed:
-                    // We just store these.
-                    actualChanges.append(change)
-                }
-            }
-            self.board = board
-            self.changes = actualChanges
-        }
-    }
-    class SingleMoveVariant: BoardVariant {
-        func pieceWeights() -> GameAnalysis {
+        public let originalFEN: String
+        private(set) public var changes: [Chess.Move] = []
+        public var board: Board
+        public func pieceWeights() -> GameAnalysis {
             return board.pieceWeights()
         }
-        var move: Move? {
-            guard let firstChange = changes.first,
-                case .moveMade(let firstMove) = firstChange else {
-                    return nil
+        public func makeMove(_ move: Chess.Move, deepVariant: Bool) throws {
+            var moveAttempt = move
+            let result = board.attemptMove(&moveAttempt, applyVariants: deepVariant)
+            switch result {
+            case .failure(let limitation):
+                throw limitation
+            case .success:
+                changes.append(moveAttempt)
             }
-            return firstMove
         }
-        var limitation: Move.Limitation? {
-            guard let firstChange = changes.first,
-                case .moveFailed(_, let reason) = firstChange else {
-                    return nil
+        public func undoMove(_ move: Chess.Move) throws {
+            guard let lastMove = changes.last else {
+                throw BoardVariantError.noMoveToUndo
             }
-            return reason
+            guard lastMove == move else {
+                throw BoardVariantError.canOnlyUndoLastMove
+            }
+            changes.removeLast()
+            // Replay the change
+            board.resetBoard(FEN: originalFEN)
+            for change in changes {
+                var moveAttempt = change
+                // Note this assumption, undo is used primarily with
+                // GameplayKit Strategist which wants the apply variants
+                _ = board.attemptMove(&moveAttempt, applyVariants: true)
+            }
+        }
+        public init(originalFEN: String, deepVariant: Bool) {
+            self.originalFEN = originalFEN
+            self.board = Board(FEN: originalFEN)
         }
     }
 }
