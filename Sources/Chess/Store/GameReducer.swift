@@ -67,6 +67,9 @@ public extension ChessStore {
         game.execute(move: move)
         if game.board.lastMove == move {
             game.changeSides(move.side.opposingSide)
+            if game.board.isInCheck == true {
+                Chess.Sounds().check()
+            }
         }
     }
     static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
