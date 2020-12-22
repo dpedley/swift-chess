@@ -29,12 +29,12 @@ public extension Chess.Robot {
                 return "hare"
             }
         }
-        public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
-            guard let choices = super.validChoices(board: board) else { return nil }
-            if let matingChoices = matingMoves(choices: choices) {
+        public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
+            let choices = super.validChoices(board: board) as ChessRobotChoices
+            if let matingChoices = choices.matingMoves() {
                 return matingChoices
             }
-            guard let attacks = validAttacks(choices: choices) else {
+            guard let attacks = choices.validAttacks() else {
                 // If we can't attack, who cares.
                 return choices
             }

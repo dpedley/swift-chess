@@ -19,29 +19,24 @@ public extension Chess.Robot {
                 return "tortoise"
             }
         }
-        public override func validChoices(board: Chess.Board) -> [Chess.SingleMoveVariant]? {
-            guard let choices = super.validChoices(board: board) else { return nil }
-            if let matingChoices = matingMoves(choices: choices) {
+        public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
+            let choices = super.validChoices(board: board)
+            if let matingChoices = choices.matingMoves() {
                 return matingChoices
             }
-
-            var potentials: [Chess.SingleMoveVariant] = []
-            for choice in choices {
-                guard let move = choice.move else { continue }
-                if choice.board.square(move.end, isDefendedBy: side.opposingSide) {
-                    // The spot we're going to is defended, it's not a good potential.
-                    continue
-                }
-                potentials.append(choice)
+            if let saveMateChoices = choices.saveMateMoves() {
+                return saveMateChoices
             }
+            let potentials = choices.removingSacrifices()
+                .removingRiskyTakes(forSide: side)
+            
             // If there is at most 1 potential move, we don't need to filter the list.
-            guard potentials.count > 1 else {
-                guard let move = potentials.first else { return nil }
-                return [move]
+            if let only = potentials.firstIfOnlyOne() {
+                return [only]
             }
-            let sorted = potentials.sorted {
+            guard let sorted = potentials?.sorted(by: {
                 $0.pieceWeights().value(for: side.opposingSide) < $1.pieceWeights().value(for: side.opposingSide)
-            }
+            }) else { return nil }
             guard let firstValue = sorted.first?.pieceWeights().value(for: side.opposingSide) else { return nil }
             let filtered = sorted.filter { $0.pieceWeights().value(for: side.opposingSide) == firstValue }
             return filtered.count > 0 ? filtered : nil

@@ -76,24 +76,8 @@ public extension Chess {
                 delegate.gameAction(.makeMove(move: move))
             }
         }
-        public func validChoices(board: Chess.Board) -> [SingleMoveVariant]? {
+        public func validChoices(board: Chess.Board) -> ChessRobotChoices {
             board.createValidVariants(for: side)
-        }
-        func validAttacks(choices: [SingleMoveVariant]?) -> [SingleMoveVariant]? {
-            let filteredAttacks = choices?.filter { variant in
-                guard let move = variant.move else { return false }
-                return !variant.board.squares[move.end].isEmpty
-            }
-            guard let attacks = filteredAttacks, attacks.count > 0 else { return nil }
-            return attacks
-        }
-        public func matingMoves(choices: [SingleMoveVariant]?) -> [SingleMoveVariant]? {
-            let filteredMoves = choices?.filter { variant in
-                guard variant.move != nil else { return false }
-                return variant.board.isKingMated()
-            }
-            guard let matingMoves = filteredMoves, matingMoves.count > 0 else { return nil }
-            return matingMoves
         }
         /// Evaluate board for the optimal move
         ///
