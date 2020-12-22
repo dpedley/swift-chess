@@ -3,8 +3,6 @@ name: Swift
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   BuildAndTest:
@@ -18,11 +16,3 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
-  SwiftLint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: GitHub Action for SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
-        with:
-          args: --strict
