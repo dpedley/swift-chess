@@ -31,12 +31,16 @@ public struct ChessSettingsView: View {
                 ChessOpponentSelector(player: random(store.game, side: .white))
                 ChessOpponentSelector(player: greedy(store.game, side: .white))
                 ChessOpponentSelector(player: cautious(store.game, side: .white))
+                // ChessOpponentSelector(player: mindyMax(store.game, side: .white))
+                // ChessOpponentSelector(player: montyCarlo(store.game, side: .white))
             }
             Section(header: Text("Black")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
                 ChessOpponentSelector(player: random(store.game, side: .black))
                 ChessOpponentSelector(player: greedy(store.game, side: .black))
                 ChessOpponentSelector(player: cautious(store.game, side: .black))
+                // ChessOpponentSelector(player: mindyMax(store.game, side: .black))
+                // ChessOpponentSelector(player: montyCarlo(store.game, side: .black))
             }
             Section(header: Text("Robot Move Delay \(String(format: "%#0.1#2f", robotDelay)) seconds")) {
                 Slider(value: $robotDelay, in: 0.1...10,
@@ -74,6 +78,14 @@ public struct ChessSettingsView: View {
     func cautious(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
         let robot = Chess.Robot.CautiousBot(side: side)
         robot.responseDelay = game.robotPlaybackSpeed()
+        return robot
+    }
+    func mindyMax(_ game: Chess.Game, side: Chess.Side) -> Chess.Player {
+        let robot = Chess.Robot.MindyMaxBot(side: side)
+        return robot
+    }
+    func montyCarlo(_ game: Chess.Game, side: Chess.Side) -> Chess.Player {
+        let robot = Chess.Robot.MontyCarloBot(side: side)
         return robot
     }
     public init() {}

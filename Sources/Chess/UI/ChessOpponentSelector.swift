@@ -89,6 +89,12 @@ struct ChessOpponentSelectorPreviews: PreviewProvider {
                 ChessOpponentSelector(player:
                                         Chess.Robot.CautiousBot(side: .white))
                     .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.MindyMaxBot(side: .white))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.MontyCarloBot(side: .white))
+                    .environmentObject(previewChessStore)
             }
             Section(header: Text("Black")) {
                 ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
@@ -100,6 +106,12 @@ struct ChessOpponentSelectorPreviews: PreviewProvider {
                     .environmentObject(previewChessStore)
                 ChessOpponentSelector(player:
                                         Chess.Robot.CautiousBot(side: .black))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.MindyMaxBot(side: .black))
+                    .environmentObject(previewChessStore)
+                ChessOpponentSelector(player:
+                                        Chess.Robot.MontyCarloBot(side: .black))
                     .environmentObject(previewChessStore)
             }
         }.foregroundColor(.black)
