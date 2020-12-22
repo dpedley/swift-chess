@@ -22,8 +22,10 @@ public struct ChessSettingsButton: View {
 }
 
 public struct ChessSettingsView: View {
+    public typealias DebugSectionProvider = () -> AnyView
     @EnvironmentObject public var store: ChessStore
     @State var robotDelay: TimeInterval = 1
+    let debug: DebugSectionProvider
     public var body: some View {
         Form {
             Section(header: Text("White")) {
@@ -63,6 +65,7 @@ public struct ChessSettingsView: View {
                     Text("Show valid choices when moving")
                 })
             }
+            debug()
         }.foregroundColor(.black)
     }
     func random(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
@@ -88,7 +91,9 @@ public struct ChessSettingsView: View {
         let robot = Chess.Robot.MontyCarloBot(side: side)
         return robot
     }
-    public init() {}
+    public init(_ debug: DebugSectionProvider? = nil) {
+        self.debug = debug ?? { AnyView(EmptyView()) }
+    }
 }
 
 struct ChessSettingsViewPreviews: PreviewProvider {
