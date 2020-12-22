@@ -26,6 +26,12 @@ public struct ChessSettingsView: View {
     @EnvironmentObject public var store: ChessStore
     @State var robotDelay: TimeInterval = 1
     let debug: DebugSectionProvider
+    func debugSettings(environment: ChessEnvironment) -> AnyView {
+        guard environment.target == .development else {
+            return AnyView(EmptyView())
+        }
+        return debug()
+    }
     public var body: some View {
         Form {
             Section(header: Text("White")) {
@@ -65,7 +71,7 @@ public struct ChessSettingsView: View {
                     Text("Show valid choices when moving")
                 })
             }
-            debug()
+            debugSettings(environment: store.environment)
         }.foregroundColor(.black)
     }
     func random(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
