@@ -50,6 +50,7 @@ public struct ChessSettingsView: View {
                 // ChessOpponentSelector(player: mindyMax(store.game, side: .black))
                 // ChessOpponentSelector(player: montyCarlo(store.game, side: .black))
             }
+            /* Revisit the robotic delay in relation to the processing time.
             Section(header: Text("Robot Move Delay \(String(format: "%#0.1#2f", robotDelay)) seconds")) {
                 Slider(value: $robotDelay, in: 0.1...10,
                        step: 0.05,
@@ -57,6 +58,7 @@ public struct ChessSettingsView: View {
                     store.game.setRobotPlaybackSpeed(robotDelay)
                 })
             }
+             */
             Section(header: Text("Colors")) {
                 BoardColorSelector(.brown)
                 BoardColorSelector(.blue)
