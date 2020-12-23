@@ -12,15 +12,6 @@ import Foundation
 
 public extension Chess.Robot {
     class GreedyBot: Chess.Robot {
-        func bestAttacks(attacks: [Chess.SingleMoveVariant]) -> [Chess.SingleMoveVariant] {
-            // When you're greedy, the best attack have the highest piece value change
-            let sortedAttacks = attacks.sorted {
-                return $0.pieceWeights().value(for: side.opposingSide) <
-                    $1.pieceWeights().value(for: side.opposingSide)
-            }
-            let bestWeight = sortedAttacks.first?.pieceWeights().value(for: side.opposingSide) ?? 0
-            return sortedAttacks.filter { $0.pieceWeights().value(for: side.opposingSide) == bestWeight }
-        }
         public override func iconName() -> String {
             switch side {
             case .black:
@@ -30,15 +21,11 @@ public extension Chess.Robot {
             }
         }
         public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
-            let choices = super.validChoices(board: board) as ChessRobotChoices
-            if let matingChoices = choices.matingMoves() {
-                return matingChoices
-            }
-            guard let attacks = choices.validAttacks() else {
-                // If we can't attack, who cares.
-                return choices
-            }
-            return bestAttacks(attacks: attacks)
+            let choices = super.validChoices(board: board)
+            let attacks = choices.filterMatingMoves()
+                                 .preferAttacks()
+                                 .filterTopWeightClass()
+            return attacks
         }
     }
 }

@@ -19,29 +19,13 @@ public extension Chess.Robot {
                 return "tortoise"
             }
         }
-        func filterTopPerformers(potentials: ChessRobotChoices) -> ChessRobotChoices {
-            // If there is at most 1 potential move, we don't need to filter the list.
-            if let only = potentials.firstIfOnlyOne() {
-                return [only]
-            }
-            guard let sorted = potentials?.sorted(by: {
-                $0.pieceWeights().value(for: side.opposingSide) < $1.pieceWeights().value(for: side.opposingSide)
-            }) else { return nil }
-            guard let firstValue = sorted.first?.pieceWeights().value(for: side.opposingSide) else { return nil }
-            let filtered = sorted.filter { $0.pieceWeights().value(for: side.opposingSide) == firstValue }
-            return filtered.count > 0 ? filtered : nil
-        }
         public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
             let choices = super.validChoices(board: board)
-            if let matingChoices = choices.matingMoves() {
-                return matingChoices
-            }
-            if let saveMateChoices = choices.saveMateMoves() {
-                return saveMateChoices
-            }
-            let potentials = choices.removingSacrifices()
+            let potentials = choices.filterMatingMoves()
+                                    .filterMatingSaves()
                                     .removingRiskyTakes()
-            return filterTopPerformers(potentials: potentials)
+                                    .filterTopWeightClass()
+            return potentials
         }
     }
 }
