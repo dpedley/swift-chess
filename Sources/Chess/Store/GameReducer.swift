@@ -72,6 +72,17 @@ public extension ChessStore {
             }
         }
     }
+    static func humanInitialTap(_ position: Chess.Position, game: inout Chess.Game, human: Chess.HumanPlayer) {
+        game.clearActivePlayerSelections()
+        human.initialPositionTapped = position
+        game.board.squares[position].selected = true
+        if let targetedPositions =
+            game.board.squares[position].buildMoveDestinations(board: game.board) {
+            targetedPositions.forEach {
+                game.board.squares[$0].targetedBySelected = true
+            }
+        }
+    }
     static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
         guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
             return
@@ -80,21 +91,32 @@ public extension ChessStore {
             game.start()
         }
         guard let moveStart = human.initialPositionTapped else {
-            // This was the first tap, setup the selection
-            game.clearActivePlayerSelections()
-            human.initialPositionTapped = position
-            game.board.squares[position].selected = true
-            if let targetedPositions =
-                game.board.squares[position].buildMoveDestinations(board: game.board) {
-                targetedPositions.forEach {
-                    game.board.squares[$0].targetedBySelected = true
-                }
+            // Check if they have a piece at this position.
+            guard let piece = game.board.squares[position].piece,
+                  piece.side == human.side else {
+                game.clearActivePlayerSelections()
+                // The user's first tap is only valid for own pieces.
+                return
             }
+            // This was the first tap, setup the selection
+            humanInitialTap(position, game: &game, human: human)
             return
         }
         // Check if they retapped the same square
         guard moveStart != position else {
+            game.clearActivePlayerSelections()
             return
+        }
+        // If they tap their own piece as move end, they either want to make that their
+        // move start, deselecting the other piece they had started to move, or they
+        // are premoving and they suspect that their own piece will not be at move end
+        // when it is their turn.
+        if let endPiece = game.board.squares[position].piece,
+           endPiece.side == human.side,
+           game.board.playingSide == human.side {
+            // They were not intending to premove, let's deselect the
+            // previous start and make this the new start.
+            humanInitialTap(position, game: &game, human: human)
         }
         let move = Chess.Move(side: human.side, start: moveStart, end: position)
         human.moveAttempt = move
