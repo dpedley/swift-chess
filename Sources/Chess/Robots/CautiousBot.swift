@@ -19,17 +19,7 @@ public extension Chess.Robot {
                 return "tortoise"
             }
         }
-        public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
-            let choices = super.validChoices(board: board)
-            if let matingChoices = choices.matingMoves() {
-                return matingChoices
-            }
-            if let saveMateChoices = choices.saveMateMoves() {
-                return saveMateChoices
-            }
-            let potentials = choices.removingSacrifices()
-                .removingRiskyTakes(forSide: side)
-            
+        func filterTopPerformers(potentials: ChessRobotChoices) -> ChessRobotChoices {
             // If there is at most 1 potential move, we don't need to filter the list.
             if let only = potentials.firstIfOnlyOne() {
                 return [only]
@@ -40,6 +30,18 @@ public extension Chess.Robot {
             guard let firstValue = sorted.first?.pieceWeights().value(for: side.opposingSide) else { return nil }
             let filtered = sorted.filter { $0.pieceWeights().value(for: side.opposingSide) == firstValue }
             return filtered.count > 0 ? filtered : nil
+        }
+        public override func validChoices(board: Chess.Board) -> ChessRobotChoices {
+            let choices = super.validChoices(board: board)
+            if let matingChoices = choices.matingMoves() {
+                return matingChoices
+            }
+            if let saveMateChoices = choices.saveMateMoves() {
+                return saveMateChoices
+            }
+            let potentials = choices.removingSacrifices()
+                                    .removingRiskyTakes()
+            return filterTopPerformers(potentials: potentials)
         }
     }
 }

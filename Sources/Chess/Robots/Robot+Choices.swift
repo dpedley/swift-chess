@@ -45,13 +45,13 @@ public extension ChessRobotChoices {
         // TODO
         return self
     }
-    func removingRiskyTakes(forSide side: Chess.Side) -> ChessRobotChoices {
+    func removingRiskyTakes() -> ChessRobotChoices {
         guard let potentials = self?.filter({ variant in
             // TODO update this
             // The spot we're going to is defended, it's not a good potential.
-            // We only want to take if it's worth it.
+            // We only want to take if it's a capture that is worth it.
             guard let move = variant.move else { return false }
-            return variant.board.square(move.end, isDefendedBy: side.opposingSide) == false
+            return variant.board.square(move.end, isDefendedBy: move.side.opposingSide) == false
         }), potentials.count>0 else { return nil }
         return potentials
     }
