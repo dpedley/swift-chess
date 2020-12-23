@@ -74,7 +74,6 @@ public extension ChessRobotChoices {
     func removingRiskyTakes() -> ChessRobotChoices {
         if let only = firstIfOnlyOne() { return only }
         let riskFree = self?.filter { variant in
-            // TODO update this
             // The spot we're going to is defended, it's not a good potential.
             // We only want to take if it's a capture that is worth it.
             guard let move = variant.move else { return false }
@@ -85,13 +84,9 @@ public extension ChessRobotChoices {
             // The spot is defended, we only want to move there if it captures a piece worth more than we lose.
             let findPiecesBoard = Chess.Board(FEN: variant.originalFEN)
             // These guards shouldn't fail, the move was already vetted.
-            guard let pieceLoss = findPiecesBoard.squares[move.start].piece,
-                  let pieceGain = findPiecesBoard.squares[move.end].piece else { return false }
-            if pieceLoss.weight < pieceGain.weight {
-                // Worth it
-                return true
-            }
-            return false
+            guard let pieceLoss = findPiecesBoard.squares[move.start].piece?.weight,
+                  let pieceGain = findPiecesBoard.squares[move.end].piece?.weight else { return false }
+            return pieceLoss < pieceGain
         }
         guard let riskFreeCount = riskFree?.count, riskFreeCount > 0 else {
             // There were no move that were risk free, so we return ourselves unfiltered
