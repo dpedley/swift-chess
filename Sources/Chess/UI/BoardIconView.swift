@@ -10,20 +10,18 @@ import Combine
 
 public struct BoardIconView: View {
     let color: Chess.UI.BoardColor
+    let height: Int
+    let width: Int
     public var body: some View {
         GeometryReader { geometry in
             VStack(alignment: .center, spacing: 0) {
-                HStack(alignment: .center, spacing: 0) {
-                    Rectangle()
-                        .fill(color.dark)
-                    Rectangle()
-                        .fill(color.light)
-                }
-                HStack(alignment: .center, spacing: 0) {
-                    Rectangle()
-                        .fill(color.light)
-                    Rectangle()
-                        .fill(color.dark)
+                ForEach(0..<height) { yIdx in
+                    HStack(alignment: .center, spacing: 0) {
+                        ForEach(0..<width) { xIdx in
+                            Rectangle()
+                                .fill( (yIdx + xIdx) % 2 == 0 ? color.dark : color.light )
+                        }
+                    }
                 }
             }
             .frame(width: geometry.size.minimumLength,
@@ -31,8 +29,10 @@ public struct BoardIconView: View {
                    alignment: .center)
         }
     }
-    public init(_ color: Chess.UI.BoardColor) {
+    public init(_ color: Chess.UI.BoardColor, width: Int = 2, height: Int = 2) {
         self.color = color
+        self.height = height
+        self.width = width
     }
 }
 
@@ -41,11 +41,11 @@ struct BoardIconViewPreviews: PreviewProvider {
         VStack {
             BoardIconView(.blue)
             Spacer()
-            BoardIconView(.green)
+            BoardIconView(.green, width: 3, height: 3)
             Spacer()
-            BoardIconView(.brown)
+            BoardIconView(.brown, width: 4, height: 4)
             Spacer()
-            BoardIconView(.purple)
+            BoardIconView(.purple, width: 8, height: 8)
         }
     }
 }

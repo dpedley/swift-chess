@@ -79,6 +79,8 @@ extension ChessStore {
         }
         // Check the status and update our result if the game is over
         let status = updatedGame.computeGameStatus()
+        let humanSide: Chess.Side? = (updatedGame.black as? Chess.HumanPlayer)?.side ??
+                                     (updatedGame.white as? Chess.HumanPlayer)?.side ?? nil
         Chess.log.debug("Computed game status: \(status)")
         switch status {
         case .notYetStarted, .paused, .unknown:
@@ -90,15 +92,30 @@ extension ChessStore {
              .drawByRepetition,
              .drawBecauseOfInsufficientMatingMaterial,
              .stalemate:
+            Chess.Sounds().defeat()
             self.gameAction(.gameResult(result: .draw, status: status))
         case .mate:
             let winningSide = opposingSide.opposingSide // The opposingSide lost, so...
             let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
+            // Play the end game sound
+            if winningSide.opposingSide != humanSide {
+                // We play victory for human wins, and if both are bots
+                Chess.Sounds().victory()
+            } else {
+                Chess.Sounds().defeat()
+            }
             self.gameAction(.gameResult(result: result, status: status))
         case .resign, .timeout:
             // Resign and timeout have their side kept in last move.
             guard let winningSide = self.game.board.lastMove?.side.opposingSide else {
                 return
+            }
+            // Play the end game sound
+            if winningSide.opposingSide != humanSide {
+                // We play victory for human wins, and if both are bots
+                Chess.Sounds().victory()
+            } else {
+                Chess.Sounds().defeat()
             }
             let result: Chess.Game.PGNResult = winningSide == .black ? .blackWon : .whiteWon
             self.gameAction(.gameResult(result: result, status: status))

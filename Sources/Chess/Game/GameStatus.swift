@@ -51,7 +51,6 @@ public extension Chess.Game {
             }
             return .unknown
         }
-        guard !userPaused else { return .paused }
         guard !lastMove.isTimeout else { return .timeout }
         guard !lastMove.isResign else { return .resign }
         guard !board.isKingMated() else { return .mate }
@@ -63,6 +62,7 @@ public extension Chess.Game {
 //            case drawByRepetition
 //            case drawByMoves
 //            case drawBecauseOfInsufficientMatingMaterial
+        guard !userPaused else { return .paused }
         return .active
     }
 }

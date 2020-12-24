@@ -35,6 +35,7 @@ public struct DraggablePiece: View {
 public struct PieceView: View {
     let piece: Chess.Piece
     let addDetails: Bool
+    let lineWidth: CGFloat
     func details(piece: Chess.Piece) -> some View {
         guard addDetails else {
             return AnyView(EmptyView())
@@ -42,7 +43,7 @@ public struct PieceView: View {
         return AnyView(
             // Render the details in the highlight color
             PieceShape.Details(artwork: piece.artwork)
-                .stroke(piece.style.highlight, lineWidth: 1.5)
+                .stroke(piece.style.highlight, lineWidth: lineWidth * 1.5)
         )
     }
     public var body: some View {
@@ -52,36 +53,42 @@ public struct PieceView: View {
                 .foregroundColor(piece.style.fill)
             // Then outline it
             PieceShape(artwork: piece.artwork)
-                .stroke(piece.style.outline)
+                .stroke(piece.style.outline,
+                        lineWidth: lineWidth)
             details(piece: piece)
         }
     }
     public init(piece: Chess.Piece,
-                addDetails: Bool = true) {
+                addDetails: Bool = true,
+                lineWidth: CGFloat = 1) {
         self.piece = piece
         self.addDetails = addDetails
+        self.lineWidth = lineWidth
     }
 }
 
 // False positives disabled.
 struct PieceViewPreview: PreviewProvider {
-    static var store = ChessStore(game: .sampleGame())
     static var previews: some View {
         ZStack {
-            DraggablePiece(position: .d8)
-                .environmentObject(store)
+            PieceView(piece: .init(side: .black,
+                                   pieceType: .queen),
+                      lineWidth: 2)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: -50)
-            DraggablePiece(position: .c1)
-                .environmentObject(store)
+            PieceView(piece: .init(side: .white,
+                                   pieceType: .bishop),
+                      lineWidth: 2)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: -50)
-            DraggablePiece(position: .e1)
-                .environmentObject(store)
+            PieceView(piece: .init(side: .white,
+                                   pieceType: .king),
+                      lineWidth: 2)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: -50, y: 50)
-            DraggablePiece(position: .b8)
-                .environmentObject(store)
+            PieceView(piece: .init(side: .black,
+                                   pieceType: .knight),
+                      lineWidth: 2)
                 .frame(width: 100, height: 100, alignment: .center)
                 .offset(x: 50, y: 50)
         }

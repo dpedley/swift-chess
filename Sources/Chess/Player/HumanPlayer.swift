@@ -41,5 +41,15 @@ public extension Chess {
         public override func timerRanOut() {
             // This is where we will message the human that the game is over.
         }
+        public func canTap(in game: Chess.Game) -> Bool {
+            let status = game.computeGameStatus()
+            switch status {
+            case .active, .paused, .notYetStarted:
+                return true
+            case .drawBecauseOfInsufficientMatingMaterial, .drawByMoves, .drawByRepetition,
+                 .mate, .unknown, .resign, .timeout, .stalemate:
+                return false
+            }
+        }
     }
 }

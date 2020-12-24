@@ -101,7 +101,7 @@ public extension Chess {
             case .failure(let limitation):
                 Chess.log.critical("Move failed: \(limitation)")
                 if let human = activePlayer as? Chess.HumanPlayer {
-                    updateBoard(human: human, failed: moveAttempt, with: limitation)
+                    executeFailed(human: human, failed: moveAttempt, with: limitation)
                 } else {
                     // a bot failed to move, for some this means resign
                     // STILL UNDONE message user
@@ -146,7 +146,10 @@ public extension Chess {
                                                          fenAfterMove: board.FEN,
                                                          annotation: nil)
             pgn.moves.append(annotatedMove)
-            clearActivePlayerSelections()
+            let player: Chess.Player? = black.isBot() ? ( white.isBot() ? nil : white) : black
+            if let human = player, human.side == move.side {
+                clearActivePlayerSelections()
+            }
             // Note piece is at `move.end` now as the move is complete.
             if board.squares[move.end].piece != nil {
                 // Lastly add this move to our ledger
@@ -186,9 +189,9 @@ public extension Chess {
 //            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
 //            board.ui.apply(board: board, updates: updates)
         }
-        mutating public func updateBoard(human: Chess.HumanPlayer,
-                                         failed move: Chess.Move,
-                                         with reason: Chess.Move.Limitation) {
+        mutating public func executeFailed(human: Chess.HumanPlayer,
+                                           failed move: Chess.Move,
+                                           with reason: Chess.Move.Limitation) {
             clearActivePlayerSelections()
             switch reason {
             case .invalidAttackForPiece, .invalidMoveForPiece, .noPieceToMove,

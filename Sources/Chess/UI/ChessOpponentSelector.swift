@@ -114,6 +114,6 @@ struct ChessOpponentSelectorPreviews: PreviewProvider {
                                         Chess.Robot.MontyCarloBot(side: .black))
                     .environmentObject(previewChessStore)
             }
-        }.foregroundColor(.black)
+        }.accentColor(.primary)
     }
 }
