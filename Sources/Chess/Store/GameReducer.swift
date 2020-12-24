@@ -88,8 +88,7 @@ public extension ChessStore {
             game.clearActivePlayerSelections()
             return
         }
-        let gameStatus = game.computeGameStatus()
-        guard gameStatus == .active || gameStatus == .paused else {
+        guard human.canTap(in: game) else {
             game.clearActivePlayerSelections()
             return
         }
