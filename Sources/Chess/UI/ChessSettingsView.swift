@@ -13,7 +13,7 @@ public struct ChessSettingsButton: View {
     public var body: some View {
         Button(action: action, label: {
             Image(systemName: "gearshape")
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         })
     }
     public init(_ action: @escaping () -> Void) {
@@ -74,7 +74,7 @@ public struct ChessSettingsView: View {
                 })
             }
             debugSettings(environment: store.environment)
-        }.foregroundColor(.black)
+        }.accentColor(.primary)
     }
     func random(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
         let robot = Chess.Robot(side: side)

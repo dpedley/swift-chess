@@ -22,7 +22,7 @@ public struct ResetBoardButton: View {
             self.showAlert = true
         } label: {
             Image(systemName: "backward")
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
         .alert(isPresented: $showAlert, content: resetWarning)
         return AnyView(button)

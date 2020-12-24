@@ -22,7 +22,7 @@ public struct PlayAsButton: View {
                 .fill( playingAs == selection ? Color.blue : Color.gray )
             Text(selection.rawValue)
                 .bold()
-                .foregroundColor(.white)
+                .foregroundColor(.secondary)
         }
     }
     public init(_ selection: Choice, _ playingAs: Binding<Choice>) {
