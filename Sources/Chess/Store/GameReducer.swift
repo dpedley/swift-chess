@@ -85,6 +85,12 @@ public extension ChessStore {
     }
     static func userTappedSquare(_ position: Chess.Position, game: inout Chess.Game) {
         guard let human = (game.white as? Chess.HumanPlayer) ?? (game.black as? Chess.HumanPlayer) else {
+            game.clearActivePlayerSelections()
+            return
+        }
+        let gameStatus = game.computeGameStatus()
+        guard gameStatus == .active || gameStatus == .paused else {
+            game.clearActivePlayerSelections()
             return
         }
         if game.userPaused {
