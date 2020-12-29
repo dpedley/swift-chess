@@ -13,9 +13,9 @@
 
 import Foundation
 
-public extension Chess {
+extension Chess {
     /// A base robot, the evaluate is meant for subclasses
-    class Robot: Chess.Player, RoboticMoveDecider {
+    open class Robot: Chess.Player, RoboticMoveDecider {
         /// How long to wait before starting to process the evaluation 0 = immediate
         public var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.

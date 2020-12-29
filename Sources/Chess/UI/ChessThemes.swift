@@ -9,7 +9,7 @@ import SwiftUI
 public extension Chess.UI {
     struct ChessTheme {
         @AppStorage("boardColor", store: ChessEnvironment.defaults)
-            public var color: BoardColor = .blue
+            public var color: BoardColor = .brown
     }
     enum BoardColor: String {
         case brown
