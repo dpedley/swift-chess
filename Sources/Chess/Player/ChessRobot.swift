@@ -17,9 +17,9 @@ extension Chess {
     /// A base robot, the evaluate is meant for subclasses
     open class Robot: Chess.Player, RoboticMoveDecider {
         /// How long to wait before starting to process the evaluation 0 = immediate
-        public var responseDelay: TimeInterval = 0.0
+        open var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.
-        public var stopAfterMove: Int
+        open var stopAfterMove: Int
 
         /// A few overrides from Chess.Player
         public override func isBot() -> Bool { return true }
@@ -76,14 +76,14 @@ extension Chess {
                 delegate.gameAction(.makeMove(move: move))
             }
         }
-        public func validChoices(board: Chess.Board) -> ChessRobotChoices {
+        open func validChoices(board: Chess.Board) -> ChessRobotChoices {
             board.createValidVariants(for: side)
         }
         /// Evaluate board for the optimal move
         ///
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
-        public func evalutate(board: Chess.Board) -> Chess.Move? {
+        open func evalutate(board: Chess.Board) -> Chess.Move? {
             var tmpBoard = Chess.Board(FEN: board.FEN)
             tmpBoard.playingSide = side
             return validChoices(board: tmpBoard)?.randomElement()?.move
