@@ -53,7 +53,7 @@ extension Chess {
                 Chess.log.debug("turnUpdate stopAfterMove: \(stopAfterMove)")
                 return
             }
-            let evaluteFEN = game.board.FEN
+            let localBoard = game.board
             weak var weakSelf = self
             weak var weakDelegate = delegate
             let sleepTime = responseDelay
@@ -62,7 +62,7 @@ extension Chess {
                     Thread.sleep(until: Date().addingTimeInterval(sleepTime))
                 }
                 guard let self = weakSelf, let delegate = weakDelegate else { return }
-                let board = Chess.Board(FEN: evaluteFEN)
+                let board = localBoard
                 guard let move = self.evalutate(board: board) else {
                     let square = game.board.squareForActiveKing
                     guard square.piece?.side == self.side else {
@@ -84,7 +84,7 @@ extension Chess {
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
         open func evalutate(board: Chess.Board) -> Chess.Move? {
-            var tmpBoard = Chess.Board(FEN: board.FEN)
+            var tmpBoard = board
             tmpBoard.playingSide = side
             return validChoices(board: tmpBoard)?.randomElement()?.move
         }
