@@ -25,7 +25,7 @@ extension Chess {
         public override func isBot() -> Bool { return true }
         public override func prepareForGame() { }
         public override func timerRanOut() {}
-        public override func iconName() -> String {
+        open override func iconName() -> String {
             switch side {
             case .black:
                 return "ladybug.fill"

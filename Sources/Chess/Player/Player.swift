@@ -45,7 +45,7 @@ extension Chess {
                 return "crown"
             }
         }
-        public func menuName() -> String {
+        open func menuName() -> String {
             if self is Chess.Robot.CautiousBot {
                 return "CautiousBot"
             }
