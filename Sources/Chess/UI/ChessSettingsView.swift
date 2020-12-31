@@ -32,22 +32,18 @@ public struct ChessSettingsView: View {
         }
         return debug()
     }
-    func index(_ side: Chess.Side, game: Chess.Game) -> Binding<Int> {
-        return side == .black ?
-            game.playerFactory.$black : game.playerFactory.$white
-    }
     var availablePlayers: [String] = ["abc", "def"]
     public var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Game")) {
-                    Picker(selection: index(.white, game: store.game),
+                    Picker(selection: store.game.playerFactory.$white,
                            label: Text("White")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.white))
                         }
                     }
-                    Picker(selection: index(.black, game: store.game),
+                    Picker(selection: store.game.playerFactory.$black,
                            label: Text("Black")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.black))
