@@ -67,7 +67,12 @@ public extension Chess {
                 Chess.log.critical("Cannot build a FEN unless this move continues gamesplay.")
                 return "N/A"
             } else {
-                desc = "\(start.FEN)\(end.FEN)"
+                let fens = "\(start.FEN)\(end.FEN)"
+                if case SideEffect.promotion(let piece) = sideEffect {
+                    desc = "\(fens)\(piece.fen())"
+                } else {
+                    desc = fens
+                }
             }
             return desc
         }
