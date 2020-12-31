@@ -32,18 +32,17 @@ public struct ChessSettingsView: View {
         }
         return debug()
     }
-    var availablePlayers: [String] = ["abc", "def"]
     public var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Game")) {
-                    Picker(selection: store.game.playerFactory.$white,
+                    Picker(selection: $store.game.playerFactory.white,
                            label: Text("White")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.white))
                         }
                     }
-                    Picker(selection: store.game.playerFactory.$black,
+                    Picker(selection: $store.game.playerFactory.black,
                            label: Text("Black")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.black))
