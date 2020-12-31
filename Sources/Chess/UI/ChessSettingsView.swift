@@ -32,29 +32,22 @@ public struct ChessSettingsView: View {
         }
         return debug()
     }
-    @AppStorage("defaultWhiteIndex") var defaultWhiteIndex: Int = 0 {
-        didSet {
-            playerChosenWhite()
-        }
+    func index(_ side: Chess.Side, game: Chess.Game) -> Binding<Int> {
+        return side == .black ?
+            game.playerFactory.$black : game.playerFactory.$white
     }
-    @AppStorage("defaultBlackIndex") var defaultBlackIndex: Int = 1 {
-        didSet {
-            playerChosenBlack()
-        }
-    }
-
     var availablePlayers: [String] = ["abc", "def"]
     public var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Game")) {
-                    Picker(selection: $defaultWhiteIndex,
+                    Picker(selection: index(.white, game: store.game),
                            label: Text("White")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.white))
                         }
                     }
-                    Picker(selection: $defaultBlackIndex,
+                    Picker(selection: index(.black, game: store.game),
                            label: Text("Black")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.black))
@@ -81,6 +74,7 @@ public struct ChessSettingsView: View {
             .accentColor(.primary)
         }
     }
+    /*
     func playerChosenBlack() {
         var prevBot: Chess.Robot
         if let bot = store.game.black as? Chess.Robot {
@@ -112,7 +106,7 @@ public struct ChessSettingsView: View {
             prevBot.side = .black
             store.game.black = prevBot
         }
-    }
+    }*/
     public init(_ debug: DebugSectionProvider? = nil) {
         self.debug = debug ?? { AnyView(EmptyView()) }
     }

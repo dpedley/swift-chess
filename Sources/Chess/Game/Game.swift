@@ -32,6 +32,7 @@ public extension Chess {
                 return black
             }
         }
+        public var playerFactory = PlayerFactorySettings()
         public init(gameDelegate: ChessGameDelegate? = nil) {
             self.init(.init(side: .white), against: .init(side: .black), gameDelegate: gameDelegate)
         }

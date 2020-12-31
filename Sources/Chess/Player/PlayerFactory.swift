@@ -8,6 +8,12 @@
 import SwiftUI
 
 public extension Chess {
+    struct PlayerFactorySettings {
+        @AppStorage("defaultWhiteIndex", store: ChessEnvironment.defaults)
+            public var white: Int = 0
+        @AppStorage("defaultBlackIndex", store: ChessEnvironment.defaults)
+            public var black: Int = 1
+    }
     typealias PlayerCreator = (Chess.Side) -> Chess.Player
     struct PlayerFactory {
         public var players: [PlayerCreator] = []
