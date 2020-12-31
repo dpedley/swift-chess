@@ -13,6 +13,7 @@ public extension Chess {
             public var white: Int = 0
         @AppStorage("defaultBlackIndex", store: ChessEnvironment.defaults)
             public var black: Int = 1
+        public init() {}
     }
     typealias PlayerCreator = (Chess.Side) -> Chess.Player
     struct PlayerFactory {
