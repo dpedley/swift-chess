@@ -71,9 +71,67 @@ final class BoardFenTests: XCTestCase {
         XCTAssertFalse(board.areThereAnyValidMoves(),
                        "Expected the board to be in a draw state after queen takes queen.")
     }
-
+    func testRepetitionDraw() {
+        let white = Chess.HumanPlayer(side: .white)
+        let black = Chess.HumanPlayer(side: .black)
+        var game = Chess.Game(white, against: black)
+        game.userPaused = false
+        game.execute(move: Chess.Move.white.e2.e4)
+        game.changeSides(.black)
+        game.execute(move: Chess.Move.black.e7.e5)
+        game.changeSides(.white)
+        game.execute(move: Chess.Move.white.d1.g4)
+        game.changeSides(.black)
+        game.execute(move: Chess.Move.black.d8.g5)
+        game.changeSides(.white)
+        game.execute(move: Chess.Move.white.g4.d1)
+        game.changeSides(.black)
+        game.execute(move: Chess.Move.black.g5.d8)
+        game.changeSides(.white)
+        game.execute(move: Chess.Move.white.d1.g4)
+        game.changeSides(.black)
+        game.execute(move: Chess.Move.black.d8.g5)
+        game.changeSides(.white)
+        game.execute(move: Chess.Move.white.g4.d1)
+        let preStatus = game.computeGameStatus()
+        XCTAssertTrue(preStatus == .active,
+                      "Expected active")
+        game.changeSides(.black)
+        game.execute(move: Chess.Move.black.g5.d8)
+        let status = game.computeGameStatus()
+        XCTAssertTrue(status == .drawByRepetition,
+                      "Expected a draw got \(status)")
+    }
+    func testInsufficientMaterialDraw() {
+        let draw = "8/8/8/4K3/7N/6k1/8/8 w - - 0 50"
+        var game = Chess.Game()
+        game.board.resetBoard(FEN: draw)
+        game.board.turns.append(.init(0, white: Chess.Move.white.e2.e4, black: nil))
+        let status = game.computeGameStatus()
+        XCTAssertTrue(status == .drawBecauseOfInsufficientMatingMaterial,
+                      "Expected a draw got \(status)")
+    }
+    func testFiftyMoveDraw() {
+        let draw = "8/8/4k3/2p5/2P5/3K4/8/8 w - - 49 62"
+        let white = Chess.HumanPlayer(side: .white)
+        let black = Chess.HumanPlayer(side: .black)
+        var game = Chess.Game(white, against: black)
+        game.userPaused = false
+        game.board.resetBoard(FEN: draw)
+        game.board.turns.append(.init(0, white: Chess.Move.black.d6.e6, black: nil))
+        let status = game.computeGameStatus()
+        XCTAssertTrue(status == .active,
+                      "Expected active got \(status)")
+        game.execute(move: Chess.Move.white.d3.e3)
+        game.changeSides(.black)
+        let newStatus = game.computeGameStatus()
+        XCTAssertTrue(newStatus == .drawByMoves, "Expected a draw got \(newStatus)")
+    }
     static var allTests = [
         ("testBoardstartingFEN", testBoardstartingFEN),
-        ("testZugDraw", testZugDraw)
+        ("testZugDraw", testZugDraw),
+        ("testInsufficientMaterialDraw", testInsufficientMaterialDraw),
+        ("testRepetitionDraw", testRepetitionDraw),
+        ("testFiftyMoveDraw", testFiftyMoveDraw)
     ]
 }

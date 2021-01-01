@@ -58,10 +58,17 @@ public extension Chess.Game {
         guard board.validVariantExists(for: board.playingSide) else {
             return .stalemate
         }
-        // STILL UNDONE: draws...
-//            case drawByRepetition
-//            case drawByMoves
-//            case drawBecauseOfInsufficientMatingMaterial
+        // Has a capture happened, or a pawn been moved in the last fifty moves?
+        guard board.fiftyMovesCount < 50 else {
+            return .drawByMoves
+        }
+        // Has the same position been achieved 3 times?
+        guard board.repetitionCount() < 3 else {
+            return .drawByRepetition
+        }
+        guard board.hasMatingMaterial() else {
+            return .drawBecauseOfInsufficientMatingMaterial
+        }
         guard !userPaused else { return .paused }
         return .active
     }

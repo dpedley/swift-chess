@@ -13,9 +13,10 @@ final class ChessRobotTests: XCTestCase {
         game.setRobotPlaybackSpeed(0.01)
         let store = ChessStore(game: game)
         let gameCompleted = expectation(description: "testPlaybackBot")
-        var playbackCompleteFEN: String? = "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 0 43"
+        var playbackCompleteFEN: String? = "8/8/4R1p1/2k3p1/1p4P1/1P1b1P2/3K1n2/8 b - - 2 43"
         store.$game.sink(receiveValue: { game in
             let testFEN = game.board.FEN
+            print("\(testFEN)")
             guard testFEN == playbackCompleteFEN else { return }
             playbackCompleteFEN = nil
             gameCompleted.fulfill()

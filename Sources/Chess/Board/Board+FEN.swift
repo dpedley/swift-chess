@@ -11,6 +11,7 @@ public extension Chess.Board {
     var FEN: String { return createCurrentFENString() }
     mutating func resetBoard(FEN: String = Chess.Board.startingFEN) {
         turns.removeAll()
+        repetitionMap.removeAll()
         let FENParts = FEN.components(separatedBy: " ")
         guard FENParts.count==6, let newSide = Chess.Side(rawValue: FENParts[1]) else {
             Chess.log.critical("Invalid FEN: Cannot find active side.")
@@ -18,10 +19,16 @@ public extension Chess.Board {
         }
         let castlingRights = FENParts[2]
         parseCastlingString(castlingRights)
+        guard let drawCount = Int(FENParts[4]) else {
+            Chess.log.critical("Invalid FEN: Cannot parse fiftyRuleCount \(FENParts[4]).")
+            return
+        }
+        fiftyMovesCount = drawCount
         guard let moveCount = Int(FENParts[5]) else {
             Chess.log.critical("Invalid FEN: Cannot parse fullmoves \(FENParts[5]).")
             return
         }
+        fullMoves = moveCount
         // en passant square last move side effect additions
         guard let piecesString = FENParts.first else {
             Chess.log.critical("Invalid FEN")
@@ -32,7 +39,6 @@ public extension Chess.Board {
             Chess.log.critical("Invalid FEN")
             return
         }
-        fullMoves = moveCount
         var rankIndex = 0
         for rankString in ranks {
             processFENRankString(rankString, rankIndex: rankIndex)
@@ -49,7 +55,9 @@ extension Chess.Board {
         for square in squares {
             fen += square.createCurrentFENString(&emptyCount)
         }
-        fen += " \(playingSide.FEN) \(createCastlingString()) \(enPassantPosition?.FEN ?? "-") 0 \(fullMoves)"
+        let castles = createCastlingString()
+        let enPassant = enPassantPosition?.FEN ?? "-"
+        fen += " \(playingSide.FEN) \(castles) \(enPassant) \(fiftyMovesCount) \(fullMoves)"
         return fen
     }
     private mutating func parseCastlingString(_ castling: String) {
