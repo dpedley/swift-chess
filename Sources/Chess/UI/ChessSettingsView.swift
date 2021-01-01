@@ -42,11 +42,17 @@ public struct ChessSettingsView: View {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.white))
                         }
                     }
+                    .onChange(of: store.game.playerFactory.white) { _ in
+                        self.playerChosenWhite()
+                    }
                     Picker(selection: $store.game.playerFactory.black,
                            label: Text("Black")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
                             PlayerTitleView(player: Chess.playerFactory.players[$0](.black))
                         }
+                    }
+                    .onChange(of: store.game.playerFactory.black) { _ in
+                        self.playerChosenBlack()
                     }
                 }
                 Section(header: Text("Colors")) {
@@ -69,7 +75,6 @@ public struct ChessSettingsView: View {
             .accentColor(.primary)
         }
     }
-    /*
     func playerChosenBlack() {
         var prevBot: Chess.Robot
         if let bot = store.game.black as? Chess.Robot {
@@ -78,7 +83,8 @@ public struct ChessSettingsView: View {
             prevBot = Chess.Robot(side: .black)
             prevBot.responseDelay = store.game.robotPlaybackSpeed()
         }
-        let player = Chess.playerFactory.players[defaultBlackIndex](.black)
+        let blackIndex = store.game.playerFactory.black
+        let player = Chess.playerFactory.players[blackIndex](.black)
         store.game.black = player
         if !player.isBot() && !store.game.white.isBot() {
             // We don't allow 2 player game, make the other player a bot
@@ -94,14 +100,15 @@ public struct ChessSettingsView: View {
             prevBot = Chess.Robot(side: .white)
             prevBot.responseDelay = store.game.robotPlaybackSpeed()
         }
-        let player = Chess.playerFactory.players[defaultWhiteIndex](.white)
+        let whiteIndex = store.game.playerFactory.white
+        let player = Chess.playerFactory.players[whiteIndex](.white)
         store.game.white = player
         if !player.isBot() && !store.game.black.isBot() {
             // We don't allow 2 player game, make the other player a bot
             prevBot.side = .black
             store.game.black = prevBot
         }
-    }*/
+    }
     public init(_ debug: DebugSectionProvider? = nil) {
         self.debug = debug ?? { AnyView(EmptyView()) }
     }
