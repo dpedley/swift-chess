@@ -13,19 +13,19 @@
 
 import Foundation
 
-public extension Chess {
+extension Chess {
     /// A base robot, the evaluate is meant for subclasses
-    class Robot: Chess.Player, RoboticMoveDecider {
+    open class Robot: Chess.Player, RoboticMoveDecider {
         /// How long to wait before starting to process the evaluation 0 = immediate
-        public var responseDelay: TimeInterval = 0.0
+        open var responseDelay: TimeInterval = 0.0
         /// This is the last move that will be played.
-        public var stopAfterMove: Int
+        open var stopAfterMove: Int
 
         /// A few overrides from Chess.Player
         public override func isBot() -> Bool { return true }
         public override func prepareForGame() { }
         public override func timerRanOut() {}
-        public override func iconName() -> String {
+        open override func iconName() -> String {
             switch side {
             case .black:
                 return "ladybug.fill"
@@ -53,7 +53,7 @@ public extension Chess {
                 Chess.log.debug("turnUpdate stopAfterMove: \(stopAfterMove)")
                 return
             }
-            let evaluteFEN = game.board.FEN
+            let localBoard = game.board
             weak var weakSelf = self
             weak var weakDelegate = delegate
             let sleepTime = responseDelay
@@ -62,7 +62,7 @@ public extension Chess {
                     Thread.sleep(until: Date().addingTimeInterval(sleepTime))
                 }
                 guard let self = weakSelf, let delegate = weakDelegate else { return }
-                let board = Chess.Board(FEN: evaluteFEN)
+                let board = localBoard
                 guard let move = self.evalutate(board: board) else {
                     let square = game.board.squareForActiveKing
                     guard square.piece?.side == self.side else {
@@ -76,15 +76,15 @@ public extension Chess {
                 delegate.gameAction(.makeMove(move: move))
             }
         }
-        public func validChoices(board: Chess.Board) -> ChessRobotChoices {
+        open func validChoices(board: Chess.Board) -> ChessRobotChoices {
             board.createValidVariants(for: side)
         }
         /// Evaluate board for the optimal move
         ///
         /// - Parameter board: The board waiting for a move to be player by this bot.
         /// - Returns: Optional. The best move the bot found. If no move is returned, the bot resigns.
-        public func evalutate(board: Chess.Board) -> Chess.Move? {
-            var tmpBoard = Chess.Board(FEN: board.FEN)
+        open func evalutate(board: Chess.Board) -> Chess.Move? {
+            var tmpBoard = board
             tmpBoard.playingSide = side
             return validChoices(board: tmpBoard)?.randomElement()?.move
         }

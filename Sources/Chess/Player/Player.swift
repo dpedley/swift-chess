@@ -8,8 +8,8 @@ import Foundation
 
 public typealias ChessTurnCallback = (Chess.Move) -> Void
 
-public extension Chess {
-    class Player {
+extension Chess {
+    open class Player {
         public var side: Side
         public var timeLeft: TimeInterval?
         public var currentMoveStartTime: Date?
@@ -45,7 +45,7 @@ public extension Chess {
                 return "crown"
             }
         }
-        public func menuName() -> String {
+        open func menuName() -> String {
             if self is Chess.Robot.CautiousBot {
                 return "CautiousBot"
             }

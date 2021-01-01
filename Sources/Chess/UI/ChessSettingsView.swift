@@ -33,71 +33,81 @@ public struct ChessSettingsView: View {
         return debug()
     }
     public var body: some View {
-        Form {
-            Section(header: Text("White")) {
-                ChessOpponentSelector(player: Chess.HumanPlayer(side: .white))
-                ChessOpponentSelector(player: random(store.game, side: .white))
-                ChessOpponentSelector(player: greedy(store.game, side: .white))
-                ChessOpponentSelector(player: cautious(store.game, side: .white))
-                // ChessOpponentSelector(player: mindyMax(store.game, side: .white))
-                // ChessOpponentSelector(player: montyCarlo(store.game, side: .white))
+        NavigationView {
+            Form {
+                Section(header: Text("Game")) {
+                    Picker(selection: $store.game.playerFactory.white,
+                           label: Text("White")) {
+                        ForEach(0 ..< Chess.playerFactory.players.count) {
+                            PlayerTitleView(player: Chess.playerFactory.players[$0](.white))
+                        }
+                    }
+                    .onChange(of: store.game.playerFactory.white) { _ in
+                        self.playerChosenWhite()
+                    }
+                    Picker(selection: $store.game.playerFactory.black,
+                           label: Text("Black")) {
+                        ForEach(0 ..< Chess.playerFactory.players.count) {
+                            PlayerTitleView(player: Chess.playerFactory.players[$0](.black))
+                        }
+                    }
+                    .onChange(of: store.game.playerFactory.black) { _ in
+                        self.playerChosenBlack()
+                    }
+                }
+                Section(header: Text("Colors")) {
+                    BoardColorSelector(.brown)
+                    BoardColorSelector(.blue)
+                    BoardColorSelector(.green)
+                    BoardColorSelector(.purple)
+                }
+                Section(header: Text("Highlights")) {
+                    Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
+                        Text("Show highlights for the last move")
+                    })
+                    Toggle(isOn: $store.environment.preferences.highlightChoices, label: {
+                        Text("Show valid choices when moving")
+                    })
+                }
+                debugSettings(environment: store.environment)
             }
-            Section(header: Text("Black")) {
-                ChessOpponentSelector(player: Chess.HumanPlayer(side: .black))
-                ChessOpponentSelector(player: random(store.game, side: .black))
-                ChessOpponentSelector(player: greedy(store.game, side: .black))
-                ChessOpponentSelector(player: cautious(store.game, side: .black))
-                // ChessOpponentSelector(player: mindyMax(store.game, side: .black))
-                // ChessOpponentSelector(player: montyCarlo(store.game, side: .black))
-            }
-            /* Revisit the robotic delay in relation to the processing time.
-            Section(header: Text("Robot Move Delay \(String(format: "%#0.1#2f", robotDelay)) seconds")) {
-                Slider(value: $robotDelay, in: 0.1...10,
-                       step: 0.05,
-                       onEditingChanged: { _ in
-                    store.game.setRobotPlaybackSpeed(robotDelay)
-                })
-            }
-             */
-            Section(header: Text("Colors")) {
-                BoardColorSelector(.brown)
-                BoardColorSelector(.blue)
-                BoardColorSelector(.green)
-                BoardColorSelector(.purple)
-            }
-            Section(header: Text("Highlights")) {
-                Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
-                    Text("Show highlights for the last move")
-                })
-                Toggle(isOn: $store.environment.preferences.highlightChoices, label: {
-                    Text("Show valid choices when moving")
-                })
-            }
-            debugSettings(environment: store.environment)
-        }.accentColor(.primary)
+            .navigationTitle("Settings")
+            .accentColor(.primary)
+        }
     }
-    func random(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
-        let robot = Chess.Robot(side: side)
-        robot.responseDelay = game.robotPlaybackSpeed()
-        return robot
+    func playerChosenBlack() {
+        var prevBot: Chess.Robot
+        if let bot = store.game.black as? Chess.Robot {
+            prevBot = bot
+        } else {
+            prevBot = Chess.Robot(side: .black)
+            prevBot.responseDelay = store.game.robotPlaybackSpeed()
+        }
+        let blackIndex = store.game.playerFactory.black
+        let player = Chess.playerFactory.players[blackIndex](.black)
+        store.game.black = player
+        if !player.isBot() && !store.game.white.isBot() {
+            // We don't allow 2 player game, make the other player a bot
+            prevBot.side = .white
+            store.game.white = prevBot
+        }
     }
-    func greedy(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
-        let robot = Chess.Robot.GreedyBot(side: side)
-        robot.responseDelay = game.robotPlaybackSpeed()
-        return robot
-    }
-    func cautious(_ game: Chess.Game, side: Chess.Side) -> Chess.Robot {
-        let robot = Chess.Robot.CautiousBot(side: side)
-        robot.responseDelay = game.robotPlaybackSpeed()
-        return robot
-    }
-    func mindyMax(_ game: Chess.Game, side: Chess.Side) -> Chess.Player {
-        let robot = Chess.Robot.MindyMaxBot(side: side)
-        return robot
-    }
-    func montyCarlo(_ game: Chess.Game, side: Chess.Side) -> Chess.Player {
-        let robot = Chess.Robot.MontyCarloBot(side: side)
-        return robot
+    func playerChosenWhite() {
+        var prevBot: Chess.Robot
+        if let bot = store.game.white as? Chess.Robot {
+            prevBot = bot
+        } else {
+            prevBot = Chess.Robot(side: .white)
+            prevBot.responseDelay = store.game.robotPlaybackSpeed()
+        }
+        let whiteIndex = store.game.playerFactory.white
+        let player = Chess.playerFactory.players[whiteIndex](.white)
+        store.game.white = player
+        if !player.isBot() && !store.game.black.isBot() {
+            // We don't allow 2 player game, make the other player a bot
+            prevBot.side = .black
+            store.game.black = prevBot
+        }
     }
     public init(_ debug: DebugSectionProvider? = nil) {
         self.debug = debug ?? { AnyView(EmptyView()) }
