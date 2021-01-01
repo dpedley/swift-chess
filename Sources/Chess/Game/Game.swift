@@ -82,12 +82,11 @@ public extension Chess {
         }
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
-            // STILL UNDONE: this is where the clock updates might happen
         }
         public mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
                 if move.isResign || move.isTimeout {
-                    appendLedger(move)
+                    appendLedger(move, pieceType: .king, captureType: nil)
                     return
                 }
                 Chess.log.critical("Need to diagnose this scenario, shouldn't come here.")
@@ -105,7 +104,6 @@ public extension Chess {
                     executeFailed(human: human, failed: moveAttempt, with: limitation)
                 } else {
                     // a bot failed to move, for some this means resign
-                    // STILL UNDONE message user
                     let winningSide = board.playingSide.opposingSide
                     pgn.result = winningSide == .black ? .blackWon : .whiteWon
                     Chess.log.debug("\nUnknown: \n\(pgn.formattedString)")
@@ -152,12 +150,14 @@ public extension Chess {
                 clearActivePlayerSelections()
             }
             // Note piece is at `move.end` now as the move is complete.
-            if board.squares[move.end].piece != nil {
+            if let moved = board.squares[move.end].piece {
                 // Lastly add this move to our ledger
-                appendLedger(move)
+                appendLedger(move, pieceType: moved.pieceType, captureType: capturedPiece?.pieceType)
             }
         }
-        mutating public func appendLedger(_ move: Chess.Move) {
+        mutating public func appendLedger(_ move: Chess.Move,
+                                          pieceType: Chess.PieceType,
+                                          captureType: Chess.PieceType?) {
             if board.playingSide == .black {
                 if board.turns.count == 0 {
                     // This should only happen in board variants.
@@ -170,6 +170,22 @@ public extension Chess {
             } else {
                 let index = board.turns.count
                 board.turns.append(Chess.Turn(index, white: move, black: nil))
+            }
+            if captureType != nil || pieceType == .pawn {
+                board.fiftyMovesCount = 0
+            } else {
+                board.fiftyMovesCount += 1
+            }
+            let boardKey = board.squares.reduce("") { key, square -> String in
+                guard let fen = square.piece?.FEN else {
+                    return key + "-"
+                }
+                return key + fen
+            }
+            if let repCount = board.repetitionMap[boardKey] {
+                board.repetitionMap[boardKey] = repCount + 1
+            } else {
+                board.repetitionMap[boardKey] = 1
             }
         }
         mutating public func clearActivePlayerSelections() {
