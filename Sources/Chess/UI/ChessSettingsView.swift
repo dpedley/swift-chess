@@ -43,7 +43,7 @@ public struct ChessSettingsView: View {
     public var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Game")) {
+                Section(header: Text("Players")) {
                     Picker(selection: $store.game.playerFactory.white,
                            label: Text("White")) {
                         ForEach(0 ..< Chess.playerFactory.players.count) {
@@ -63,7 +63,7 @@ public struct ChessSettingsView: View {
                         self.playerChosenBlack()
                     }
                 }
-                Section(header: Text("Board")) {
+                Section(header: Text("Preferences")) {
                     Picker(selection: $store.environment.theme.color,
                            label: Text(store.environment.theme.color.id)) {
                         Text("Brown").tag(Chess.UI.BoardColor.brown)
@@ -71,16 +71,17 @@ public struct ChessSettingsView: View {
                         Text("Green").tag(Chess.UI.BoardColor.green)
                         Text("Purple").tag(Chess.UI.BoardColor.purple)
                     }.pickerStyle(SegmentedPickerStyle())
-                    HStack {
-                        Spacer()
-                        BoardIconView(store.environment.theme.color)
-                            .frame(height: 50)
-                            .aspectRatio(1, contentMode: .fit)
-                        Spacer().frame(width: 20)
-                        Text("Colors")
-                            .frame(alignment: .leading)
-                        Spacer()
+                    GeometryReader { boardColorGeometry in
+                        HStack {
+                            Spacer().frame(width: 4)
+                            BoardIconView(store.environment.theme.color,
+                                          width: 12,
+                                          height: 2)
+                                .frame(width: boardColorGeometry.size.width,
+                                       height: boardColorGeometry.size.width / 6)
+                        }
                     }
+                    .frame(height: 50, alignment: .center)
                     Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                         Text("Show highlights for the last move")
                     })

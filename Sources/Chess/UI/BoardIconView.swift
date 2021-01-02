@@ -8,6 +8,24 @@
 import SwiftUI
 import Combine
 
+extension View {
+    func frame(in geometry: GeometryProxy, width: Int, height: Int) -> some View {
+        let frameWidth: CGFloat
+        let frameHeight: CGFloat
+        let ratio = CGFloat(width) / CGFloat(height)
+        let geometryRatio = geometry.size.width / geometry.size.height
+        if geometryRatio > ratio {
+            frameHeight = geometry.size.height
+            frameWidth = frameHeight * ratio
+        } else {
+            frameWidth = geometry.size.width
+            frameHeight = frameWidth / ratio
+        }
+        return self.frame(width: frameWidth,
+                          height: frameHeight,
+                          alignment: .center)
+    }
+}
 public struct BoardIconView: View {
     let color: Chess.UI.BoardColor
     let height: Int
@@ -24,9 +42,7 @@ public struct BoardIconView: View {
                     }
                 }
             }
-            .frame(width: geometry.size.minimumLength,
-                   height: geometry.size.minimumLength,
-                   alignment: .center)
+            .frame(in: geometry, width: width, height: height)
         }
     }
     public init(_ color: Chess.UI.BoardColor, width: Int = 2, height: Int = 2) {
@@ -44,6 +60,8 @@ struct BoardIconViewPreviews: PreviewProvider {
             BoardIconView(.green, width: 3, height: 3)
             Spacer()
             BoardIconView(.brown, width: 4, height: 4)
+            Spacer()
+            BoardIconView(.brown, width: 3, height: 2)
             Spacer()
             BoardIconView(.purple, width: 8, height: 8)
         }
