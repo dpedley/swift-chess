@@ -16,16 +16,7 @@ public extension Chess {
         public var blackCastleQueenSide: Bool?
         public var whiteCastleKingSide: Bool?
         public var whiteCastleQueenSide: Bool?
-        public var playingSide: Side = .white {
-            didSet {
-                // Only do this for an active visual board, it's expensive for a NilVisualizer
-                if self.populateExpensiveVisuals {
-                    isInCheck = square(squareForActiveKing.position, canBeAttackedBy: playingSide)
-                } else {
-                    isInCheck = nil
-                }
-            }
-        }
+        public var playingSide: Side = .white
         public var lastMove: Move? {
             guard let lastTurn = turns.last else { return nil }
             if let move = lastTurn.black {

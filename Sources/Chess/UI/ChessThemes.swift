@@ -11,11 +11,14 @@ public extension Chess.UI {
         @AppStorage("boardColor", store: ChessEnvironment.defaults)
             public var color: BoardColor = .brown
     }
-    enum BoardColor: String {
-        case brown
-        case blue
-        case green
-        case purple
+    enum BoardColor: String, CaseIterable, Identifiable {
+        // swiftlint:disable identifier_name
+        public var id: String { return rawValue }
+        // swiftlint:enable identifier_name
+        case brown = "Brown"
+        case blue = "Blue"
+        case green = "Green"
+        case purple = "Purple"
         public var dark: Color {
             switch self {
             case .brown:
@@ -38,18 +41,6 @@ public extension Chess.UI {
                 return .chessBoardGreenLight
             case .purple:
                 return .chessBoardPurpleLight
-            }
-        }
-        public var name: LocalizedStringKey {
-            switch self {
-            case .brown:
-                return "Brown"
-            case .blue:
-                return "Blue"
-            case .green:
-                return "Green"
-            case .purple:
-                return "Purple"
             }
         }
     }

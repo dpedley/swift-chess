@@ -7,6 +7,13 @@
 import Foundation
 import SwiftUI
 
+public struct BoardSegment: View {
+    let color: Chess.UI.BoardColor
+    public var body: some View {
+        Text(color.id)
+    }
+}
+
 public struct ChessSettingsButton: View {
     @EnvironmentObject public var store: ChessStore
     let action: () -> Void
@@ -32,6 +39,7 @@ public struct ChessSettingsView: View {
         }
         return debug()
     }
+    let colors = Chess.UI.BoardColor.allCases
     public var body: some View {
         NavigationView {
             Form {
@@ -55,13 +63,24 @@ public struct ChessSettingsView: View {
                         self.playerChosenBlack()
                     }
                 }
-                Section(header: Text("Colors")) {
-                    BoardColorSelector(.brown)
-                    BoardColorSelector(.blue)
-                    BoardColorSelector(.green)
-                    BoardColorSelector(.purple)
-                }
-                Section(header: Text("Highlights")) {
+                Section(header: Text("Board")) {
+                    Picker(selection: $store.environment.theme.color,
+                           label: Text(store.environment.theme.color.id)) {
+                        Text("Brown").tag(Chess.UI.BoardColor.brown)
+                        Text("Blue").tag(Chess.UI.BoardColor.blue)
+                        Text("Green").tag(Chess.UI.BoardColor.green)
+                        Text("Purple").tag(Chess.UI.BoardColor.purple)
+                    }.pickerStyle(SegmentedPickerStyle())
+                    HStack {
+                        Spacer()
+                        BoardIconView(store.environment.theme.color)
+                            .frame(height: 50)
+                            .aspectRatio(1, contentMode: .fit)
+                        Spacer().frame(width: 20)
+                        Text("Colors")
+                            .frame(alignment: .leading)
+                        Spacer()
+                    }
                     Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                         Text("Show highlights for the last move")
                     })

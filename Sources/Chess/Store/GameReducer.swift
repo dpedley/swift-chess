@@ -12,6 +12,7 @@ import Combine
 public typealias ChessGameReducer = (Chess.Game, Chess.GameAction, ChessEnvironment,
                                      PassthroughSubject<Chess.Game, Never>) -> Void
 public extension ChessStore {
+    // swiftlint:disable cyclomatic_complexity
     static func gameReducer(
         game: Chess.Game,
         action: Chess.GameAction,
@@ -21,7 +22,7 @@ public extension ChessStore {
         var mutableGame = game
         switch action {
         case .nextTurn:
-            Chess.log.info("nextTurn: \(game.board.playingSide)")
+            Chess.log.info("nextTurn: \(mutableGame.board.playingSide)")
             mutableGame.nextTurn()
         case .startGame:
             Chess.log.info("startGame: Starting...")
@@ -32,14 +33,15 @@ public extension ChessStore {
         case .setBoard(let FEN):
             Chess.log.info("setBoard: Board setup as: \(FEN)")
             resetBoard(FEN: FEN, game: &mutableGame)
+        case .kingFlash(let active):
+            Chess.log.info("kingFlash: \(active)")
+            mutableGame.kingFlash = active
         case .resetBoard:
             Chess.log.info("resetBoard: resetting...")
             resetBoard(FEN: Chess.Board.startingFEN, game: &mutableGame)
         case .gameResult(let result, let status):
             Chess.log.info("gameResult: \(result.rawValue)")
-            mutableGame.pgn.result = result
-            mutableGame.info = .gameEnded(result: result, status: status)
-            mutableGame.userPaused = true
+            gameResult(result: result, status: status, game: &mutableGame)
         case .makeMove(let move):
             Chess.log.info("makeMove: \(move.side) \(move.description)")
             makeMove(move, game: &mutableGame)
@@ -57,6 +59,12 @@ public extension ChessStore {
         }
         passThrough.send(mutableGame)
     }
+    // swiftlint:enable cyclomatic_complexity
+    private static func gameResult(result: Chess.Game.PGNResult, status: Chess.GameStatus, game: inout Chess.Game) {
+        game.pgn.result = result
+        game.info = .gameEnded(result: result, status: status)
+        game.userPaused = true
+    }
     private static func resetBoard(FEN: String, game: inout Chess.Game) {
         game.pgn = Chess.Game.freshPGN(game.black, game.white)
         game.info = nil
@@ -68,6 +76,7 @@ public extension ChessStore {
         if game.board.lastMove == move {
             game.changeSides(move.side.opposingSide)
             if game.board.isInCheck == true {
+                game.kingFlash = true
                 Chess.Sounds().check()
             }
         }

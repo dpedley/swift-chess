@@ -186,13 +186,11 @@ extension Chess.Board {
         // The move passed our tests, we can commit it safely
         move.verify()
     }
-    private func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
-        let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN,
-                                                  move: move,
-                                                  deepVariant: false)
-        // Are we defending the king properly?
-        if let kingSquare = testVariant.board.findOptionalKing(move.side) {
-            let attackers = testVariant.board.allSquaresAttacking(kingSquare,
+    private func kingMustBeDefended(_ variant: Chess.SingleMoveVariant,
+                                    squares: [Chess.Square],
+                                    move: Chess.Move) throws {
+        for kingSquare in squares {
+            let attackers = variant.board.allSquaresAttacking(kingSquare,
                                                                   side: move.side.opposingSide,
                                                                   applyVariants: false)
             if attackers.count>0 {
@@ -210,6 +208,23 @@ extension Chess.Board {
                     throw Chess.Move.Limitation.kingWouldBeUnderAttackAfterMove
                 }
             }
+        }
+    }
+    private func applyVariantsForMoveAttempt(_ move: Chess.Move) throws {
+        let testVariant = Chess.SingleMoveVariant(originalFEN: self.FEN,
+                                                  move: move,
+                                                  deepVariant: false)
+        // Are we defending the king properly?
+        if let kingSquare = testVariant.board.findOptionalKing(move.side) {
+            var testSquares = [kingSquare]
+            switch move.sideEffect {
+            case .castling:
+                testSquares.append(testVariant.board.squares[move.start])
+                testSquares.append(testVariant.board.squares[(move.start + move.end) / 2])
+            default:
+                break
+            }
+            try kingMustBeDefended(testVariant, squares: testSquares, move: move)
         }
     }
     private func canPieceAttack(_ move: inout Chess.Move, piece: Chess.Piece) -> Bool {

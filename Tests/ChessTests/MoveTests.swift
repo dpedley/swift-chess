@@ -93,7 +93,21 @@ final class MoveTests: XCTestCase {
         board.playingSide = .white
         XCTAssertEqual(board.FEN, castledFEN)
     }
-
+    func testCastlingWhileUnderAttack() {
+        let beforeMoveFEN = "8/1k2pppp/5r2/8/2b5/8/PPPP1P2/R3K1B1 b Q - 0 41"
+        let checkFEN = "8/1k2pppp/4r3/8/2b5/8/PPPP1P2/R3K1B1 w Q - 1 42"
+        let black = Chess.HumanPlayer(side: .black)
+        let white = Chess.HumanPlayer(side: .white)
+        var game = Chess.Game(white, against: black)
+        game.board.resetBoard(FEN: beforeMoveFEN)
+        game.userPaused = false
+        game.execute(move: Chess.Move.black.f6.e6)
+        game.changeSides(.white)
+        XCTAssertEqual(game.board.FEN, checkFEN)
+        let moves = game.board.createValidVariants(for: .white, deepVariants: true)
+        XCTAssertTrue(moves?.count == 1)
+        XCTAssertTrue(moves?.first?.move == Chess.Move.white.e1.d1)
+    }
     static var allTests = [
         ("testMoveEquality", testMoveEquality),
         ("testEnPassant", testEnPassant),

@@ -24,6 +24,7 @@ public extension Chess {
         public var round: Int = 1
         public var pgn: Chess.Game.PortableNotation
         public var info: GameUpdate?
+        public var kingFlash = false
         public var activePlayer: Player {
             switch board.playingSide {
             case .white:
@@ -82,6 +83,12 @@ public extension Chess {
         }
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
+            if board.populateExpensiveVisuals {
+                board.isInCheck = board.square(board.squareForActiveKing.position,
+                                               canBeAttackedBy: side.opposingSide)
+            } else {
+                board.isInCheck = nil
+            }
         }
         public mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {
@@ -99,7 +106,7 @@ public extension Chess {
             case .success(let capturedPiece):
                 executeSuccess(move: moveAttempt, capturedPiece: capturedPiece)
             case .failure(let limitation):
-                Chess.log.critical("Move failed: \(limitation)")
+                Chess.log.critical("Move failed: \(move.description) \(limitation)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     executeFailed(human: human, failed: moveAttempt, with: limitation)
                 } else {
@@ -200,12 +207,6 @@ public extension Chess {
                 human.initialPositionTapped = nil
             }
         }
-        private func flashKing() {
-            // STILL UNDONE: Vet the use of the old UI update here.
-//            let kingPosition = board.squareForActiveKing.position
-//            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
-//            board.ui.apply(board: board, updates: updates)
-        }
         mutating public func executeFailed(human: Chess.HumanPlayer,
                                            failed move: Chess.Move,
                                            with reason: Chess.Move.Limitation) {
@@ -216,7 +217,7 @@ public extension Chess {
                 // Nothing to see here, just humans
                 break
             case .kingWouldBeUnderAttackAfterMove:
-                flashKing()
+                delegate?.gameAction(.kingFlash(active: true))
                 Chess.Sounds().check()
             case .unknown:
                 Chess.log.info("Human's move had unknown limitation.")
