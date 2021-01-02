@@ -100,7 +100,7 @@ public extension Chess {
             case .success(let capturedPiece):
                 executeSuccess(move: moveAttempt, capturedPiece: capturedPiece)
             case .failure(let limitation):
-                Chess.log.critical("Move failed: \(limitation)")
+                Chess.log.critical("Move failed: \(move.description) \(limitation)")
                 if let human = activePlayer as? Chess.HumanPlayer {
                     executeFailed(human: human, failed: moveAttempt, with: limitation)
                 } else {
