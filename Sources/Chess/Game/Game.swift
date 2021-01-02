@@ -85,7 +85,7 @@ public extension Chess {
             board.playingSide = side
             if board.populateExpensiveVisuals {
                 board.isInCheck = board.square(board.squareForActiveKing.position,
-                                               canBeAttackedBy: side)
+                                               canBeAttackedBy: side.opposingSide)
             } else {
                 board.isInCheck = nil
             }
