@@ -40,7 +40,7 @@ public extension Chess.UI {
                 return .chessBoardPurpleLight
             }
         }
-        public var name: LocalizedStringKey {
+        public var name: String {
             switch self {
             case .brown:
                 return "Brown"
