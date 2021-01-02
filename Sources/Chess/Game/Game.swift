@@ -24,6 +24,7 @@ public extension Chess {
         public var round: Int = 1
         public var pgn: Chess.Game.PortableNotation
         public var info: GameUpdate?
+        public var kingFlash = false
         public var activePlayer: Player {
             switch board.playingSide {
             case .white:
@@ -200,12 +201,6 @@ public extension Chess {
                 human.initialPositionTapped = nil
             }
         }
-        private func flashKing() {
-            // STILL UNDONE: Vet the use of the old UI update here.
-//            let kingPosition = board.squareForActiveKing.position
-//            let updates = [Chess.UI.Update.flashSquare(kingPosition)]
-//            board.ui.apply(board: board, updates: updates)
-        }
         mutating public func executeFailed(human: Chess.HumanPlayer,
                                            failed move: Chess.Move,
                                            with reason: Chess.Move.Limitation) {
@@ -216,7 +211,7 @@ public extension Chess {
                 // Nothing to see here, just humans
                 break
             case .kingWouldBeUnderAttackAfterMove:
-                flashKing()
+                kingFlash = true
                 Chess.Sounds().check()
             case .unknown:
                 Chess.log.info("Human's move had unknown limitation.")

@@ -68,6 +68,7 @@ public extension ChessStore {
         if game.board.lastMove == move {
             game.changeSides(move.side.opposingSide)
             if game.board.isInCheck == true {
+                game.kingFlash = true
                 Chess.Sounds().check()
             }
         }
