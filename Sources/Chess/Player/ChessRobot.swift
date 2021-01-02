@@ -56,10 +56,10 @@ extension Chess {
             let localBoard = game.board
             weak var weakSelf = self
             weak var weakDelegate = delegate
-            let sleepTime = responseDelay
+            let answerDate = Date(timeIntervalSinceNow: responseDelay)
             Thread.detachNewThread {
-                if sleepTime>0 {
-                    Thread.sleep(until: Date().addingTimeInterval(sleepTime))
+                if answerDate.compare(Date()) == .orderedDescending {
+                    Thread.sleep(until: answerDate)
                 }
                 guard let self = weakSelf, let delegate = weakDelegate else { return }
                 let board = localBoard
