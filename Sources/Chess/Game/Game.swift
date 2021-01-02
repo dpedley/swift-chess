@@ -217,7 +217,7 @@ public extension Chess {
                 // Nothing to see here, just humans
                 break
             case .kingWouldBeUnderAttackAfterMove:
-                kingFlash = true
+                delegate?.gameAction(.kingFlash(active: true))
                 Chess.Sounds().check()
             case .unknown:
                 Chess.log.info("Human's move had unknown limitation.")
