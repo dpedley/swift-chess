@@ -45,6 +45,12 @@ public extension Chess.Board {
                                                  start: square.position,
                                                  end: toSquare)
                     var tmpBoard = Chess.Board(FEN: currentFEN)
+                    if moveAttempt == Chess.Move.white.e1.d1 {
+                        print("Move: \(moveAttempt.description)")
+                    }
+                    if moveAttempt == Chess.Move.white.e1.c1 {
+                        print("Castle: \(moveAttempt.description)")
+                    }
                     let attempt = tmpBoard.attemptMove(&moveAttempt)
                     switch attempt {
                     case .success:
