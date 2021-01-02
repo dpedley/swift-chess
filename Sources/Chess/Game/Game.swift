@@ -83,6 +83,12 @@ public extension Chess {
         }
         public mutating func changeSides(_ side: Chess.Side) {
             board.playingSide = side
+            if board.populateExpensiveVisuals {
+                board.isInCheck = board.square(board.squareForActiveKing.position,
+                                               canBeAttackedBy: side)
+            } else {
+                board.isInCheck = nil
+            }
         }
         public mutating func execute(move: Chess.Move) {
             guard move.continuesGameplay else {

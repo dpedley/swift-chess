@@ -45,6 +45,11 @@ public extension Chess.Board {
             rankIndex+=1
         }
         playingSide = newSide
+        if self.populateExpensiveVisuals {
+            isInCheck = square(squareForActiveKing.position, canBeAttackedBy: playingSide)
+        } else {
+            isInCheck = nil
+        }
     }
 }
 

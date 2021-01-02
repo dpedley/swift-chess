@@ -186,7 +186,9 @@ extension Chess.Board {
         // The move passed our tests, we can commit it safely
         move.verify()
     }
-    private func kingMustBeDefended(_ variant: Chess.SingleMoveVariant, squares: [Chess.Square], move: Chess.Move) throws {
+    private func kingMustBeDefended(_ variant: Chess.SingleMoveVariant,
+                                    squares: [Chess.Square],
+                                    move: Chess.Move) throws {
         for kingSquare in squares {
             let attackers = variant.board.allSquaresAttacking(kingSquare,
                                                                   side: move.side.opposingSide,
