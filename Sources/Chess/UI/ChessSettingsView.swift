@@ -73,14 +73,15 @@ public struct ChessSettingsView: View {
                     }.pickerStyle(SegmentedPickerStyle())
                     GeometryReader { boardColorGeometry in
                         HStack {
+                            Spacer().frame(width: 4)
                             BoardIconView(store.environment.theme.color,
-                                          width: 16,
-                                          height: 3)
-                                .offset(x: 0, y: -22)
+                                          width: 12,
+                                          height: 2)
                                 .frame(width: boardColorGeometry.size.width,
-                                       height: boardColorGeometry.size.width * 3 / 16)
+                                       height: boardColorGeometry.size.width / 6)
                         }
-                    }.clipped()
+                    }
+                    .frame(height: 50, alignment: .center)
                     Toggle(isOn: $store.environment.preferences.highlightLastMove, label: {
                         Text("Show highlights for the last move")
                     })
