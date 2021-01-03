@@ -26,6 +26,10 @@ final class MoveTests: XCTestCase {
         board.playingSide = .black
         var takeEnPassant = Chess.Move.black.g4.f3
         testMove(board.attemptMove(&takeEnPassant))
+        board.turns[0].black = takeEnPassant
+        board.playingSide = .white
+        let enPassantCapturedFEN = "8/8/8/8/2k5/5p2/2K5/8 w - - 0 1"
+        XCTAssertEqual(enPassantCapturedFEN, board.FEN)
     }
 
     func testPinnedPieces() throws {

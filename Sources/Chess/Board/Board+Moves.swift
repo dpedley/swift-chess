@@ -90,6 +90,15 @@ public extension Chess.Board {
         squares[move.start].piece = piece
         squares[move.end].piece = squares[move.start].piece
         squares[move.start].piece = nil
+        // For En Passant we need to clear the captured piece where it
+        // trespassed, it is not at move.end like a normal capture.
+        switch move.sideEffect {
+        case .enPassantCapture(_, let trespasser):
+            squares[trespasser].piece = nil
+        default:
+            break
+        }
+
         if move.unicodePGN == nil { // It can be set via the side effect as well.
             switch movingPiece.pieceType {
             case .pawn:
