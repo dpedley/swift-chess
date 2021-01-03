@@ -26,17 +26,17 @@ public extension Chess {
         }
         factory.players.append { side in
             let robot = Chess.Robot(side: side)
-            robot.responseDelay = 1
+            robot.responseDelay = 0.5
             return robot
         }
         factory.players.append { side in
             let robot = Chess.Robot.GreedyBot(side: side)
-            robot.responseDelay = 1
+            robot.responseDelay = 0.5
             return robot
         }
         factory.players.append { side in
             let robot = Chess.Robot.CautiousBot(side: side)
-            robot.responseDelay = 1
+            robot.responseDelay = 0.5
             return robot
         }
         return factory
