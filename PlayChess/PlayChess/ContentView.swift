@@ -10,101 +10,78 @@ import Chess
 
 struct ContentView: View {
     @EnvironmentObject var store: ChessStore
-    @State var white: String = ""
-    @State var black: String = ""
+    @AppStorage("welcomeMessage")
+        var welcomeMessage: Bool = true
+    func welcomeView() -> some View {
+        guard welcomeMessage else {
+            return AnyView(EmptyView())
+        }
+        return AnyView(WelcomeView())
+    }
+    static let kingFlashColor = Color.yellow.opacity(0.2)
+    func boardHighlightColor(_ game: Chess.Game) -> Color {
+        guard game.kingFlash else { return .clear }
+        Thread.detachNewThread {
+            Thread.sleep(forTimeInterval: 0.2)
+            store.gameAction(.kingFlash(active: false))
+        }
+        return Self.kingFlashColor
+    }
+    func newGameView(_ game: Chess.Game) -> NewGameView? {
+        return store.game.board.turns.isEmpty ?
+            NewGameView() : nil
+    }
+    func inProgressGameView(_ game: Chess.Game,
+                            geometry: GeometryProxy) -> AnyView? {
+        return store.game.board.turns.isEmpty ? nil :
+            AnyView(
+                HStack {
+                    ChessLedgerView()
+                        .frame(width: geometry.size.width / 2)
+                    VStack(spacing: 0) {
+                        DungeonView(side: .white)
+                        DungeonView(side: .black)
+                    }
+                    .frame(width: geometry.size.width / 2)
+                }
+            )
+    }
     var body: some View {
-        VStack {
-            Spacer()
-            BoardView()
-            Spacer()
-            HStack {
-                Spacer()
-                Menu("Board Color") {
-                    Button("Green") {
-                        store.environmentChange(.boardColor(newColor: .green))
-                    }
-                    Button("Blue") {
-                        store.environmentChange(.boardColor(newColor: .blue))
-                    }
-                    Button("Brown") {
-                        store.environmentChange(.boardColor(newColor: .brown))
-                    }
-                    Button("Purple") {
-                        store.environmentChange(.boardColor(newColor: .purple))
-                    }
+        GeometryReader { geometry in
+            ZStack {
+                VStack(spacing: 0) {
+                    Spacer()
+                    ZStack {
+                        BoardGameView()
+                        Rectangle()
+                            .fill(boardHighlightColor(store.game))
+                    }.frame(width: geometry.size.width - 8,
+                            height: geometry.size.width + (BoardGameView.playerHeight * 2) )
+                    newGameView(store.game)
+                    inProgressGameView(store.game, geometry: geometry)
                 }
-                Spacer()
+                .frame(width: geometry.size.width, alignment: .center)
+                GameOverView($store.game.info)
+                    .frame(width: geometry.size.width,
+                           height: geometry.size.height,
+                           alignment: .center)
+                welcomeView()
+                    .frame(width: geometry.size.width,
+                           height: geometry.size.height,
+                           alignment: .center)
             }
-            Spacer(minLength: 50)
-            HStack {
-                Spacer()
-                Menu("White \(white)") {
-                    Button("Human") {
-                        store.game.white = Chess.HumanPlayer(side: .white)
-                        white = "Human"
-                    }
-                    Button("RandomBot") {
-                        store.game.white = Chess.Robot(side: .white)
-                        white = "RandomBot"
-                    }
-                    Button("GreedyBot") {
-                        store.game.white = Chess.Robot.GreedyBot(side: .white)
-                        white = "GreedyBot"
-                    }
-                    Button("CautiousBot") {
-                        store.game.white = Chess.Robot.CautiousBot(side: .white)
-                        white = "CautiousBot"
-                    }
-                }
-                Spacer()
-                Menu("Black \(black)") {
-                    Button("Human") {
-                        store.game.black = Chess.HumanPlayer(side: .black)
-                        black = "Human"
-                    }
-                    Button("RandomBot") {
-                        store.game.black = Chess.Robot(side: .black)
-                        black = "RandomBot"
-                    }
-                    Button("GreedyBot") {
-                        store.game.black = Chess.Robot.GreedyBot(side: .black)
-                        black = "GreedyBot"
-                    }
-                    Button("CautiousBot") {
-                        store.game.black = Chess.Robot.CautiousBot(side: .black)
-                        black = "CautiousBot"
-                    }
-                }
-                Spacer()
-            }
-            Spacer(minLength: 50)
-            HStack {
-                Spacer()
-                Button("Reset Board") {
-                    if !store.game.userPaused {
-                        store.gameAction(.pauseGame)
-                    }
-                    store.gameAction(.resetBoard)
-                }
-                Spacer()
-                Button("\(store.game.userPaused ? "Start" : "Pause")") {
-                    store.game.setRobotPlaybackSpeed(1)
-                    if store.game.userPaused {
-                        store.game.userPaused = false
-                        store.gameAction(.startGame)
-                    } else {
-                        store.gameAction(.pauseGame)
-                    }
-                }
-                Spacer()
-            }
-            Spacer()
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static let store = ChessStore()
+    static let store: ChessStore = {
+        let white = Chess.HumanPlayer(side: .white)
+        let black = Chess.Robot.CautiousBot(side: .black)
+        let game = Chess.Game(white, against: black)
+        let store = ChessStore(game: game)
+        return store
+    }()
     static var previews: some View {
         ContentView()
             .environmentObject(store)

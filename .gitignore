@@ -2,6 +2,7 @@
 .DS_Store
 Package.resolved
 project.pbxproj/
+project.xcworkspace/
 xcshareddata/
 xcuserdata/
 .DS_Store
