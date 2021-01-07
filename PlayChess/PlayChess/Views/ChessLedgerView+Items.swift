@@ -35,7 +35,6 @@ extension ChessLedgerView {
             }
         }
     }
-
     struct LedgerItem: View {
         let turn: Chess.Turn
         var body: some View {
@@ -56,6 +55,4 @@ extension ChessLedgerView {
             }
         }
     }
-
-
 }

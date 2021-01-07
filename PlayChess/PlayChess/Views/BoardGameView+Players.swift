@@ -4,7 +4,6 @@
 //
 //  Created by Douglas Pedley on 12/16/20.
 //
-
 import SwiftUI
 import Chess
 
@@ -20,4 +19,3 @@ extension BoardGameView {
         return PlayerTitleView(player: player)
     }
 }
-

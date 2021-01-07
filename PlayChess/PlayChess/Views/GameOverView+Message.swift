@@ -86,6 +86,4 @@ extension GameOverView {
             return (encourage, "Draw")
         }
     }
-
 }
-
