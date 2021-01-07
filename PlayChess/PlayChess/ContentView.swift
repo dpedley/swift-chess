@@ -10,42 +10,7 @@ import Chess
 
 struct ContentView: View {
     @EnvironmentObject var store: ChessStore
-    @AppStorage("welcomeMessage")
-        var welcomeMessage: Bool = true
-    func welcomeView() -> some View {
-        guard welcomeMessage else {
-            return AnyView(EmptyView())
-        }
-        return AnyView(WelcomeView())
-    }
-    static let kingFlashColor = Color.yellow.opacity(0.2)
-    func boardHighlightColor(_ game: Chess.Game) -> Color {
-        guard game.kingFlash else { return .clear }
-        Thread.detachNewThread {
-            Thread.sleep(forTimeInterval: 0.2)
-            store.gameAction(.kingFlash(active: false))
-        }
-        return Self.kingFlashColor
-    }
-    func newGameView(_ game: Chess.Game) -> NewGameView? {
-        return store.game.board.turns.isEmpty ?
-            NewGameView() : nil
-    }
-    func inProgressGameView(_ game: Chess.Game,
-                            geometry: GeometryProxy) -> AnyView? {
-        return store.game.board.turns.isEmpty ? nil :
-            AnyView(
-                HStack {
-                    ChessLedgerView()
-                        .frame(width: geometry.size.width / 2)
-                    VStack(spacing: 0) {
-                        DungeonView(side: .white)
-                        DungeonView(side: .black)
-                    }
-                    .frame(width: geometry.size.width / 2)
-                }
-            )
-    }
+    @AppStorage("welcomeMessage") var welcomeMessage = true
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -56,7 +21,7 @@ struct ContentView: View {
                         Rectangle()
                             .fill(boardHighlightColor(store.game))
                     }.frame(width: geometry.size.width - 8,
-                            height: geometry.size.width + (BoardGameView.playerHeight * 2) )
+                            height: geometry.size.width + 64 )
                     newGameView(store.game)
                     inProgressGameView(store.game, geometry: geometry)
                 }

@@ -15,6 +15,16 @@
 		CD50BB2E25815C2F0013B873 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD50BB2D25815C2F0013B873 /* Assets.xcassets */; };
 		CD50BB3C25815C2F0013B873 /* PlayChessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD50BB3B25815C2F0013B873 /* PlayChessTests.swift */; };
 		CD50BB4725815C2F0013B873 /* PlayChessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD50BB4625815C2F0013B873 /* PlayChessUITests.swift */; };
+		CD75EAA325A6DCC000F9D325 /* BoardGameView+Players.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAA225A6DCC000F9D325 /* BoardGameView+Players.swift */; };
+		CD75EAA725A6DD3600F9D325 /* BoardGameView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAA625A6DD3600F9D325 /* BoardGameView+Layout.swift */; };
+		CD75EAAD25A6DDC000F9D325 /* WelcomeView+DebugSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAAC25A6DDC000F9D325 /* WelcomeView+DebugSettings.swift */; };
+		CD75EAB125A6E15400F9D325 /* DungeonView+Pieces.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAB025A6E15400F9D325 /* DungeonView+Pieces.swift */; };
+		CD75EAB725A6E23800F9D325 /* GameOverView+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAB625A6E23800F9D325 /* GameOverView+Message.swift */; };
+		CD75EABD25A6E2BC00F9D325 /* View+ChessHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EABC25A6E2BC00F9D325 /* View+ChessHelpers.swift */; };
+		CD75EAC325A6E35700F9D325 /* ChessLedgerView+Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAC225A6E35700F9D325 /* ChessLedgerView+Items.swift */; };
+		CD75EAC925A6E3FE00F9D325 /* RobotStories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAC825A6E3FE00F9D325 /* RobotStories.swift */; };
+		CD75EACD25A6E46B00F9D325 /* RobotPlacard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EACC25A6E46B00F9D325 /* RobotPlacard.swift */; };
+		CD75EAD125A6E54F00F9D325 /* ContentView+Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD75EAD025A6E54F00F9D325 /* ContentView+Game.swift */; };
 		CDB6007A258DF291009BBFE9 /* ChessLedgerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB60079258DF291009BBFE9 /* ChessLedgerView.swift */; };
 		CDB6330C258FEFAC009C1326 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB6330B258FEFAC009C1326 /* WelcomeView.swift */; };
 		CDB7946725A1276A00D1877B /* NewGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB7946625A1276A00D1877B /* NewGameView.swift */; };
@@ -66,6 +76,16 @@
 		CD50BB4225815C2F0013B873 /* PlayChessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlayChessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD50BB4625815C2F0013B873 /* PlayChessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayChessUITests.swift; sourceTree = "<group>"; };
 		CD50BB4825815C2F0013B873 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD75EAA225A6DCC000F9D325 /* BoardGameView+Players.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoardGameView+Players.swift"; sourceTree = "<group>"; };
+		CD75EAA625A6DD3600F9D325 /* BoardGameView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoardGameView+Layout.swift"; sourceTree = "<group>"; };
+		CD75EAAC25A6DDC000F9D325 /* WelcomeView+DebugSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WelcomeView+DebugSettings.swift"; sourceTree = "<group>"; };
+		CD75EAB025A6E15400F9D325 /* DungeonView+Pieces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DungeonView+Pieces.swift"; sourceTree = "<group>"; };
+		CD75EAB625A6E23800F9D325 /* GameOverView+Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameOverView+Message.swift"; sourceTree = "<group>"; };
+		CD75EABC25A6E2BC00F9D325 /* View+ChessHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ChessHelpers.swift"; sourceTree = "<group>"; };
+		CD75EAC225A6E35700F9D325 /* ChessLedgerView+Items.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChessLedgerView+Items.swift"; sourceTree = "<group>"; };
+		CD75EAC825A6E3FE00F9D325 /* RobotStories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotStories.swift; sourceTree = "<group>"; };
+		CD75EACC25A6E46B00F9D325 /* RobotPlacard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotPlacard.swift; sourceTree = "<group>"; };
+		CD75EAD025A6E54F00F9D325 /* ContentView+Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Game.swift"; sourceTree = "<group>"; };
 		CDB60079258DF291009BBFE9 /* ChessLedgerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessLedgerView.swift; sourceTree = "<group>"; };
 		CDB6330B258FEFAC009C1326 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		CDB7946625A1276A00D1877B /* NewGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameView.swift; sourceTree = "<group>"; };
@@ -129,15 +149,12 @@
 			isa = PBXGroup;
 			children = (
 				CD50BB2D25815C2F0013B873 /* Assets.xcassets */,
-				CD19AB96258A8AE000E54FBA /* BoardGameView.swift */,
-				CDB60079258DF291009BBFE9 /* ChessLedgerView.swift */,
 				CD50BB2B25815C2E0013B873 /* ContentView.swift */,
-				CD2FE411258E789D003D74D9 /* DungeonView.swift */,
-				CD3A47A2258D2F0C0009C549 /* GameOverView.swift */,
+				CD75EAD025A6E54F00F9D325 /* ContentView+Game.swift */,
 				CD50BB3225815C2F0013B873 /* Info.plist */,
-				CDB7946625A1276A00D1877B /* NewGameView.swift */,
 				CD50BB2925815C2E0013B873 /* PlayChessApp.swift */,
-				CDB6330B258FEFAC009C1326 /* WelcomeView.swift */,
+				CD75EAC825A6E3FE00F9D325 /* RobotStories.swift */,
+				CD75EA9B25A6DB3F00F9D325 /* Views */,
 			);
 			path = PlayChess;
 			sourceTree = "<group>";
@@ -158,6 +175,27 @@
 				CD50BB4825815C2F0013B873 /* Info.plist */,
 			);
 			path = PlayChessUITests;
+			sourceTree = "<group>";
+		};
+		CD75EA9B25A6DB3F00F9D325 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CD19AB96258A8AE000E54FBA /* BoardGameView.swift */,
+				CD75EAA625A6DD3600F9D325 /* BoardGameView+Layout.swift */,
+				CD75EAA225A6DCC000F9D325 /* BoardGameView+Players.swift */,
+				CDB60079258DF291009BBFE9 /* ChessLedgerView.swift */,
+				CD75EAC225A6E35700F9D325 /* ChessLedgerView+Items.swift */,
+				CD2FE411258E789D003D74D9 /* DungeonView.swift */,
+				CD75EAB025A6E15400F9D325 /* DungeonView+Pieces.swift */,
+				CD3A47A2258D2F0C0009C549 /* GameOverView.swift */,
+				CD75EAB625A6E23800F9D325 /* GameOverView+Message.swift */,
+				CDB7946625A1276A00D1877B /* NewGameView.swift */,
+				CD75EACC25A6E46B00F9D325 /* RobotPlacard.swift */,
+				CD75EABC25A6E2BC00F9D325 /* View+ChessHelpers.swift */,
+				CDB6330B258FEFAC009C1326 /* WelcomeView.swift */,
+				CD75EAAC25A6DDC000F9D325 /* WelcomeView+DebugSettings.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -297,10 +335,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD2FE412258E789D003D74D9 /* DungeonView.swift in Sources */,
+				CD75EABD25A6E2BC00F9D325 /* View+ChessHelpers.swift in Sources */,
+				CD75EAA325A6DCC000F9D325 /* BoardGameView+Players.swift in Sources */,
+				CD75EAB125A6E15400F9D325 /* DungeonView+Pieces.swift in Sources */,
+				CD75EACD25A6E46B00F9D325 /* RobotPlacard.swift in Sources */,
 				CD19AB97258A8AE000E54FBA /* BoardGameView.swift in Sources */,
+				CD75EAA725A6DD3600F9D325 /* BoardGameView+Layout.swift in Sources */,
 				CD50BB2C25815C2E0013B873 /* ContentView.swift in Sources */,
 				CD3A47A3258D2F0C0009C549 /* GameOverView.swift in Sources */,
+				CD75EAC325A6E35700F9D325 /* ChessLedgerView+Items.swift in Sources */,
+				CD75EAAD25A6DDC000F9D325 /* WelcomeView+DebugSettings.swift in Sources */,
 				CDB6007A258DF291009BBFE9 /* ChessLedgerView.swift in Sources */,
+				CD75EAB725A6E23800F9D325 /* GameOverView+Message.swift in Sources */,
+				CD75EAC925A6E3FE00F9D325 /* RobotStories.swift in Sources */,
+				CD75EAD125A6E54F00F9D325 /* ContentView+Game.swift in Sources */,
 				CD50BB2A25815C2E0013B873 /* PlayChessApp.swift in Sources */,
 				CDB6330C258FEFAC009C1326 /* WelcomeView.swift in Sources */,
 				CDB7946725A1276A00D1877B /* NewGameView.swift in Sources */,
@@ -458,7 +506,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = PlayChess/Info.plist;
@@ -484,7 +532,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = PlayChess/Info.plist;
@@ -510,7 +558,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GNE4VFAE6G;
 				INFOPLIST_FILE = PlayChessTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -532,7 +580,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GNE4VFAE6G;
 				INFOPLIST_FILE = PlayChessTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

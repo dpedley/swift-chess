@@ -10,36 +10,9 @@ import SwiftUI
 import Chess
 
 struct BoardGameView: View {
-    static let playerHeight: CGFloat = 32
-    static let iconEdgeOffset: CGFloat = 32
     @EnvironmentObject var store: ChessStore
-    @AppStorage("muted") var muted: Bool = false
-    @State var settingsVisible: Bool = false
-    @AppStorage("welcomeMessage")
-        var welcomeMessage: Bool = false
-    func debugMenu() -> AnyView {
-        guard store.environment.target == .development else {
-            return AnyView(EmptyView())
-        }
-        return AnyView(
-            Section(header: Text("Development Settings")) {
-                Toggle(isOn: $welcomeMessage, label: {
-                    Text("Show the welcome screen")
-                })
-
-            }
-        )
-    }
-    func topPlayer(_ game: Chess.Game) -> some View {
-        // top and bottom are meant to allow white and black
-        // to flip sides on the board.
-        let player = game.black
-        return PlayerTitleView(player: player)
-    }
-    func bottomPlayer(_ game: Chess.Game) -> some View {
-        let player = game.white
-        return PlayerTitleView(player: player)
-    }
+    @AppStorage("welcomeMessage") var welcomeMessage = false
+    @State var settingsVisible = false
     var body: some View {
         // This view combines the chess board with
         // some common controls and game indicators
@@ -61,7 +34,7 @@ struct BoardGameView: View {
                                 } label: {
                                     Image(systemName: "xmark")
                                         .accentColor(.primary)
-                                        .frame(width: sheetGeometry.size.width - Self.iconEdgeOffset,
+                                        .frame(width: sheetGeometry.size.width - 32,
                                                alignment: .trailing)
                                 }
                                 .padding()
@@ -89,23 +62,9 @@ struct BoardGameView: View {
                 .playerFrame(geometry)
             }
             .frame(width: geometry.size.width,
-                   height: geometry.size.width + (Self.playerHeight * 2),
+                   height: geometry.size.width + 64,
                    alignment: .center)
         }
-    }
-}
-
-extension View {
-    func playerFrame(_ geometry: GeometryProxy) -> some View {
-        return frame(width: geometry.size.width,
-                     height: BoardGameView.playerHeight)
-    }
-    func boardFrame(_ geometry: GeometryProxy) -> some View {
-        return frame(width: geometry.size.width,
-                      height: geometry.size.width)
-    }
-    func cornerFrame(_ geometry: GeometryProxy, alignment: Alignment) -> some View {
-        return frame(width: geometry.size.width - BoardGameView.iconEdgeOffset, alignment: alignment)
     }
 }
 
