@@ -188,7 +188,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD50BB4E25815C2F0013B873 /* Build configuration list for PBXNativeTarget "PlayChessTests" */;
 			buildPhases = (
-				86782C4C6FAB831E47B8FB1C /* [CP] Check Pods Manifest.lock */,
 				CD50BB3325815C2F0013B873 /* Sources */,
 				CD50BB3425815C2F0013B873 /* Frameworks */,
 				CD50BB3525815C2F0013B873 /* Resources */,
@@ -207,11 +206,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD50BB5125815C2F0013B873 /* Build configuration list for PBXNativeTarget "PlayChessUITests" */;
 			buildPhases = (
-				C549235C1E0DDA0E9C03AE7D /* [CP] Check Pods Manifest.lock */,
 				CD50BB3E25815C2F0013B873 /* Sources */,
 				CD50BB3F25815C2F0013B873 /* Frameworks */,
 				CD50BB4025815C2F0013B873 /* Resources */,
-				403E6BC6721576174BEEDDFE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -293,70 +290,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		403E6BC6721576174BEEDDFE /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PlayChess-PlayChessUITests/Pods-PlayChess-PlayChessUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PlayChess-PlayChessUITests/Pods-PlayChess-PlayChessUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PlayChess-PlayChessUITests/Pods-PlayChess-PlayChessUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		86782C4C6FAB831E47B8FB1C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-PlayChessTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C549235C1E0DDA0E9C03AE7D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-PlayChess-PlayChessUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CD50BB2225815C2E0013B873 /* Sources */ = {
