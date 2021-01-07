@@ -1,13 +1,15 @@
 # Chess
 
+<img src="Screenshots/playchessapp.png" align="right">
+
 This package provides UI components and game logic for standard chess play. The code presents a unified pattern for the game interactions using 
 [Combine](https://developer.apple.com/documentation/combine) and [SwiftUI](https://developer.apple.com/documentation/swiftui). 
 
-You can find an example Xcode project in the "PlayChess" folder.
  
-![](Screenshots/playchessapp.png)
+You can find an example Xcode project in the "PlayChess" folder.
 
 This app is also available in the [App Store](https://apps.apple.com/us/app/playchess/id1544715134) if you'd like to try it.
+
 
 ### Getting Started
 
