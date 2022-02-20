@@ -12,14 +12,12 @@ public extension Chess {
     struct Turn: Identifiable {
         public var white: Move?
         public var black: Move?
-        // swiftlint:disable identifier_name
         public let id: Int
-        init(_ id: Int, white: Move?, black: Move?) {
-            self.id = id
+        init(_ turnId: Int, white: Move?, black: Move?) {
+            self.id = turnId
             self.white = white
             self.black = black
         }
-        // swiftlint:enable identifier_name
     }
     struct Move: Equatable {
         public static func == (lhs: Move, rhs: Move) -> Bool {

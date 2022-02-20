@@ -12,9 +12,7 @@ public extension Chess.UI {
             public var color: BoardColor = .brown
     }
     enum BoardColor: String, CaseIterable, Identifiable {
-        // swiftlint:disable identifier_name
         public var id: String { return rawValue }
-        // swiftlint:enable identifier_name
         case brown = "Brown"
         case blue = "Blue"
         case green = "Green"
