@@ -11,9 +11,7 @@ public extension Chess {
         public static func == (lhs: Piece, rhs: Piece) -> Bool {
             return lhs.pieceType.fen() == rhs.pieceType.fen()
         }
-        // swiftlint:disable identifier_name
         public let id = UUID()
-        // swiftlint:enable identifier_name
         public let side: Side
         public var pieceType: PieceType
         public var FEN: String {
