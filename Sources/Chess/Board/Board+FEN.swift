@@ -138,9 +138,9 @@ extension Chess.Board {
                 Chess.Rules.startingPositionsForBlackRooks.contains(square.position) :
                 Chess.Rules.startingPositionsForWhiteRooks.contains(square.position)
         case .queen:
-            return piece.side == .black ? square.position == .d8 : square.position == .d1
-        case .king:
             return piece.side == .black ? square.position == .e8 : square.position == .e1
+        case .king:
+            return piece.side == .black ? square.position == .d8 : square.position == .d1
         }
     }
 }
